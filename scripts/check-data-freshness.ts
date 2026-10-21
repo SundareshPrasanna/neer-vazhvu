@@ -348,9 +348,10 @@ function deriveChecks(places: PlaceConfig[]): { checks: Check[]; problems: strin
     if (!EXEMPTIONS[rainfallKey]) {
       if (!existsSync(resolve(ROOT, rainfallFile))) {
         problems.push(
-          `${cityId}: missing ${rainfallFile} - wire the city into ` +
-            `fetch_recent_rainfall.py + rainfall-recent-refresh.yml, or add an ` +
-            `EXEMPTIONS entry ("${rainfallKey}") with the reason.`,
+          `${cityId}: missing ${rainfallFile} - set rainfall.imdGrid and rainfall.recent in ` +
+            `src/cities/${cityId}/pipeline.json, run generate_imd_rainfall.py then ` +
+            `fetch_recent_rainfall.py --city ${cityId}, or add an EXEMPTIONS entry ` +
+            `("${rainfallKey}") with the reason.`,
         );
       } else {
         checks.push({

@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // City onboarding research (git-excluded): downloaded pages and bundles.
+    ".onboarding-state/**",
   ]),
   // Pages and runtime modules never value-import the atlas build pipeline; its types are fine (no bundle edge).
   {

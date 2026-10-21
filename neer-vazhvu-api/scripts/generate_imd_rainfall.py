@@ -142,6 +142,11 @@ def main() -> None:
         )
     )
 
+    # Resolve the licence before the download: an unregistered source id would
+    # otherwise fail at the write, after every year has been fetched.
+    if ENVELOPE_SOURCE_ID.get(city_id):
+        registry_license(ENVELOPE_SOURCE_ID[city_id])
+
     start_year = args.start_year
     end_year = args.end_year
     print(f"Downloading IMD rainfall data {start_year}-{end_year} for '{city_id}'")

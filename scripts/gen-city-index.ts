@@ -254,12 +254,14 @@ async function main() {
     return;
   }
   const cities = await scanCities();
+  // Scope rows first: a city in an unregistered state stops here, before any
+  // generated file is written, so the tree is never left half-generated.
+  const scopes = withMissingScopes(cities);
   const files = renderIndex(cities);
   mkdirSync(OUT_DIR, { recursive: true });
   for (const f of readdirSync(OUT_DIR)) if (!(f in files)) rmSync(join(OUT_DIR, f));
   for (const [name, text] of Object.entries(files)) writeFileSync(join(OUT_DIR, name), text);
   console.log(`wrote ${Object.keys(files).length} files to src/cities/generated/`);
-  const scopes = withMissingScopes(cities);
   if (scopes) {
     writeFileSync(SCOPES, scopes);
     console.log("added city rows to schemas/nvdm/scopes.json; now run: python3 scripts/build_nvdm_reference.py");
