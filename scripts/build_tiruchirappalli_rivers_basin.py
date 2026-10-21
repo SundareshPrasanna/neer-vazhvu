@@ -82,8 +82,8 @@ REGISTER_YEARS = "2015 to 2024"
 TNPCB_OFFICE = {"TRY": "DEE Trichy"}  # the register's office codes (TNPCB's DEE offices)
 SUB_BASIN_KEY = {}  # sheds keep TNGIS's object_id keys (SB<object_id>), listed in the manifest
 TALUK_ALIASES = {"Tiruchirappalli - East": "THIRUCHIRAPALLI-EAST"}  # TNGIS taluk -> IN-GRES locationName where the spellings differ
-RIVER_ALIASES = {"cauvery": ("kaveri", "cauvery"), "kollidam": ("kollidam", "coleroon"), "kolaiyar": ("kolaiyar",), "ayyar": ("aiyar", "ayyar"), "vellar": ("vellar",), "ariyar": ("ariyar",), "koraiyar": ("koraiaru", "koraiyar")}  # OSM spellings folded to one river each (substring match, first hit wins)
-RIVER_NAMES = {"cauvery": "Cauvery", "kollidam": "Kollidam", "kolaiyar": "Kolaiyar", "ayyar": "Ayyar", "vellar": "Vellar", "ariyar": "Ariyar", "koraiyar": "Koraiyar"}  # river_id -> display name
+RIVER_ALIASES = {"cauvery": ("kaveri", "cauvery"), "kollidam": ("kollidam", "coleroon"), "kulaiyar": ("kolaiyar", "kulaiyar"), "ayyar": ("aiyar", "ayyar"), "vellar": ("vellar",), "ariyar": ("ariyar",), "koraiyar": ("koraiaru", "koraiyar")}  # OSM spellings folded to one river each (substring match, first hit wins)
+RIVER_NAMES = {"cauvery": "Cauvery", "kollidam": "Kollidam (Coleroon)", "kulaiyar": "Kulaiyar", "ayyar": "Ayyar", "vellar": "South Vellar", "ariyar": "Ariyar", "koraiyar": "Koraiyar"}  # river_id -> display name
 REPO_FAMILIES = (
     ("monitoring-points", "public/data/basins/cauvery-tn/wq-stations.geojson", "near", "TNPCB stretch-wise monthly water-quality reports, January to December 2023 (the last year published); classes are the worst monthly use-based class of 2023; station points are town centres, as ingested for the Cauvery (Tamil Nadu) basin", "cauvery-tn/wq-stations.geojson"),
 )
