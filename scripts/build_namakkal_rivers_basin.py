@@ -130,7 +130,7 @@ PRS_OUTFALLS = (
      "Outfall OF19, 'near Molasi Village': one of 19 outfalls TNPCB's 2019 Cauvery action plan identifies on the Kumarapalayam office's 60.4 km reach (p.84), where it records sewage drains reaching the River Cauvery (pp.74, 103). The plan gives no flow or BOD for it."),
 )
 
-STEPS = ("waterways", "cauvery-prs", "repo-families", "tanks", "industries", "quarries", "admin", "panchayats", "waterbodies", "watersheds", "groundwater-wells", "canals")
+STEPS = ("waterways", "prs", "repo-families", "tanks", "industries", "quarries", "admin", "panchayats", "waterbodies", "watersheds", "groundwater-wells", "canals")
 
 # Envelopes (scripts/nvdm_envelope_district_basin.py): the shared TN families.
 ENVELOPE_SOURCES = {

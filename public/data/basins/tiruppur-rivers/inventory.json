@@ -1,0 +1,504 @@
+{
+  "nvdm": "1.0",
+  "dataset": "basins/inventory",
+  "scope": {
+    "kind": "basin",
+    "id": "tiruppur-rivers"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "tngis-open-geoserver",
+        "title": "TNGIS open GeoServer (WFS): district, taluk, block and village panchayat boundaries, TN WRD sub-basins and reservoirs, micro-watershed atlas, all-water-bodies and all-tanks registers, mine leases, industry register matched to land parcels",
+        "publisher": "Tamil Nadu e-Governance Agency (TNGIS)",
+        "license": "Tamil Nadu government data on an open GeoServer (WFS, no login); published with TNGIS's permission and with attribution.",
+        "role": "input",
+        "url": "https://tngis.tn.gov.in/tngismaps/ows"
+      },
+      {
+        "id": "osm-overpass",
+        "title": "OpenStreetMap (Overpass API extract: named river courses)",
+        "publisher": "OpenStreetMap contributors",
+        "license": "ODbL 1.0",
+        "role": "input"
+      },
+      {
+        "id": "ingres-gw-assessment-tn",
+        "title": "IN-GRES dynamic groundwater assessment 2024-2025, stage of extraction by taluk",
+        "publisher": "CGWB with IIT Hyderabad (IN-GRES)",
+        "license": "no explicit licence: the IN-GRES portal publishes no terms of use, no disclaimer and no copyright or licence statement anywhere; nothing has been established about who may redistribute this material or on what terms",
+        "role": "input",
+        "url": "https://ingres.iith.ac.in/",
+        "as_of": "2025"
+      },
+      {
+        "id": "nwic-nwdp-groundwater-level",
+        "title": "National Water Data Portal: Ground Water Level datasets for Tamil Nadu (CGWB telemetry 2026-2030, Tamil Nadu SW GW telemetry 2026-2030, CGWB manual quarterly 2021-2025)",
+        "publisher": "National Water Informatics Centre (NWIC), Ministry of Jal Shakti",
+        "license": "Government of India open data portal: its copyright policy permits reproduction free of charge in any format without specific permission, reproduced accurately and with the source prominently acknowledged; cited with attribution",
+        "role": "input",
+        "url": "https://nwdp.nwic.gov.in/"
+      },
+      {
+        "id": "nwic-nwdp-cwc-canal-network",
+        "title": "CWC canal network and water resource project (command area) layers, National Water Data Portal",
+        "publisher": "Central Water Commission, via the National Water Informatics Centre (NWIC)",
+        "license": "Government of India open data portal: its copyright policy permits reproduction free of charge in any format without specific permission, reproduced accurately and with the source prominently acknowledged; cited with attribution",
+        "role": "input",
+        "url": "https://nwdp.nwic.gov.in/",
+        "as_of": "2025"
+      },
+      {
+        "id": "tnpcb-realtime-wq-dashboard",
+        "title": "TNPCB real-time water quality monitoring dashboard: monthly means of sensor readings",
+        "publisher": "Tamil Nadu Pollution Control Board",
+        "license": "LICENCE UNVERIFIED - see notes. Public Tamil Nadu government dashboard with no reuse terms stated; its own page switches the download buttons off. Monthly means published with attribution.",
+        "role": "input",
+        "url": "https://tnpcb.gov.in/rtwqmstnpcb"
+      },
+      {
+        "id": "tnsmart-rimes-reservoirs",
+        "title": "Tamil Nadu reservoir dashboard (TN-SMART): the day's storage, depth and percentage of capacity per reservoir",
+        "publisher": "RIMES, relaying Tamil Nadu's daily reservoir storage",
+        "license": "LICENCE UNVERIFIED - see notes. The dashboard states no terms of use, no copyright policy and no licence anywhere on the page; nothing has been established about who may redistribute this material. Storage readings are served as current facts with the dashboard named.",
+        "role": "input",
+        "url": "https://beta-tnsmart.rimes.int/index.php/Reservoir"
+      }
+    ],
+    "method": "derived",
+    "produced_at": "2026-10-21",
+    "produced_by": "scripts/build_tiruppur_rivers_basin.py",
+    "note": "Tiruppur district's rivers, groundwater and industry (scope tiruppur-rivers; the district's own scope id is tn-tiruppur). The district boundary is the frame and TN WRD's sub-basins, clipped to it, are the catchments (shedId). The industry register holds only units TNGIS matched to a land parcel, so every count is a lower bound; sector comes from the reviewed TNPCB type-code lookup pipeline-inputs/basins/tn-tnpcb-type-sectors.json."
+  },
+  "basinId": "tiruppur-rivers",
+  "generatedFrom": "build_tiruppur_rivers_basin.py",
+  "generatedOn": "2026-10-21",
+  "families": {
+    "boundary": {
+      "featureCount": 1,
+      "sources": [
+        {
+          "file": "admin_master:administrative_boundary_district",
+          "kind": null,
+          "count": 1,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: district boundary, LGD code 634"
+        }
+      ],
+      "bytes": 23409,
+      "sliced": false
+    },
+    "sub-hydrosheds": {
+      "featureCount": 5,
+      "sources": [
+        {
+          "file": "generic_viewer:sub_basin",
+          "kind": null,
+          "count": 5,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: TN WRD sub-basins, clipped to the district boundary"
+        }
+      ],
+      "bytes": 25628,
+      "sliced": false
+    },
+    "rivers": {
+      "featureCount": 7,
+      "sources": [
+        {
+          "file": "osm-waterways.json",
+          "kind": null,
+          "count": 7,
+          "provenance": "Rivers: OpenStreetMap waterway courses (Overpass), clipped to the district plus 1.6 km so boundary rivers stay"
+        }
+      ],
+      "bytes": 37979,
+      "sliced": false
+    },
+    "reservoirs": {
+      "featureCount": 6,
+      "sources": [
+        {
+          "file": "generic_viewer:reservoir",
+          "kind": null,
+          "count": 6,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: TN WRD reservoir register, waterspread polygons shown at a point inside each; waterspread area computed from the polygon"
+        }
+      ],
+      "bytes": 2667,
+      "sliced": false
+    },
+    "tanks": {
+      "featureCount": 53,
+      "sources": [
+        {
+          "file": "generic_viewer:all_tanks",
+          "kind": null,
+          "count": 53,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: all-tanks register (generic_viewer:all_tanks), Tiruppur district, the tanks the register names, shown at a point inside each; waterspread area computed from the polygon"
+        }
+      ],
+      "bytes": 13397,
+      "sliced": false
+    },
+    "industries": {
+      "featureCount": 2061,
+      "sources": [
+        {
+          "file": "generic_viewer:industry_cad_matched",
+          "kind": "green-white",
+          "count": 434,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: industry register matched to land parcels (generic_viewer:industry_cad_matched), Tiruppur district; unit ids follow TNPCB's consent-register format, registrations 2015 to 2024; one point per unit at the mean of its parcel centres; sector from the reviewed TNPCB type-code lookup"
+        },
+        {
+          "file": "generic_viewer:industry_cad_matched",
+          "kind": "orange",
+          "count": 679,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: industry register matched to land parcels (generic_viewer:industry_cad_matched), Tiruppur district; unit ids follow TNPCB's consent-register format, registrations 2015 to 2024; one point per unit at the mean of its parcel centres; sector from the reviewed TNPCB type-code lookup"
+        },
+        {
+          "file": "generic_viewer:industry_cad_matched",
+          "kind": "red-chemicals",
+          "count": 3,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: industry register matched to land parcels (generic_viewer:industry_cad_matched), Tiruppur district; unit ids follow TNPCB's consent-register format, registrations 2015 to 2024; one point per unit at the mean of its parcel centres; sector from the reviewed TNPCB type-code lookup"
+        },
+        {
+          "file": "generic_viewer:industry_cad_matched",
+          "kind": "red-metal-treatment",
+          "count": 2,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: industry register matched to land parcels (generic_viewer:industry_cad_matched), Tiruppur district; unit ids follow TNPCB's consent-register format, registrations 2015 to 2024; one point per unit at the mean of its parcel centres; sector from the reviewed TNPCB type-code lookup"
+        },
+        {
+          "file": "generic_viewer:industry_cad_matched",
+          "kind": "red-other",
+          "count": 41,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: industry register matched to land parcels (generic_viewer:industry_cad_matched), Tiruppur district; unit ids follow TNPCB's consent-register format, registrations 2015 to 2024; one point per unit at the mean of its parcel centres; sector from the reviewed TNPCB type-code lookup"
+        },
+        {
+          "file": "generic_viewer:industry_cad_matched",
+          "kind": "red-paper",
+          "count": 8,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: industry register matched to land parcels (generic_viewer:industry_cad_matched), Tiruppur district; unit ids follow TNPCB's consent-register format, registrations 2015 to 2024; one point per unit at the mean of its parcel centres; sector from the reviewed TNPCB type-code lookup"
+        },
+        {
+          "file": "generic_viewer:industry_cad_matched",
+          "kind": "red-quarry-mining",
+          "count": 249,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: industry register matched to land parcels (generic_viewer:industry_cad_matched), Tiruppur district; unit ids follow TNPCB's consent-register format, registrations 2015 to 2024; one point per unit at the mean of its parcel centres; sector from the reviewed TNPCB type-code lookup"
+        },
+        {
+          "file": "generic_viewer:industry_cad_matched",
+          "kind": "red-textile",
+          "count": 645,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: industry register matched to land parcels (generic_viewer:industry_cad_matched), Tiruppur district; unit ids follow TNPCB's consent-register format, registrations 2015 to 2024; one point per unit at the mean of its parcel centres; sector from the reviewed TNPCB type-code lookup"
+        }
+      ],
+      "bytes": 1224637,
+      "sliced": false
+    },
+    "treatment-plants": {
+      "featureCount": 17,
+      "sources": [
+        {
+          "file": "generic_viewer:industry_cad_matched",
+          "kind": "cetp-operating",
+          "count": 14,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: industry register matched to land parcels (generic_viewer:industry_cad_matched), Tiruppur district; unit ids follow TNPCB's consent-register format, registrations 2015 to 2024; one point per unit at the mean of its parcel centres; sector from the reviewed TNPCB type-code lookup"
+        },
+        {
+          "file": "generic_viewer:industry_cad_matched",
+          "kind": "stp",
+          "count": 3,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: industry register matched to land parcels (generic_viewer:industry_cad_matched), Tiruppur district; unit ids follow TNPCB's consent-register format, registrations 2015 to 2024; one point per unit at the mean of its parcel centres; sector from the reviewed TNPCB type-code lookup"
+        }
+      ],
+      "bytes": 14777,
+      "sliced": false
+    },
+    "quarries": {
+      "featureCount": 239,
+      "sources": [
+        {
+          "file": "generic_viewer:mines",
+          "kind": null,
+          "count": 239,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: mines and quarry lease areas"
+        }
+      ],
+      "bytes": 96742,
+      "sliced": false
+    },
+    "admin-taluk": {
+      "featureCount": 9,
+      "sources": [
+        {
+          "file": "admin_master:administrative_boundary_taluk",
+          "kind": null,
+          "count": 9,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: taluk boundaries, LGD district 634"
+        }
+      ],
+      "bytes": 37330,
+      "sliced": false
+    },
+    "groundwater-taluks": {
+      "featureCount": 9,
+      "sources": [
+        {
+          "file": "atlas/tn/tiruppur/groundwater-taluks.json",
+          "kind": "critical",
+          "count": 2,
+          "provenance": "IN-GRES (CGWB / IIT Hyderabad) dynamic groundwater assessment 2024-2025, stage of extraction by taluk, as served on the Tiruppur district page; taluk polygons from TNGIS"
+        },
+        {
+          "file": "atlas/tn/tiruppur/groundwater-taluks.json",
+          "kind": "over-exploited",
+          "count": 2,
+          "provenance": "IN-GRES (CGWB / IIT Hyderabad) dynamic groundwater assessment 2024-2025, stage of extraction by taluk, as served on the Tiruppur district page; taluk polygons from TNGIS"
+        },
+        {
+          "file": "atlas/tn/tiruppur/groundwater-taluks.json",
+          "kind": "safe",
+          "count": 1,
+          "provenance": "IN-GRES (CGWB / IIT Hyderabad) dynamic groundwater assessment 2024-2025, stage of extraction by taluk, as served on the Tiruppur district page; taluk polygons from TNGIS"
+        },
+        {
+          "file": "atlas/tn/tiruppur/groundwater-taluks.json",
+          "kind": "semi-critical",
+          "count": 4,
+          "provenance": "IN-GRES (CGWB / IIT Hyderabad) dynamic groundwater assessment 2024-2025, stage of extraction by taluk, as served on the Tiruppur district page; taluk polygons from TNGIS"
+        }
+      ],
+      "bytes": 38462,
+      "sliced": false
+    },
+    "admin-block": {
+      "featureCount": 13,
+      "sources": [
+        {
+          "file": "generic_viewer:block_boundary",
+          "kind": null,
+          "count": 13,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: rural development block boundaries"
+        }
+      ],
+      "bytes": 54742,
+      "sliced": false
+    },
+    "admin-gp": {
+      "featureCount": 265,
+      "sources": [
+        {
+          "file": "tnrd:panchayat_boundary",
+          "kind": null,
+          "count": 265,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: village panchayat boundaries (tnrd:panchayat_boundary). Town panchayats, municipalities, the corporation and reserve forest are not village panchayats and are not in this layer"
+        }
+      ],
+      "bytes": 446447,
+      "sliced": true,
+      "shedKeys": [
+        "SB113",
+        "SB120",
+        "SB126",
+        "SB87"
+      ]
+    },
+    "waterbodies-major": {
+      "featureCount": 151,
+      "sources": [
+        {
+          "file": "generic_viewer:all_water_bodies",
+          "kind": null,
+          "count": 151,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: all water bodies register (generic_viewer:all_water_bodies), Tiruppur district; area computed from the polygon; a name is kept only where the register prints one rather than a class (Kuttai, Kulam, Odai, Stream) or the basin"
+        }
+      ],
+      "bytes": 149742,
+      "sliced": false
+    },
+    "waterbodies-minor": {
+      "featureCount": 1333,
+      "sources": [
+        {
+          "file": "generic_viewer:all_water_bodies",
+          "kind": null,
+          "count": 1333,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: all water bodies register (generic_viewer:all_water_bodies), Tiruppur district; area computed from the polygon; a name is kept only where the register prints one rather than a class (Kuttai, Kulam, Odai, Stream) or the basin"
+        }
+      ],
+      "bytes": 463932,
+      "sliced": true,
+      "shedKeys": [
+        "SB113",
+        "SB120",
+        "SB126",
+        "SB87"
+      ]
+    },
+    "watersheds": {
+      "featureCount": 11,
+      "sources": [
+        {
+          "file": "generic_viewer:microwatersheds",
+          "kind": null,
+          "count": 11,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: micro-watershed atlas (generic_viewer:microwatersheds), dissolved on its 'watershed' code column and cut to the district"
+        }
+      ],
+      "bytes": 54461,
+      "sliced": false
+    },
+    "sub-watersheds": {
+      "featureCount": 34,
+      "sources": [
+        {
+          "file": "generic_viewer:microwatersheds",
+          "kind": null,
+          "count": 34,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: micro-watershed atlas (generic_viewer:microwatersheds), dissolved on its 'subwatersh' code column and cut to the district"
+        }
+      ],
+      "bytes": 100399,
+      "sliced": false
+    },
+    "mini-watersheds": {
+      "featureCount": 74,
+      "sources": [
+        {
+          "file": "generic_viewer:microwatersheds",
+          "kind": null,
+          "count": 74,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: micro-watershed atlas (generic_viewer:microwatersheds), dissolved on its 'mini' code column and cut to the district"
+        }
+      ],
+      "bytes": 132407,
+      "sliced": false
+    },
+    "micro-watersheds": {
+      "featureCount": 724,
+      "sources": [
+        {
+          "file": "generic_viewer:microwatersheds",
+          "kind": null,
+          "count": 724,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: micro-watershed atlas (generic_viewer:microwatersheds), dissolved on its 'microwater' code column and cut to the district"
+        }
+      ],
+      "bytes": 437588,
+      "sliced": true,
+      "shedKeys": [
+        "SB113",
+        "SB120",
+        "SB126",
+        "SB86",
+        "SB87"
+      ]
+    },
+    "groundwater-wells": {
+      "featureCount": 62,
+      "sources": [
+        {
+          "file": "nwdp.nwic.gov.in datastore",
+          "kind": "cgwb-manual",
+          "count": 39,
+          "provenance": "National Water Data Portal (NWIC, nwdp.nwic.gov.in): groundwater level datasets for Tamil Nadu, Tiruppur-tagged stations placed by their coordinates; depth in metres below ground level, sign convention read per station from its own median, sentinel values and readings outside the physical envelope dropped"
+        },
+        {
+          "file": "nwdp.nwic.gov.in datastore",
+          "kind": "cgwb-telemetry",
+          "count": 8,
+          "provenance": "National Water Data Portal (NWIC, nwdp.nwic.gov.in): groundwater level datasets for Tamil Nadu, Tiruppur-tagged stations placed by their coordinates; depth in metres below ground level, sign convention read per station from its own median, sentinel values and readings outside the physical envelope dropped"
+        },
+        {
+          "file": "nwdp.nwic.gov.in datastore",
+          "kind": "state-telemetry",
+          "count": 15,
+          "provenance": "National Water Data Portal (NWIC, nwdp.nwic.gov.in): groundwater level datasets for Tamil Nadu, Tiruppur-tagged stations placed by their coordinates; depth in metres below ground level, sign convention read per station from its own median, sentinel values and readings outside the physical envelope dropped"
+        }
+      ],
+      "bytes": 23609,
+      "sliced": false
+    },
+    "canals": {
+      "featureCount": 197,
+      "sources": [
+        {
+          "file": "canal_network.zip",
+          "kind": "distributary",
+          "count": 69,
+          "provenance": "CWC canal network (National Water Data Portal, 2025), cut to the district"
+        },
+        {
+          "file": "canal_network.zip",
+          "kind": "main",
+          "count": 17,
+          "provenance": "CWC canal network (National Water Data Portal, 2025), cut to the district"
+        },
+        {
+          "file": "canal_network.zip",
+          "kind": "minor",
+          "count": 111,
+          "provenance": "CWC canal network (National Water Data Portal, 2025), cut to the district"
+        }
+      ],
+      "bytes": 347961,
+      "sliced": false
+    },
+    "command-areas": {
+      "featureCount": 4,
+      "sources": [
+        {
+          "file": "command_area.zip",
+          "kind": "amaravathy",
+          "count": 1,
+          "provenance": "CWC 'Water Resource Project' command areas (National Water Data Portal, 2025), cut to the district; culturable command area and potential created are CWC's figures in thousand hectares, mapped areas are computed from the polygons"
+        },
+        {
+          "file": "command_area.zip",
+          "kind": "lower-bhavani",
+          "count": 1,
+          "provenance": "CWC 'Water Resource Project' command areas (National Water Data Portal, 2025), cut to the district; culturable command area and potential created are CWC's figures in thousand hectares, mapped areas are computed from the polygons"
+        },
+        {
+          "file": "command_area.zip",
+          "kind": "palar-porandalar",
+          "count": 1,
+          "provenance": "CWC 'Water Resource Project' command areas (National Water Data Portal, 2025), cut to the district; culturable command area and potential created are CWC's figures in thousand hectares, mapped areas are computed from the polygons"
+        },
+        {
+          "file": "command_area.zip",
+          "kind": "parambikulam-aliyar-irrigation",
+          "count": 1,
+          "provenance": "CWC 'Water Resource Project' command areas (National Water Data Portal, 2025), cut to the district; culturable command area and potential created are CWC's figures in thousand hectares, mapped areas are computed from the polygons"
+        }
+      ],
+      "bytes": 40669,
+      "sliced": false
+    },
+    "realtime-stations": {
+      "featureCount": 2,
+      "sources": [
+        {
+          "file": "rtwqmstnpcb api/readings/graph",
+          "kind": null,
+          "count": 2,
+          "provenance": "TNPCB real-time water quality monitoring dashboard (tnpcb.gov.in/rtwqmstnpcb): station positions and monthly means of the sensor readings; values a dead sensor reports (dissolved solids below 1 mg/L) are dropped"
+        }
+      ],
+      "bytes": 1328,
+      "sliced": false
+    },
+    "cepi-area": {
+      "featureCount": 1,
+      "sources": [
+        {
+          "file": "CEPI_TprRpt4920.pdf",
+          "kind": null,
+          "count": 1,
+          "provenance": "TNPCB, Evaluation of CEPI score and action plan for CEPI area of Tiruppur (January 2020), p.6: the core zone's eight boundary points C-1 to C-8, joined in printed order"
+        }
+      ],
+      "bytes": 1181,
+      "sliced": false
+    }
+  }
+}

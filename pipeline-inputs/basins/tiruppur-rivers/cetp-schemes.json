@@ -1,0 +1,709 @@
+{
+ "_doc": [
+  "Tiruppur's 18 common effluent treatment plants (CETPs) for textile bleaching and dyeing units, as listed by TNPCB (2020) and by the state's June 2026 progress report to NMCG, all operating. No proposed CETP scheme for Tiruppur is on the Department of Textiles' 'Nadanthai Vaazhi Cauvery' page (checked 2026-10-21; its ten schemes are in Erode and Namakkal districts), so 'schemes' is empty.",
+  "Location names are as printed, except that the June 2026 report's dash between name and 'Tiruppur' is written here as a hyphen. Rows are transcribed from the PDFs and each row is checked by script (scripts/cetp.py) against the page's text layer; the tables were also read from the rendered page images (img/v-tnpcb-textile2020-p1.png, -p2.png, img/v-mpr-tn-2026-06-p53.png, -p54.png).",
+  "registerUnitId joins each plant to the TNGIS industry register's unit of the same name (treatment-plants.geojson, kind cetp, 14 units). The join is by name and is the part to review: see joinBasis, especially R15TPN2078008 (Mangalam).",
+  "consentedKld repeats TNPCB's 2020 column headed 'DPR Quantity (in KLD)', to match the field the engine reads (scripts/lib/tn_district_basin.py plant_facts); consentIssuedOn is the column 'CTO issued on' and renewalValidTo the column 'RCO Validity' of 2020. The June 2026 report gives the current renewal status in mpr2026.renewalStatus.",
+  "notOnRegister: the four listed plants with no register unit (Arulpuram, Kallikadu, Tiruppur Murugampalayam, Andipalayam). No official source read prints their location, so they are not drawn.",
+  "Left out: TNPCB row 19 and the June 2026 report's row 19, Perundurai CETP (printed 'Perundurai CETP- Tiruppur' in the June 2026 report), which is in Erode district and is already in pipeline-inputs/basins/erode-rivers/cetp-schemes.json."
+ ],
+ "schemaVersion": 1,
+ "id": "tiruppur-rivers-cetp-schemes",
+ "review": {
+  "status": "proposed",
+  "extractedBy": "transcribed from the PDFs and checked by script against their text layers, 2026-10-21",
+  "verifiedBy": null,
+  "verifiedAt": null
+ },
+ "source": {
+  "title": "Details of Common Effluent Treatment Plants pertaining to the Clusters of Textile Industries in Tamil Nadu",
+  "publisher": "Tamil Nadu Pollution Control Board",
+  "url": "https://tnpcb.gov.in/PDF/Information/cept/Textile2020.pdf",
+  "listedOn": "https://tnpcb.gov.in/cept.php",
+  "retrieved": "2026-10-21",
+  "pdfCreated": "2020-07-14"
+ },
+ "sources": [
+  {
+   "title": "Monthly Progress Report, Tamil Nadu, O.A. 673/2018, June 2026",
+   "publisher": "Government of Tamil Nadu, via NMCG",
+   "url": "https://nmcg.nic.in/writereaddata/fileupload/ngtmpr/43_Tamil%20Nadu%20-%20MPR%20June%202026.pdf",
+   "pages": [
+    52,
+    53,
+    54
+   ]
+  },
+  {
+   "title": "Evaluation of CEPI score and action plan for CEPI area of Tiruppur (submitted January 2020)",
+   "publisher": "Tamil Nadu Pollution Control Board",
+   "url": "https://tnpcb.gov.in/PDF/About_Us/projects/CEPI/CEPI_TprRpt4920.pdf",
+   "mirror": "https://cpcb.nic.in/industrial_pollution/New_Action_Plans/CEPI_Action%20Plan_TIRRUPUR.pdf",
+   "pages": [
+    6,
+    27
+   ]
+  },
+  {
+   "title": "Nadanthai Vaazhi Cauvery: proposed CETPs",
+   "publisher": "Department of Textiles, Government of Tamil Nadu",
+   "url": "https://tntextiles.tn.gov.in/nadanthai-vaazhi-cauvery/",
+   "use": "checked: no Tiruppur scheme"
+  }
+ ],
+ "totals": {
+  "tiruppurPlantsListed": 18,
+  "onRegister": 14,
+  "notOnRegister": 4,
+  "tnpcb2020DprQuantityKldSum": 98200,
+  "tnpcb2020TotalMembersSum": 441,
+  "tnpcb2020ParticipatingMembersSum": 362,
+  "mpr2026UnitsConnectedSum": 359,
+  "mpr2026RestrictedQuantityKldSum": 83530.85,
+  "note": "Sums are computed here over the 18 Tiruppur rows; TNPCB's printed total (102250 KLD, 455 members, 370 participating) includes row 19, Perundurai CETP in Erode district (4050 KLD, 14, 8)."
+ },
+ "schemes": [],
+ "existingPlants": [
+  {
+   "registerUnitId": "R15TPN546058",
+   "tnpcbSl": 1,
+   "nameAsPrinted": "Park CETP",
+   "dprQuantityKld": 2500,
+   "consentedKld": 2500,
+   "consentIssuedOn": "12.10.2011",
+   "renewalValidTo": "30.09.2020",
+   "totalMembers": 4,
+   "participatingMembers": 4,
+   "source": "TNPCB, Details of Common Effluent Treatment Plants pertaining to the Clusters of Textile Industries in Tamil Nadu (Textile2020.pdf), row 1, p.1",
+   "mpr2026": {
+    "sl": 8,
+    "locationAsPrinted": "Park CETP - Tiruppur",
+    "industrialUnitsConnected": 4,
+    "restrictedQuantityKld": 2250,
+    "status": "Operation",
+    "ocems": "Connected",
+    "renewalStatus": "31.03.2028",
+    "compliance": "Complied",
+    "page": 53,
+    "source": "Tamil Nadu monthly progress report to NMCG in O.A. 673/2018, June 2026, 'STATUS OF COMPLIANCE AND OPERATION OF COMMON EFFLUENT TREATMENT PLANTS'"
+   },
+   "register": {
+    "name": "PARK COMMON EFFLUENT TREATMENT PLANT PRIVATE LIMITED",
+    "village": "Thottipalayam",
+    "taluk": "Tiruppur North",
+    "registeredYear": "2015",
+    "lat": 11.14889,
+    "lon": 77.3383,
+    "kmToNoyyalMappedCourse": 4.97
+   },
+   "joinBasis": "name"
+  },
+  {
+   "registerUnitId": "R15TPN2089173",
+   "tnpcbSl": 3,
+   "nameAsPrinted": "Veerapandi CETP",
+   "dprQuantityKld": 12000,
+   "consentedKld": 12000,
+   "consentIssuedOn": "07.01.2010",
+   "renewalValidTo": "30.09.2020",
+   "totalMembers": 69,
+   "participatingMembers": 68,
+   "source": "TNPCB, Details of Common Effluent Treatment Plants pertaining to the Clusters of Textile Industries in Tamil Nadu (Textile2020.pdf), row 3, p.1",
+   "mpr2026": {
+    "sl": 7,
+    "locationAsPrinted": "Veerapandi CETP- Tiruppur",
+    "industrialUnitsConnected": 62,
+    "restrictedQuantityKld": 10800,
+    "status": "Operation",
+    "ocems": "Connected",
+    "renewalStatus": "31.03.2028",
+    "compliance": "Complied",
+    "page": 53,
+    "source": "Tamil Nadu monthly progress report to NMCG in O.A. 673/2018, June 2026, 'STATUS OF COMPLIANCE AND OPERATION OF COMMON EFFLUENT TREATMENT PLANTS'"
+   },
+   "register": {
+    "name": "VEERAPANDI COMMON EFFLUENT TREATMENT PLANT PRIVATE LIMITED",
+    "village": "Veerapandi",
+    "taluk": "Tiruppur South",
+    "registeredYear": "2015",
+    "lat": 11.07539,
+    "lon": 77.33213,
+    "kmToNoyyalMappedCourse": 2.67
+   },
+   "joinBasis": "name"
+  },
+  {
+   "registerUnitId": "R15TPN417266",
+   "tnpcbSl": 4,
+   "nameAsPrinted": "Mannarai CETP",
+   "dprQuantityKld": 4200,
+   "consentedKld": 4200,
+   "consentIssuedOn": "07.01.2010",
+   "renewalValidTo": "30.09.2020",
+   "totalMembers": 28,
+   "participatingMembers": 18,
+   "source": "TNPCB, Details of Common Effluent Treatment Plants pertaining to the Clusters of Textile Industries in Tamil Nadu (Textile2020.pdf), row 4, p.1",
+   "mpr2026": {
+    "sl": 6,
+    "locationAsPrinted": "Mannarai CETP- Tiruppur",
+    "industrialUnitsConnected": 20,
+    "restrictedQuantityKld": 5400,
+    "status": "Operation",
+    "ocems": "Connected",
+    "renewalStatus": "31.03.2027",
+    "compliance": "Complied",
+    "page": 53,
+    "source": "Tamil Nadu monthly progress report to NMCG in O.A. 673/2018, June 2026, 'STATUS OF COMPLIANCE AND OPERATION OF COMMON EFFLUENT TREATMENT PLANTS'"
+   },
+   "cepiPlan2020": {
+    "nameAsPrinted": "M/s. Mannarai Common Effluent Treatment Plant (P) Limited",
+    "effluentFromMemberUnitsMld": 4.165,
+    "page": 27,
+    "source": "TNPCB, Evaluation of CEPI score and action plan for CEPI area of Tiruppur, January 2020, Table 3.3"
+   },
+   "register": {
+    "name": "MANNARAI COMMON EFFLUENT TREATMENT PLANT (P) LIMITED",
+    "village": "Mannarai",
+    "taluk": "Tiruppur North",
+    "registeredYear": "2015",
+    "lat": 11.11922,
+    "lon": 77.38926,
+    "kmToNoyyalMappedCourse": 0.13
+   },
+   "joinBasis": "name"
+  },
+  {
+   "registerUnitId": "R15TPN2040496",
+   "tnpcbSl": 5,
+   "nameAsPrinted": "Sirupooluvapatti CETP",
+   "dprQuantityKld": 5000,
+   "consentedKld": 5000,
+   "consentIssuedOn": "07.01.2010",
+   "renewalValidTo": "30.09.2020",
+   "totalMembers": 19,
+   "participatingMembers": 19,
+   "source": "TNPCB, Details of Common Effluent Treatment Plants pertaining to the Clusters of Textile Industries in Tamil Nadu (Textile2020.pdf), row 5, p.1",
+   "mpr2026": {
+    "sl": 10,
+    "locationAsPrinted": "Sripulavapatti CETP- Tiruppur",
+    "industrialUnitsConnected": 19,
+    "restrictedQuantityKld": 4500,
+    "status": "Operation",
+    "ocems": "Connected",
+    "renewalStatus": "31.03.2028",
+    "compliance": "Complied",
+    "page": 53,
+    "source": "Tamil Nadu monthly progress report to NMCG in O.A. 673/2018, June 2026, 'STATUS OF COMPLIANCE AND OPERATION OF COMMON EFFLUENT TREATMENT PLANTS'"
+   },
+   "cepiPlan2020": {
+    "nameAsPrinted": "M/s. Sirupooluvapatti Common Effluent Treatment Plant Private Limited",
+    "effluentFromMemberUnitsMld": 5,
+    "page": 27,
+    "source": "TNPCB, Evaluation of CEPI score and action plan for CEPI area of Tiruppur, January 2020, Table 3.3"
+   },
+   "register": {
+    "name": "SIRUPOOLUVAPATTI COMMON EFFLUENT TREATMENT PLANT PRIVATE LIMITED",
+    "village": "Velamapalayam",
+    "taluk": "Tiruppur North",
+    "registeredYear": "2015",
+    "lat": 11.10831,
+    "lon": 77.30489,
+    "kmToNoyyalMappedCourse": 0.14
+   },
+   "joinBasis": "name; the June 2026 report spells it Sripulavapatti"
+  },
+  {
+   "registerUnitId": "R15TPN2100102",
+   "tnpcbSl": 6,
+   "nameAsPrinted": "Rayapuram CETP",
+   "dprQuantityKld": 5500,
+   "consentedKld": 5500,
+   "consentIssuedOn": "07.01.2010",
+   "renewalValidTo": "30.09.2020",
+   "totalMembers": 15,
+   "participatingMembers": 15,
+   "source": "TNPCB, Details of Common Effluent Treatment Plants pertaining to the Clusters of Textile Industries in Tamil Nadu (Textile2020.pdf), row 6, p.1",
+   "mpr2026": {
+    "sl": 14,
+    "locationAsPrinted": "Rayapuram CETP- Tiruppur",
+    "industrialUnitsConnected": 13,
+    "restrictedQuantityKld": 4743,
+    "status": "Operation",
+    "ocems": "Connected",
+    "renewalStatus": "31.03.2028",
+    "compliance": "Complied",
+    "page": 54,
+    "source": "Tamil Nadu monthly progress report to NMCG in O.A. 673/2018, June 2026, 'STATUS OF COMPLIANCE AND OPERATION OF COMMON EFFLUENT TREATMENT PLANTS'"
+   },
+   "cepiPlan2020": {
+    "nameAsPrinted": "M/S. Rayapuram Common Effluent Treatment Plant Pvt Ltd",
+    "effluentFromMemberUnitsMld": 5.5,
+    "page": 27,
+    "source": "TNPCB, Evaluation of CEPI score and action plan for CEPI area of Tiruppur, January 2020, Table 3.3"
+   },
+   "register": {
+    "name": "RAYAPURAM COMMON EFFLUENT TREATMENT PLANT PVT LTD",
+    "village": "Velamapalayam",
+    "taluk": "Tiruppur North",
+    "registeredYear": "2015",
+    "lat": 11.10632,
+    "lon": 77.31552,
+    "kmToNoyyalMappedCourse": 0.16
+   },
+   "joinBasis": "name"
+  },
+  {
+   "registerUnitId": "R15TPN2077004",
+   "tnpcbSl": 8,
+   "nameAsPrinted": "Kasipalayam CETP",
+   "dprQuantityKld": 4400,
+   "consentedKld": 4400,
+   "consentIssuedOn": "07.01.2010",
+   "renewalValidTo": "30.09.2020",
+   "totalMembers": 12,
+   "participatingMembers": 12,
+   "source": "TNPCB, Details of Common Effluent Treatment Plants pertaining to the Clusters of Textile Industries in Tamil Nadu (Textile2020.pdf), row 8, p.1",
+   "mpr2026": {
+    "sl": 5,
+    "locationAsPrinted": "Kasi palayam CETP- Tiruppur",
+    "industrialUnitsConnected": 12,
+    "restrictedQuantityKld": 3960,
+    "status": "Operation",
+    "ocems": "Connected",
+    "renewalStatus": "31.03.2028",
+    "compliance": "Complied",
+    "page": 53,
+    "source": "Tamil Nadu monthly progress report to NMCG in O.A. 673/2018, June 2026, 'STATUS OF COMPLIANCE AND OPERATION OF COMMON EFFLUENT TREATMENT PLANTS'"
+   },
+   "cepiPlan2020": {
+    "nameAsPrinted": "M/s. Kasipalayam Common Effluent Treatment Plant Private Limited",
+    "effluentFromMemberUnitsMld": 4.4,
+    "page": 27,
+    "source": "TNPCB, Evaluation of CEPI score and action plan for CEPI area of Tiruppur, January 2020, Table 3.3"
+   },
+   "cepiCorePoint": {
+    "label": "C-8 North East, M/s.Kasipalayam CETP",
+    "lat": 11.124988,
+    "lon": 77.402511,
+    "page": 6,
+    "kmToRegisterPoint": 0.68
+   },
+   "register": {
+    "name": "KASIPALAYAM COMMON EFFLUENT TREATMENT PLANT PRIVATE LIMITED",
+    "village": "Agrahara Periapalayam",
+    "taluk": "Uthukkuli",
+    "registeredYear": "2015",
+    "lat": 11.12104,
+    "lon": 77.39771,
+    "kmToNoyyalMappedCourse": 0.17
+   },
+   "joinBasis": "name; the CEPI plan's C-8 'M/s.Kasipalayam CETP' point lies 0.68 km from the register point"
+  },
+  {
+   "registerUnitId": "R15TPN2087341",
+   "tnpcbSl": 9,
+   "nameAsPrinted": "Eastern CETP",
+   "dprQuantityKld": 6000,
+   "consentedKld": 6000,
+   "consentIssuedOn": "07.01.2010",
+   "renewalValidTo": "30.09.2020",
+   "totalMembers": 23,
+   "participatingMembers": 21,
+   "source": "TNPCB, Details of Common Effluent Treatment Plants pertaining to the Clusters of Textile Industries in Tamil Nadu (Textile2020.pdf), row 9, p.1",
+   "mpr2026": {
+    "sl": 1,
+    "locationAsPrinted": "Eastern CETP - Tiruppur",
+    "industrialUnitsConnected": 20,
+    "restrictedQuantityKld": 5400,
+    "status": "Operation",
+    "ocems": "Connected",
+    "renewalStatus": "31.03.2028",
+    "compliance": "Complied",
+    "page": 53,
+    "source": "Tamil Nadu monthly progress report to NMCG in O.A. 673/2018, June 2026, 'STATUS OF COMPLIANCE AND OPERATION OF COMMON EFFLUENT TREATMENT PLANTS'"
+   },
+   "cepiPlan2020": {
+    "nameAsPrinted": "M/s. Eastern Common Effluent Treatment Company Private Limited",
+    "effluentFromMemberUnitsMld": 6,
+    "page": 27,
+    "source": "TNPCB, Evaluation of CEPI score and action plan for CEPI area of Tiruppur, January 2020, Table 3.3"
+   },
+   "cepiCorePoint": {
+    "label": "C-1 East, M/s.Eastern CETP",
+    "lat": 11.118722,
+    "lon": 77.402567,
+    "page": 6,
+    "kmToRegisterPoint": 0.02
+   },
+   "register": {
+    "name": "EASTERN COMMON EFFLUENT TREATMENT COMPANY PRIVATE LIMITED",
+    "village": "Nallur",
+    "taluk": "Tiruppur South",
+    "registeredYear": "2015",
+    "lat": 11.1188,
+    "lon": 77.4024,
+    "kmToNoyyalMappedCourse": 0.29
+   },
+   "joinBasis": "name; the CEPI plan's C-1 'M/s.Eastern CETP' point lies 0.02 km from the register point"
+  },
+  {
+   "registerUnitId": "R15TPS2074911",
+   "tnpcbSl": 11,
+   "nameAsPrinted": "Karaipudur CETP",
+   "dprQuantityKld": 4500,
+   "consentedKld": 4500,
+   "consentIssuedOn": "21.01.2010",
+   "renewalValidTo": "30.09.2020",
+   "totalMembers": 25,
+   "participatingMembers": 17,
+   "source": "TNPCB, Details of Common Effluent Treatment Plants pertaining to the Clusters of Textile Industries in Tamil Nadu (Textile2020.pdf), row 11, p.1",
+   "mpr2026": {
+    "sl": 17,
+    "locationAsPrinted": "Karaipudur CETP- Tiruppur",
+    "industrialUnitsConnected": 19,
+    "restrictedQuantityKld": 3602.25,
+    "status": "Operation",
+    "ocems": "Connected",
+    "renewalStatus": "31.03.2028",
+    "compliance": "Complied",
+    "page": 54,
+    "source": "Tamil Nadu monthly progress report to NMCG in O.A. 673/2018, June 2026, 'STATUS OF COMPLIANCE AND OPERATION OF COMMON EFFLUENT TREATMENT PLANTS'"
+   },
+   "register": {
+    "name": "KARAIPUDUR COMMON EFFLUENT TREATMENT PLANT PRIVATE LIMITED",
+    "village": "Karaipudur",
+    "taluk": "Palladam",
+    "registeredYear": "2015",
+    "lat": 11.06325,
+    "lon": 77.31463,
+    "kmToNoyyalMappedCourse": 4.36
+   },
+   "joinBasis": "name"
+  },
+  {
+   "registerUnitId": "R15TPN2083149",
+   "tnpcbSl": 12,
+   "nameAsPrinted": "Angeripalayam CETP",
+   "dprQuantityKld": 10000,
+   "consentedKld": 10000,
+   "consentIssuedOn": "07.01.2010",
+   "renewalValidTo": "30.09.2020",
+   "totalMembers": 75,
+   "participatingMembers": 49,
+   "source": "TNPCB, Details of Common Effluent Treatment Plants pertaining to the Clusters of Textile Industries in Tamil Nadu (Textile2020.pdf), row 12, p.2",
+   "mpr2026": {
+    "sl": 2,
+    "locationAsPrinted": "Angaripalayam CETP-Tiruppur",
+    "industrialUnitsConnected": 46,
+    "restrictedQuantityKld": 9000,
+    "status": "Operation",
+    "ocems": "Connected",
+    "renewalStatus": "31.03.2027",
+    "compliance": "Complied",
+    "page": 53,
+    "source": "Tamil Nadu monthly progress report to NMCG in O.A. 673/2018, June 2026, 'STATUS OF COMPLIANCE AND OPERATION OF COMMON EFFLUENT TREATMENT PLANTS'"
+   },
+   "register": {
+    "name": "ANGERIPALAYAM COMMON EFFLUENT TREATMENT PLANT PRIVATE LIMITED",
+    "village": "Mannarai",
+    "taluk": "Tiruppur North",
+    "registeredYear": "2015",
+    "lat": 11.14044,
+    "lon": 77.35913,
+    "kmToNoyyalMappedCourse": 3.36
+   },
+   "joinBasis": "name; the June 2026 report spells it Angaripalayam; the register's village is Mannarai"
+  },
+  {
+   "registerUnitId": "R15TPN2078008",
+   "tnpcbSl": 13,
+   "nameAsPrinted": "Mangalam CETP",
+   "dprQuantityKld": 4000,
+   "consentedKld": 4000,
+   "consentIssuedOn": "07.01.2010",
+   "renewalValidTo": "30.09.2020",
+   "totalMembers": 15,
+   "participatingMembers": 12,
+   "source": "TNPCB, Details of Common Effluent Treatment Plants pertaining to the Clusters of Textile Industries in Tamil Nadu (Textile2020.pdf), row 13, p.2",
+   "mpr2026": {
+    "sl": 13,
+    "locationAsPrinted": "Mangalam CETP- Tiruppur",
+    "industrialUnitsConnected": 13,
+    "restrictedQuantityKld": 3492,
+    "status": "Operation",
+    "ocems": "Connected",
+    "renewalStatus": "31.03.2028",
+    "compliance": "Complied",
+    "page": 53,
+    "source": "Tamil Nadu monthly progress report to NMCG in O.A. 673/2018, June 2026, 'STATUS OF COMPLIANCE AND OPERATION OF COMMON EFFLUENT TREATMENT PLANTS'"
+   },
+   "cepiPlan2020": {
+    "nameAsPrinted": "M/s. Mangalam Common Effluent Recycling Technologies India (P) Ltd",
+    "effluentFromMemberUnitsMld": 3.88,
+    "page": 27,
+    "source": "TNPCB, Evaluation of CEPI score and action plan for CEPI area of Tiruppur, January 2020, Table 3.3"
+   },
+   "cepiCorePoint": {
+    "label": "C-5 West, M/s.Mangalam CETP",
+    "lat": 11.107708,
+    "lon": 77.288656,
+    "page": 6,
+    "kmToRegisterPoint": 0.05
+   },
+   "register": {
+    "name": "MANGALAM COMMON EFFLUENT RECYCLING TECHNOLOGIES INDIA (P) LTD",
+    "village": "Andipalayam",
+    "taluk": "Tiruppur South",
+    "registeredYear": "2015",
+    "lat": 11.10796,
+    "lon": 77.28824,
+    "kmToNoyyalMappedCourse": 0.08
+   },
+   "joinBasis": "REVIEW: the register's name is the company 'MANGALAM COMMON EFFLUENT RECYCLING TECHNOLOGIES INDIA (P) LTD' and its village Andipalayam; TNPCB lists a separate Andipalayam CETP (row 16). Joined to Mangalam because the CEPI plan prints the same company name (p.27) and its C-5 'M/s.Mangalam CETP' point lies 0.05 km from the register point (p.6)"
+  },
+  {
+   "registerUnitId": "R15TPN345527",
+   "tnpcbSl": 14,
+   "nameAsPrinted": "Chinnakarai CETP",
+   "dprQuantityKld": 8000,
+   "consentedKld": 8000,
+   "consentIssuedOn": "07.01.2010",
+   "renewalValidTo": "30.09.2020",
+   "totalMembers": 29,
+   "participatingMembers": 22,
+   "source": "TNPCB, Details of Common Effluent Treatment Plants pertaining to the Clusters of Textile Industries in Tamil Nadu (Textile2020.pdf), row 14, p.2",
+   "mpr2026": {
+    "sl": 15,
+    "locationAsPrinted": "Chinnakarai CETP- Tiruppur",
+    "industrialUnitsConnected": 24,
+    "restrictedQuantityKld": 6902.1,
+    "status": "Operation",
+    "ocems": "Connected",
+    "renewalStatus": "31.03.2027",
+    "compliance": "Complied",
+    "page": 54,
+    "source": "Tamil Nadu monthly progress report to NMCG in O.A. 673/2018, June 2026, 'STATUS OF COMPLIANCE AND OPERATION OF COMMON EFFLUENT TREATMENT PLANTS'"
+   },
+   "register": {
+    "name": "CHINNAKKARAI COMMON EFFLUENT TREATMENT PLANT PRIVATE LIMITED",
+    "village": "Veerapandi",
+    "taluk": "Tiruppur South",
+    "registeredYear": "2015",
+    "lat": 11.06509,
+    "lon": 77.32594,
+    "kmToNoyyalMappedCourse": 3.89
+   },
+   "joinBasis": "name; the register spells it Chinnakkarai"
+  },
+  {
+   "registerUnitId": "R15TPS2078602",
+   "tnpcbSl": 15,
+   "nameAsPrinted": "Kunnankalpalayam CETP",
+   "dprQuantityKld": 5500,
+   "consentedKld": 5500,
+   "consentIssuedOn": "07.01.2010",
+   "renewalValidTo": "30.09.2020",
+   "totalMembers": 18,
+   "participatingMembers": 13,
+   "source": "TNPCB, Details of Common Effluent Treatment Plants pertaining to the Clusters of Textile Industries in Tamil Nadu (Textile2020.pdf), row 15, p.2",
+   "mpr2026": {
+    "sl": 3,
+    "locationAsPrinted": "Kunnagalpalayam CETP- Tiruppur",
+    "industrialUnitsConnected": 13,
+    "restrictedQuantityKld": 4653,
+    "status": "Operation",
+    "ocems": "Connected",
+    "renewalStatus": "31.03.2028",
+    "compliance": "Complied",
+    "page": 53,
+    "source": "Tamil Nadu monthly progress report to NMCG in O.A. 673/2018, June 2026, 'STATUS OF COMPLIANCE AND OPERATION OF COMMON EFFLUENT TREATMENT PLANTS'"
+   },
+   "register": {
+    "name": "KUNNANKALPALAYAM COMMON EFFLUENT TREATMENT PLANT PRIVATE LIMITED",
+    "village": "Karaipudur",
+    "taluk": "Palladam",
+    "registeredYear": "2015",
+    "lat": 11.05723,
+    "lon": 77.32657,
+    "kmToNoyyalMappedCourse": 4.74
+   },
+   "joinBasis": "name; the June 2026 report spells it Kunnagalpalayam"
+  },
+  {
+   "registerUnitId": "R15TPN2112141",
+   "tnpcbSl": 17,
+   "nameAsPrinted": "Vettuvampalayam CETP",
+   "dprQuantityKld": 1100,
+   "consentedKld": 1100,
+   "consentIssuedOn": "27.07.2010",
+   "renewalValidTo": "30.09.2020",
+   "totalMembers": 8,
+   "participatingMembers": 5,
+   "source": "TNPCB, Details of Common Effluent Treatment Plants pertaining to the Clusters of Textile Industries in Tamil Nadu (Textile2020.pdf), row 17, p.2",
+   "mpr2026": {
+    "sl": 12,
+    "locationAsPrinted": "Vettuvapalayam CETP- Tiruppur",
+    "industrialUnitsConnected": 8,
+    "restrictedQuantityKld": 920,
+    "status": "Operation",
+    "ocems": "Connected",
+    "renewalStatus": "31.03.2026 Renewal application under process.",
+    "compliance": "Complied",
+    "page": 53,
+    "source": "Tamil Nadu monthly progress report to NMCG in O.A. 673/2018, June 2026, 'STATUS OF COMPLIANCE AND OPERATION OF COMMON EFFLUENT TREATMENT PLANTS'"
+   },
+   "register": {
+    "name": "VETTUVAPALAYAM COMMON EFFLUENT TREATMENT, RECYCLING PLANT PRIVATE LIMITED",
+    "village": "Mangalam",
+    "taluk": "Tiruppur South",
+    "registeredYear": "2015",
+    "lat": 11.10319,
+    "lon": 77.26262,
+    "kmToNoyyalMappedCourse": 0.24
+   },
+   "joinBasis": "name; TNPCB 2020 spells it Vettuvampalayam, the register and the June 2026 report Vettuvapalayam; the register's village is Mangalam"
+  },
+  {
+   "registerUnitId": "R15TPN2531229",
+   "tnpcbSl": 18,
+   "nameAsPrinted": "S.Periyapalayam CETP",
+   "dprQuantityKld": 1500,
+   "consentedKld": 1500,
+   "consentIssuedOn": "10.05.2016",
+   "renewalValidTo": "30.09.2020",
+   "totalMembers": 6,
+   "participatingMembers": 5,
+   "source": "TNPCB, Details of Common Effluent Treatment Plants pertaining to the Clusters of Textile Industries in Tamil Nadu (Textile2020.pdf), row 18, p.2",
+   "mpr2026": {
+    "sl": 18,
+    "locationAsPrinted": "S.Periyapalayam CETP-Tiruppur",
+    "industrialUnitsConnected": 5,
+    "restrictedQuantityKld": 840,
+    "status": "Operation",
+    "ocems": "Connected",
+    "renewalStatus": "31.03.2027",
+    "compliance": "Complied",
+    "page": 54,
+    "source": "Tamil Nadu monthly progress report to NMCG in O.A. 673/2018, June 2026, 'STATUS OF COMPLIANCE AND OPERATION OF COMMON EFFLUENT TREATMENT PLANTS'"
+   },
+   "register": {
+    "name": "S.PERIYAPALAYAM COMMON EFFLUENT TREATMENT PLANT PRIVATE LIMITED",
+    "village": "Agrahara Periapalayam",
+    "taluk": "Uthukkuli",
+    "registeredYear": "2015",
+    "lat": 11.13041,
+    "lon": 77.41662,
+    "kmToNoyyalMappedCourse": 0.15
+   },
+   "joinBasis": "name"
+  }
+ ],
+ "notOnRegister": [
+  {
+   "tnpcbSl": 2,
+   "nameAsPrinted": "Arulpuram CETP",
+   "dprQuantityKld": 5500,
+   "consentedKld": 5500,
+   "consentIssuedOn": "01.01.2010",
+   "renewalValidTo": "30.09.2020",
+   "totalMembers": 14,
+   "participatingMembers": 12,
+   "source": "TNPCB, Details of Common Effluent Treatment Plants pertaining to the Clusters of Textile Industries in Tamil Nadu (Textile2020.pdf), row 2, p.1",
+   "mpr2026": {
+    "sl": 9,
+    "locationAsPrinted": "Arulpuram CETP- Tiruppur",
+    "industrialUnitsConnected": 11,
+    "restrictedQuantityKld": 4950,
+    "status": "Operation",
+    "ocems": "Connected",
+    "renewalStatus": "31.03.2029",
+    "compliance": "Complied",
+    "page": 53,
+    "source": "Tamil Nadu monthly progress report to NMCG in O.A. 673/2018, June 2026, 'STATUS OF COMPLIANCE AND OPERATION OF COMMON EFFLUENT TREATMENT PLANTS'"
+   },
+   "register": null,
+   "joinBasis": "no unit of this name on the TNGIS register (the register holds only units matched to a land parcel); not drawn"
+  },
+  {
+   "tnpcbSl": 7,
+   "nameAsPrinted": "Kallikadu CETP",
+   "dprQuantityKld": 3000,
+   "consentedKld": 3000,
+   "consentIssuedOn": "01.01.2010",
+   "renewalValidTo": "31.03.2021",
+   "totalMembers": 12,
+   "participatingMembers": 11,
+   "source": "TNPCB, Details of Common Effluent Treatment Plants pertaining to the Clusters of Textile Industries in Tamil Nadu (Textile2020.pdf), row 7, p.1",
+   "mpr2026": {
+    "sl": 11,
+    "locationAsPrinted": "Kalli kadu CETP-Tiruppur",
+    "industrialUnitsConnected": 11,
+    "restrictedQuantityKld": 2700,
+    "status": "Operation",
+    "ocems": "Connected",
+    "renewalStatus": "31.03.2028",
+    "compliance": "Complied",
+    "page": 53,
+    "source": "Tamil Nadu monthly progress report to NMCG in O.A. 673/2018, June 2026, 'STATUS OF COMPLIANCE AND OPERATION OF COMMON EFFLUENT TREATMENT PLANTS'"
+   },
+   "register": null,
+   "joinBasis": "no unit of this name on the TNGIS register (the register holds only units matched to a land parcel); not drawn"
+  },
+  {
+   "tnpcbSl": 10,
+   "nameAsPrinted": "Tiruppur Murugampalayam CETP",
+   "dprQuantityKld": 11000,
+   "consentedKld": 11000,
+   "consentIssuedOn": "07.01.2010",
+   "renewalValidTo": "30.09.2020",
+   "totalMembers": 60,
+   "participatingMembers": 50,
+   "source": "TNPCB, Details of Common Effluent Treatment Plants pertaining to the Clusters of Textile Industries in Tamil Nadu (Textile2020.pdf), row 10, p.1",
+   "mpr2026": {
+    "sl": 16,
+    "locationAsPrinted": "Murugampalayam CETP-Tiruppur",
+    "industrialUnitsConnected": 50,
+    "restrictedQuantityKld": 7507.5,
+    "status": "Operation",
+    "ocems": "Connected",
+    "renewalStatus": "31.03.2027",
+    "compliance": "Complied",
+    "page": 54,
+    "source": "Tamil Nadu monthly progress report to NMCG in O.A. 673/2018, June 2026, 'STATUS OF COMPLIANCE AND OPERATION OF COMMON EFFLUENT TREATMENT PLANTS'"
+   },
+   "register": null,
+   "joinBasis": "no unit of this name on the TNGIS register (the register holds only units matched to a land parcel); not drawn"
+  },
+  {
+   "tnpcbSl": 16,
+   "nameAsPrinted": "Andipalayam CETP",
+   "dprQuantityKld": 4500,
+   "consentedKld": 4500,
+   "consentIssuedOn": "18.01.2016",
+   "renewalValidTo": "30.09.2020",
+   "totalMembers": 9,
+   "participatingMembers": 9,
+   "source": "TNPCB, Details of Common Effluent Treatment Plants pertaining to the Clusters of Textile Industries in Tamil Nadu (Textile2020.pdf), row 16, p.2",
+   "mpr2026": {
+    "sl": 4,
+    "locationAsPrinted": "Andi palayam CETP- Tiruppur",
+    "industrialUnitsConnected": 9,
+    "restrictedQuantityKld": 1911,
+    "status": "Operation",
+    "ocems": "Connected",
+    "renewalStatus": "31.03.2027",
+    "compliance": "Complied",
+    "page": 53,
+    "source": "Tamil Nadu monthly progress report to NMCG in O.A. 673/2018, June 2026, 'STATUS OF COMPLIANCE AND OPERATION OF COMMON EFFLUENT TREATMENT PLANTS'"
+   },
+   "cepiPlan2020": {
+    "nameAsPrinted": "M/s. Andipalayam Common Effluent Treatment Plant Pvt.Ltd",
+    "effluentFromMemberUnitsMld": 2.73,
+    "page": 27,
+    "source": "TNPCB, Evaluation of CEPI score and action plan for CEPI area of Tiruppur, January 2020, Table 3.3"
+   },
+   "register": null,
+   "joinBasis": "no unit of this name on the TNGIS register (the register holds only units matched to a land parcel); not drawn"
+  }
+ ]
+}

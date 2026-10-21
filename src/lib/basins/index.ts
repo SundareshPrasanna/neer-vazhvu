@@ -3,6 +3,7 @@ import { ARKAVATHI } from "./arkavathi";
 import { CHENNAI_RIVERS } from "./chennai-rivers";
 import { CAUVERY_KA } from "./cauvery-ka";
 import { CAUVERY_TN } from "./cauvery-tn";
+import { DINDIGUL_RIVERS } from "./dindigul-rivers";
 import { ERODE_RIVERS } from "./erode-rivers";
 import { KABINI } from "./kabini";
 import { KARUR_RIVERS } from "./karur-rivers";
@@ -10,8 +11,10 @@ import { KRISHNAGIRI_RIVERS } from "./krishnagiri-rivers";
 import { MUMBAI_RIVERS } from "./mumbai-rivers";
 import { NAMAKKAL_RIVERS } from "./namakkal-rivers";
 import { PALAKKAD_RIVERS } from "./palakkad-rivers";
+import { SALEM_RIVERS } from "./salem-rivers";
 import { THANJAVUR_RIVERS } from "./thanjavur-rivers";
 import { TIRUCHIRAPPALLI_RIVERS } from "./tiruchirappalli-rivers";
+import { TIRUPPUR_RIVERS } from "./tiruppur-rivers";
 
 export * from "./types";
 
@@ -22,6 +25,7 @@ const BASINS: Record<string, BasinManifest> = {
   "chennai-rivers": CHENNAI_RIVERS,
   "cauvery-ka": CAUVERY_KA,
   "cauvery-tn": CAUVERY_TN,
+  "dindigul-rivers": DINDIGUL_RIVERS,
   "erode-rivers": ERODE_RIVERS,
   kabini: KABINI,
   "karur-rivers": KARUR_RIVERS,
@@ -29,8 +33,10 @@ const BASINS: Record<string, BasinManifest> = {
   "mumbai-rivers": MUMBAI_RIVERS,
   "namakkal-rivers": NAMAKKAL_RIVERS,
   "palakkad-rivers": PALAKKAD_RIVERS,
+  "salem-rivers": SALEM_RIVERS,
   "thanjavur-rivers": THANJAVUR_RIVERS,
   "tiruchirappalli-rivers": TIRUCHIRAPPALLI_RIVERS,
+  "tiruppur-rivers": TIRUPPUR_RIVERS,
 };
 
 export function tryGetBasinManifest(basinId: string): BasinManifest | null {

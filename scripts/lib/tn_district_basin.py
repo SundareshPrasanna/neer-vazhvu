@@ -34,7 +34,7 @@ from collections import Counter
 from datetime import date, datetime
 from pathlib import Path
 
-from shapely.geometry import LineString, MultiLineString, Point, mapping, shape
+from shapely.geometry import LineString, MultiLineString, Point, Polygon, mapping, shape
 from shapely.ops import linemerge, substring, unary_union
 
 ROOT = Path(__file__).resolve().parent.parent.parent
@@ -60,6 +60,7 @@ TNPCB_RT_PARAMS = (  # key in the feed, label, unit, criterion, criterion label
     ("ph", "pH", "", None, None),
 )
 TNPCB_RT_EXPLAINER = "Each point is the month's mean of the station's sensor readings, as TNPCB's dashboard reports it. These are sensor readings, not laboratory results."
+GREEK_LOOKALIKES = str.maketrans("ΑΒΕΖΗΙΚΜΝΟΡΤΥΧ", "ABEZHIKMNOPTYX")  # a station code typed with Greek capitals (Noyyal site 7) keeps an ASCII key
 SENSOR_FLOOR = {"tds": 1.0, "conductivity": 1.0}  # a monthly mean below this is a dead sensor, not water
 CWC_STATION_MAX_KM = 3.0
 CWC_DISCHARGE = ("cba07162-d1da-4987-b52e-0c1e2173e287", "fca9df0b-47b1-4f1a-8e59-1b43a8c0ae73", "38543447-b022-4061-b246-d9c00d134639")
@@ -110,7 +111,7 @@ WB_STREAM_CLASSES = {"Stream", "Odai", "Vaikkal"}
 WB_MAJOR_HA = 5.0
 WB_RESERVOIR_MIN_HA = 1.0  # a sliver inside a reservoir's waterspread is not the reservoir
 # Blanks and the basin labels NRSC rows print in water_body_name (Krishnagiri served 776 "Pennar Cauvery" as names).
-WB_NOT_A_NAME = {"", "none", "no", "nil", "cauvery", "cauvery south", "pennar cauvery", "pennaiyar"}
+WB_NOT_A_NAME = {"", "none", "no", "nil", "cauvery", "cauvery south", "pennar cauvery", "pennaiyar", "tapi south"}
 WATERSHED_LEVELS = (  # family, source column, level label, heavy (sliced per catchment)
     ("watersheds", "watershed", "watershed", False),
     ("sub-watersheds", "subwatersh", "sub-watershed", False),
@@ -162,10 +163,18 @@ OPTIONAL = {
     "TALUK_ALIASES": {},
     # A frame read from a configured layer instead of TNGIS (see build_boundary / build_sheds).
     "FRAME": None,
-    # CPCB's Cauvery stretch (see build_cauvery_prs): the editions this district sits on, and the action plan's outfalls.
+    # CPCB's polluted stretches (see build_prs): (year, priority, wording, start point[, river_id]), and the action plans' outfalls.
     "PRS_EDITIONS": (), "PRS_OUTFALLS": (),
+    # Where a drawn end is our reading rather than a printed point: (year, river_id) -> the note served with that stretch.
+    "PRS_NOTES": {},
+    # Where PRS_OUTFALLS are transcribed from: (provenance, sourceFile).
+    "PRS_DRAINS_SOURCE": ("TNPCB, Action Plan on Rejuvenation of River Cauvery, Mettur to Mayiladuthurai stretch (2019): outfall names and GPS coordinates as printed", "PrsCauvery24919.pdf"),
+    # A CEPI area's frame (see build_cepi): points, name, statedKm2, facts, provenance, sourceFile.
+    "CEPI": None,
     # Rivers OSM leaves unnamed in the district, drawn from CWC's river network (river_id -> CWC rivname; CWC_RIVERS_FILE in CWC_LAYERS).
     "CWC_RIVER_LINES": {}, "CWC_RIVERS_FILE": None,
+    # Unnamed OSM ways that are plainly a mapped river's course, joined to it at both ends (OSM way id -> river_id).
+    "OSM_WAY_RIVERS": {},
     # Layers served as they are, cut to the district (see build_wfs_families).
     "WFS_FAMILIES": (),
     # The NWDP groundwater-level resources to read, when not Tamil Nadu's.
@@ -650,11 +659,11 @@ class DistrictBasinBuild:
         groups: dict[tuple, list] = {}
         for el in raw["elements"]:
             tags = el.get("tags", {})
-            name = tags.get("name:en") or tags.get("name")
-            if not name or len(el.get("geometry", [])) < 2:
+            name, forced = tags.get("name:en") or tags.get("name"), cfg.OSM_WAY_RIVERS.get(el["id"])
+            if not (name or forced) or len(el.get("geometry", [])) < 2:
                 continue
             kind = tags["waterway"]
-            rid = fold(name, cfg.RIVER_ALIASES) if kind == "river" else None
+            rid = forced or (fold(name, cfg.RIVER_ALIASES) if kind == "river" else None)
             if rid is None:
                 continue  # only the named trunk rivers come from OSM; canals come from CWC's canal network
             parts = lines_only(LineString([(p["lon"], p["lat"]) for p in el["geometry"]]).intersection(clip))
@@ -697,8 +706,9 @@ class DistrictBasinBuild:
         if register_name not in self.cfg.RESERVOIR_LEVELS:
             return None
         station, key, display = self.cfg.RESERVOIR_LEVELS[register_name]
-        rows = [r for rid in self.cfg.CWC_LEVEL_RESOURCES for variant in (station.title(), station.title() + " ")
-                for r in self.nwdp_records(rid, {"Station": variant}, cache_tag=f"-{key}-{'sp' if variant.endswith(' ') else 'ns'}")]
+        variants = dict.fromkeys((station.title(), station.title() + " ", station))  # the portal prints most names in title case, some in capitals
+        rows = [r for rid in self.cfg.CWC_LEVEL_RESOURCES for variant in variants
+                for r in self.nwdp_records(rid, {"Station": variant}, cache_tag=f"-{key}-{'sp' if variant.endswith(' ') else 'up' if variant.isupper() else 'ns'}")]
         daily = sorted({(datetime.strptime(r["Data Acquisition Time"], "%d-%m-%Y %H:%M"), v) for r in rows
                         for v in [num(next(v for k, v in r.items() if "Water Level" in k))] if v is not None and v > 0})
         if not daily:
@@ -1158,7 +1168,7 @@ class DistrictBasinBuild:
         self.emit("command-areas", areas, "CWC 'Water Resource Project' command areas (National Water Data Portal, 2025), cut to the district; culturable command area and potential created are CWC's figures in thousand hectares, mapped areas are computed from the polygons", "command_area.zip", by_kind=True)
         for x in areas:
             q = x["properties"]
-            print(f"    {q['project']:28} {q['mappedAreaInDistrictHa']:7} ha mapped in the district; CCA {q['culturableCommandAreaThousandHa']} th ha")
+            print(f"    {q['project']:28} {q['mappedAreaInDistrictHa']:7} ha mapped in the district; CCA {q.get('culturableCommandAreaThousandHa', 'not given')} th ha")
 
     # ── pressures ─────────────────────────────────────────────────────────────
 
@@ -1182,8 +1192,12 @@ class DistrictBasinBuild:
                         "totalCostRsCrore": r["totalCostCrore"], "centralShare75RsCrore": r["centralShare75Crore"], "stateOrUnitsShare25RsCrore": r["stateOrSpvShare25Crore"]}
         for r in doc["existingPlants"]:
             if r["registerUnitId"] == unit_id:
-                return {"kind": "cetp-operating", "status": f"Operating: consent issued {r['consentIssuedOn']}, renewal valid to {r['renewalValidTo']} (TNPCB list, 2020)",
-                        "consentedKld": r["consentedKld"], "memberUnits": r["totalMembers"], "participatingMembers": r["participatingMembers"], "permittedKld": r.get("permittedKld")}
+                facts = {"kind": "cetp-operating", "status": f"Operating: consent issued {r['consentIssuedOn']}, renewal valid to {r['renewalValidTo']} (TNPCB list, 2020)",
+                         "consentedKld": r["consentedKld"], "memberUnits": r["totalMembers"], "participatingMembers": r["participatingMembers"], "permittedKld": r.get("permittedKld")}
+                if m := r.get("mpr2026"):  # the state's newer report: its status and renewal replace the 2020 list's
+                    facts |= {"status": f"Status '{m['status']}', consent renewed to {m['renewalStatus']}, compliance '{m['compliance']}' (Tamil Nadu report to NMCG, June 2026, p.{m['page']}); "
+                                        f"consented {r['consentedKld']:,} KLD in TNPCB's 2020 list", "unitsConnected2026": m["industrialUnitsConnected"], "restrictedKld2026": m["restrictedQuantityKld"]}
+                return facts
         raise SystemExit(f"treatment plants: register unit {unit_id} is a common treatment plant with no row in {self.cfg.CETP_SCHEMES.name}")
 
     def build_industries(self) -> None:
@@ -1243,14 +1257,29 @@ class DistrictBasinBuild:
         print(f"    {len(units)} units in the register; {outside} fall outside the district polygon and are left out")
         print(f"    {no_centroid} parcel rows have no readable centroid and are skipped; {unplaced} units have no readable parcel and are left out")
 
-    def build_cauvery_prs(self) -> None:
-        """CPCB's Cauvery stretch editions on the district's mapped Cauvery, and the TNPCB action plan's outfalls (PRS_OUTFALLS)."""
-        cfg, rivers = self.cfg, self.rivers_by_id()
-        cauvery, feats = rivers["cauvery"], []
-        for year, priority, wording, start in cfg.PRS_EDITIONS:
-            reach = cauvery
-            if start and Point(start).distance(cauvery) * 110 <= PRS_POINT_MAX_KM:  # the stretch starts here: keep the reach below it
-                pt, geoms = Point(start), list(cauvery.geoms)
+    def build_prs(self) -> None:
+        """CPCB's stretch editions on the district's mapped rivers (the Cauvery unless an edition names another), and the action plans' outfalls.
+
+        An edition is (year, priority, wording, start[, river_id[, end]]). With an end the stretch stops inside the district,
+        and the reach drawn is the course between the two points (a start off the course stands for where the course enters).
+        """
+        cfg, rivers, feats = self.cfg, self.rivers_by_id(), []
+        for year, priority, wording, start, *rest in cfg.PRS_EDITIONS:
+            rid, end = (rest + [None, None])[:2] if rest else ("cauvery", None)
+            course = reach = rivers[rid]
+            beyond = "the stretch continues beyond it"
+            if end:
+                if (km := Point(end).distance(course) * 110) > PRS_POINT_MAX_KM:
+                    raise SystemExit(f"prs: the {year} {rid} stretch ends {km:.2f} km from the course - check the coordinate")
+                line = linemerge(course)
+                if line.geom_type != "LineString":
+                    raise SystemExit(f"prs: the {rid} course is in {len(line.geoms)} pieces, so the reach between two points is ambiguous")
+                a, b = sorted((line.project(Point(start)), line.project(Point(end))))
+                reach = MultiLineString([substring(line, a, b)])
+                if Point(start).distance(course) * 110 <= PRS_POINT_MAX_KM:
+                    beyond = "the whole stretch lies inside the district"
+            elif start and Point(start).distance(course) * 110 <= PRS_POINT_MAX_KM:  # the stretch starts here: keep the reach below it
+                pt, geoms = Point(start), list(course.geoms)
                 nearest = min(range(len(geoms)), key=lambda i: geoms[i].distance(pt))
                 parts = []
                 for i, g in enumerate(geoms):
@@ -1260,15 +1289,21 @@ class DistrictBasinBuild:
                     elif g.centroid.y < pt.y:
                         parts.append(g)
                 reach = MultiLineString(parts)
-            km = round(length_km(reach), 1)
+            km, name = round(length_km(reach), 1), cfg.RIVER_NAMES.get(rid, rid)
             feats.append(feat(mapping(reach), {
-                "kind": "prs", "year": year, "priority": priority, "length_km": km, "river": "Cauvery",
-                "label": f"Polluted stretch {year}, inside the district ({km} km, Priority {priority})", "cpcbWording": wording,
-                "source": "CPCB stretch wording, drawn on the OpenStreetMap course of the Cauvery inside the district; the stretch continues beyond it",
+                "kind": "prs", "year": year, "priority": priority, "length_km": km, "river": name,
+                "label": f"{name + ': p' if rest else 'P'}olluted stretch {year}, inside the district ({km} km, Priority {priority})", "cpcbWording": wording,
+                **({"reading": note} if (note := cfg.PRS_NOTES.get((year, rid))) else {}),
+                "source": f"CPCB stretch wording, drawn on the {'CWC' if rid in cfg.CWC_RIVER_LINES else 'OpenStreetMap'} course of the {cfg.RIVER_NAMES.get(rid, rid)} inside the district; {beyond}",
                 "shedId": self.sheds.for_line(reach),
             }))
             print(f"    {year}: {km} km inside the district, Priority {priority}")
-        self.emit("prs", feats, "CPCB, Polluted River Stretches for Restoration of Water Quality, 2018 and October 2025 (Annexure III A), drawn on the OpenStreetMap course of the Cauvery inside the district", "cpcb-2025 + osm-waterways.json")
+        drawn, years = sorted({f["properties"]["river"] for f in feats}), sorted({e[0] for e in cfg.PRS_EDITIONS})
+        editions = " and ".join({2025: "October 2025 (Annexure III A)"}.get(y, str(y)) for y in years)
+        cwc = any((e[4] if len(e) > 4 else "cauvery") in cfg.CWC_RIVER_LINES for e in cfg.PRS_EDITIONS)
+        self.emit("prs", feats, f"CPCB, Polluted River Stretches for Restoration of Water Quality, {editions}, drawn on the "
+                  + ("OpenStreetMap course of the Cauvery" if drawn == ["Cauvery"] else f"mapped courses of the {', '.join(drawn)}") + " inside the district",
+                  " + ".join([f"cpcb-{y}" for y in years if y != 2018] or ["cpcb-2018"]) + " + osm-waterways.json" + (f" + {cfg.CWC_RIVERS_FILE}" if cwc else ""))
         drains = []
         for name, lat, lon, river_id, page, note in cfg.PRS_OUTFALLS:
             pt = Point(*(dms(v) if isinstance(v, tuple) else v for v in (lon, lat)))
@@ -1279,7 +1314,23 @@ class DistrictBasinBuild:
                 "description": f"{note} Position is the plan's own GPS coordinate (p.{page}).", "shedId": self.sheds.for_point(pt),
             }))
         if drains:
-            self.emit("prs-drains", drains, "TNPCB, Action Plan on Rejuvenation of River Cauvery, Mettur to Mayiladuthurai stretch (2019): outfall names and GPS coordinates as printed", "PrsCauvery24919.pdf")
+            self.emit("prs-drains", drains, *cfg.PRS_DRAINS_SOURCE)
+
+    def build_cepi(self) -> None:
+        """A CEPI area as a frame through the action plan's printed reference points (CEPI config)."""
+        c = self.cfg.CEPI
+        frame = Polygon([tuple(dms(v) if isinstance(v, tuple) else v for v in (lon, lat)) for lat, lon, _ in c["points"]])
+        if not frame.is_valid or not self.district.contains(frame):
+            raise SystemExit("cepi: the reference points do not make a valid polygon inside the district - check the transcription")
+        km2, stated = round(area_km2(frame), 1), c["statedKm2"]
+        fit = ("so the true boundary lies inside this frame" if km2 > 1.05 * stated else "so the true boundary reaches beyond this frame" if km2 < 0.95 * stated
+               else "matching the plan's figure")
+        self.emit("cepi-area", [feat(mapping(frame), {
+            "name": c["name"], "kind": "cepi-frame",
+            "whatThisIs": f"A polygon through the {len(c['points'])} boundary reference points the plan prints. It encloses {km2} sq km; the plan gives {stated} sq km, {fit}.",
+            **c["facts"], "shedId": self.sheds.for_geom(frame),
+        })], c["provenance"], c["sourceFile"])
+        print(f"    frame {km2} sq km against the plan's {stated}")
 
     def build_estates(self) -> None:
         cfg, sheds = self.cfg, self.sheds
@@ -1424,7 +1475,7 @@ class DistrictBasinBuild:
             q = urllib.parse.urlencode({"site_id": site, "mean": "MO", "start_date": "2024-01-01 00:00", "end_date": f"{TODAY} 00:00"})
             d = self.cached(f"tnpcb-rt-site-{site}.json", lambda q=q: fetch_json(f"{TNPCB_RT}/api/readings/graph/?{q}"))
             rows = [r for r in d["data"] if r.get("row_type") == "data"]
-            key, series, dropped = d["station_code"].lower(), [], 0
+            key, series, dropped = d["station_code"].translate(GREEK_LOOKALIKES).lower(), [], 0
             for param, label, unit, criterion, crit_label in TNPCB_RT_PARAMS:
                 pts = []
                 for r in rows:
