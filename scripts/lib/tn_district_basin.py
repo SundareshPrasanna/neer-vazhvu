@@ -30,6 +30,7 @@ import zipfile
 import urllib.error
 import urllib.parse
 import urllib.request
+from collections import Counter
 from datetime import date, datetime
 from pathlib import Path
 
@@ -71,10 +72,12 @@ CWC_WQ_PARAMS = (  # NWDP field, label, unit, criterion, criterion label, (lowes
     ("Dissolved oxygen (mg/L)", "Dissolved oxygen", "mg/L", None, None, (0, 25)),
     ("Potential of Hydrogen (pH)", "pH", "", None, None, (2, 12)),
 )
-# CWC's daily 08:00 reservoir levels sit in the basin-wide "River Water Level CWC Cauvery, Manual Hourly" resources.
+# CWC's daily reservoir levels sit in the basin-wide "River Water Level CWC Cauvery, Manual Hourly" resources.
 CWC_LEVEL_RESOURCES = ("3e9b3cde-9d04-4c58-af03-4d4a43cc661b", "5af1557b-bbd3-4551-990c-6bea414b702e", "37cba82e-f745-4004-80d2-b05cad65b8e4")
+# "East flowing rivers between Pennar and Kanyakumari", 2021-25 and 2026-30: Poondi Satyamoorthy and Chembarampakkam, daily at 06:00.
+EAST_FLOWING_LEVEL_RESOURCES = ("1f4af90c-ef6b-4fc4-862c-02dd8fe7e81e", "a35e0e9f-4814-48c5-bc6d-ee429a70ad75")
 RESERVOIR_LEVEL_BAND_M = 25
-LEVEL_EXPLAINER = "Each point is the month's mean of CWC's daily 08:00 reservoir level, in metres above mean sea level."
+LEVEL_EXPLAINER = "Each point is the month's mean of CWC's daily {hour} reservoir level, in metres above mean sea level."  # {hour}: the pack's most common reading time
 CWC_WQ_EXPLAINER = "Each point is the mean of CWC's samples at this station in that year; hover shows how many samples it rests on."
 MASS_BALANCE_FACTOR = 8  # a downstream reading this many times the same day's upstream sum is a wrong-unit row
 CWC_FLOW_CAP_CUMEC = 15000  # above the largest flood on record for these reaches; a single value beyond it is an entry error
@@ -147,8 +150,10 @@ OPTIONAL = {
     "CANAL_RIVERS": {}, "CANAL_NAMES": {}, "CANAL_DROP": None, "SIPCOT_PARKS": (), "ESTATES_PROVENANCE": "", "ESTATES_SOURCE_FILE": "",
     "TNPCB_RT_SITES": (), "CWC_STATIONS": {}, "CWC_FLOW_EXCLUDED_MONTHS": {}, "CWC_FLOW_EXCLUDED_NOTE": {}, "FLOW_MASS_BALANCE": {},
     "RESERVOIR_LEVELS": {}, "RESERVOIR_ALIASES": {}, "REPO_FAMILIES": (), "CETP_SCHEMES": None, "WB_NOT_A_NAME": WB_NOT_A_NAME, "RESERVOIR_STORAGE": {},
-    # Read only by the Tamil Nadu steps (TNGIS sub-basins, panchayats and industry register).
+    # Read only by the Tamil Nadu steps (TNGIS sub-basins, taluks, panchayats and industry register).
     "TNRD_DISTRICT_NAME": None, "SUB_BASIN_KEY": {}, "REGISTER_YEARS": None, "TNPCB_OFFICE": {}, "SECTOR_LOOKUP": None,
+    # {TNGIS taluk name: IN-GRES locationName} where they differ beyond case, spaces, dots and hyphens (Trichy's 'Tiruchirappalli - East').
+    "TALUK_ALIASES": {},
     # A frame read from a configured layer instead of TNGIS (see build_boundary / build_sheds).
     "FRAME": None,
     # Layers served as they are, cut to the district (see build_wfs_families).
@@ -159,6 +164,8 @@ OPTIONAL = {
     "KSDMA_RESERVOIRS": (), "KSDMA_BULLETIN": "IRR-SITE",
     # The state's CWC resources on NWDP, when not Tamil Nadu's (an empty tuple reads none).
     "CWC_DISCHARGE": None, "CWC_WQ_CHEMICAL": None, "CWC_WQ_BIOLOGICAL": None, "NWDP_DISTRICT_ALIASES": (),
+    # The CWC reservoir-level resources RESERVOIR_LEVELS stations are read from, when not the Cauvery's.
+    "CWC_LEVEL_RESOURCES": CWC_LEVEL_RESOURCES,
     # A state board's monthly NWMP reports and the stations to read from them (see build_wq_report_stations).
     "WQ_REPORTS": None, "WQ_REPORT_STATIONS": {},
 }
@@ -248,6 +255,11 @@ def fold(name: str, aliases: dict) -> str | None:
         if any(k in n for k in keys):
             return rid
     return None
+
+
+def name_key(name: str) -> str:
+    """A register name with case, spaces, dots and hyphens folded away: 'K.v.kuppam' meets IN-GRES's 'K V KUPPAM'."""
+    return re.sub(r"[\s.\-]+", "", name).lower()
 
 
 def num(v) -> float | None:
@@ -341,6 +353,8 @@ class DistrictBasinBuild:
         self.FROZEN = {"district.json": "tngis-district-boundary.json", "sub-basins.json": "tngis-sub-basins.json",
                        "frame-district.json": "frame-district.json", "frame-sheds.json": "frame-sheds.json"}
         self.FROZEN_DIR = ROOT / "pipeline-inputs/basins" / cfg.BASIN_ID
+        # (NWDP filter, cache suffix) per district tag: the portal keeps older tags (Kerala's PALGHAT; CGWB's 'Vellore' for Ranipet and Tirupathur).
+        self.NWDP_TAGS = [({"District": d}, "" if d == cfg.NWDP_DISTRICT else f"-{d.lower()}") for d in (cfg.NWDP_DISTRICT, *cfg.NWDP_DISTRICT_ALIASES)]
         self.LIVE = False
         self.inventory: dict = {"basinId": cfg.BASIN_ID, "generatedFrom": cfg.GENERATED_FROM, "generatedOn": TODAY, "families": {}}
         self.district = None
@@ -420,14 +434,14 @@ class DistrictBasinBuild:
         return json.loads(fp.read_text())
 
     def nwdp_rows(self, resource_id: str, cache_name: str, fields: dict | None = None) -> list:
-        """District-tagged rows of one NWDP (CKAN) groundwater-level resource, cached. The portal carries the same
+        """District-tagged rows of one NWDP (CKAN) groundwater-level resource, cached per NWDP_TAGS tag. The portal carries the same
         station data India-WRIS serves; datastore_search pages at 5,000 rows and needs no key. fields names the
         resource's own columns where they differ from the telemetry sets' (Kerala's manual wells: 'Well No')."""
         f = {**NWDP_TELEMETRY_FIELDS, **(fields or {})}
-        def fetch() -> dict:
+        def fetch(tagged: dict) -> dict:
             rows, offset, value_field = [], 0, f.get("value")
             while True:
-                q = urllib.parse.urlencode({"resource_id": resource_id, "filters": json.dumps({"District": self.cfg.NWDP_DISTRICT}), "limit": 5000, "offset": offset})
+                q = urllib.parse.urlencode({"resource_id": resource_id, "filters": json.dumps(tagged), "limit": 5000, "offset": offset})
                 res = fetch_json(f"{NWDP}/api/3/action/datastore_search?{q}")["result"]
                 value_field = value_field or next(x["id"] for x in reversed(res["fields"]) if "Level" in x["id"])
                 for r in res["records"]:
@@ -436,7 +450,7 @@ class DistrictBasinBuild:
                 offset += 5000
                 if len(res["records"]) < 5000:
                     return {"resource_id": resource_id, "valueField": value_field, "rows": rows}
-        return self.cached(cache_name, fetch)["rows"]
+        return [r for tagged, tag in self.NWDP_TAGS for r in self.cached(cache_name.removesuffix(".json") + f"{tag}.json", lambda t=tagged: fetch(t))["rows"]]
 
     def nwdp_records(self, resource_id: str, filters: dict, cache_tag: str = "") -> list:
         """Every row of one NWDP resource matching the filters, cached, meta columns dropped.
@@ -485,9 +499,10 @@ class DistrictBasinBuild:
                 if km2 > 0:
                     dropped.append((name, round(km2, 2)))
                 continue
-            key = self.cfg.SUB_BASIN_KEY.get(name)
+            oid = f["properties"].get("object_id")  # the key unless SUB_BASIN_KEY overrides it (Krishnagiri's P-keys)
+            key = self.cfg.SUB_BASIN_KEY.get(name, None if oid in (None, "") else str(oid))
             if key is None:
-                raise SystemExit(f"sub-basin {name!r} has no key - add it to SUB_BASIN_KEY")
+                raise SystemExit(f"sub-basin {name!r} has no object_id - add it to SUB_BASIN_KEY")
             whole = area_km2(shape(f["geometry"]))
             geoms[f"SB{key}"] = part
             feats.append(feat(mapping(part.simplify(0.0008)), {
@@ -665,7 +680,7 @@ class DistrictBasinBuild:
         if register_name not in self.cfg.RESERVOIR_LEVELS:
             return None
         station, key, display = self.cfg.RESERVOIR_LEVELS[register_name]
-        rows = [r for rid in CWC_LEVEL_RESOURCES for variant in (station.title(), station.title() + " ")
+        rows = [r for rid in self.cfg.CWC_LEVEL_RESOURCES for variant in (station.title(), station.title() + " ")
                 for r in self.nwdp_records(rid, {"Station": variant}, cache_tag=f"-{key}-{'sp' if variant.endswith(' ') else 'ns'}")]
         daily = sorted({(datetime.strptime(r["Data Acquisition Time"], "%d-%m-%Y %H:%M"), v) for r in rows
                         for v in [num(next(v for k, v in r.items() if "Water Level" in k))] if v is not None and v > 0})
@@ -676,6 +691,7 @@ class DistrictBasinBuild:
         median = sorted(v for _, v in daily)[len(daily) // 2]
         kept = [(t, v) for t, v in daily if abs(v - median) <= RESERVOIR_LEVEL_BAND_M]
         dropped, daily = len(daily) - len(kept), kept
+        hour = Counter(t.strftime("%H:%M") for t, _ in daily).most_common(1)[0][0]  # the usual reading time: 08:00 Cauvery, 06:00 east-flowing
         months: dict[str, list] = {}
         for t, v in daily:
             months.setdefault(t.strftime("%Y-%m"), []).append(v)
@@ -684,7 +700,7 @@ class DistrictBasinBuild:
             "station": {"stationKey": f"reservoir-{key}", "name": f"{display} reservoir level (CWC)", "agency": "CWC", "siteType": "Reservoir level"},
             "source": {"label": "Central Water Commission daily reservoir level, from the National Water Data Portal (NWIC)", "url": NWDP, "fetched": TODAY},
             "period": {"from": daily[0][0].strftime("%Y-%m"), "to": daily[-1][0].strftime("%Y-%m")},
-            "series": [{"kind": "gauge-level-monthly", "unit": "m", "verified": True, "label": "Reservoir level (monthly mean)", "explainer": LEVEL_EXPLAINER,
+            "series": [{"kind": "gauge-level-monthly", "unit": "m", "verified": True, "label": "Reservoir level (monthly mean)", "explainer": LEVEL_EXPLAINER.format(hour=hour),
                         "note": f"{dropped} readings the portal prints more than {RESERVOIR_LEVEL_BAND_M} m from the reservoir's usual level (entry errors and gauge-zero placeholders) are left out." if dropped else None,
                         "points": [[m, round(sum(v) / len(v), 2), len(v)] for m, v in sorted(months.items())]}],
         })
@@ -1158,20 +1174,28 @@ class DistrictBasinBuild:
         lookup = json.loads(cfg.SECTOR_LOOKUP.read_text())
         raw = self.cached("industry-register.json", lambda: wfs_props("generic_viewer:industry_cad_matched", f"lgd_district_code='{cfg.DISTRICT_LGD}'", REGISTER_FIELDS))
         units: dict[str, dict] = {}
+        no_centroid = 0
         for f in raw["features"]:
             p = f["properties"]
-            lat, lon = (float(v) for v in str(p["centroid"]).split(","))
             u = units.setdefault(p["user_id"], {"p": p, "pts": []})
+            try:  # Namakkal prints some centroids as None
+                lat, lon = (float(v) for v in str(p["centroid"]).split(","))
+            except ValueError:
+                no_centroid += 1
+                continue
             u["pts"].append((lon, lat))
-        industries, plants, outside = [], [], 0
+        industries, plants, outside, unplaced = [], [], 0, 0
         near = district.buffer(0.005)  # once, not per unit: the district outline runs to thousands of vertices
         for uid, u in sorted(units.items()):
             p = u["p"]
+            if not u["pts"]:
+                unplaced += 1
+                continue
             pt = Point(sum(x for x, _ in u["pts"]) / len(u["pts"]), sum(y for _, y in u["pts"]) / len(u["pts"]))
             if not near.contains(pt):
                 outside += 1
                 continue
-            m = re.match(r"^(\d{4})\s*/\s*(.*)$", str(p["industry_type"]).strip())
+            m = re.match(r"^(\d{4})\s*[/-]\s*(.*)$", str(p["industry_type"]).strip())  # 'NNNN / Desc', or 'NNNN-Desc' in Salem, Namakkal, Ranipet
             if not m:
                 raise SystemExit(f"register: unreadable industry_type {p['industry_type']!r} for {uid}")
             code, desc = m.group(1), re.sub(r"\s+", " ", m.group(2)).strip()
@@ -1200,6 +1224,7 @@ class DistrictBasinBuild:
         self.emit("industries", industries, prov, "generic_viewer:industry_cad_matched", by_kind=True)
         self.emit("treatment-plants", plants, prov, "generic_viewer:industry_cad_matched", by_kind=True)
         print(f"    {len(units)} units in the register; {outside} fall outside the district polygon and are left out")
+        print(f"    {no_centroid} parcel rows have no readable centroid and are skipped; {unplaced} units have no readable parcel and are left out")
 
     def build_estates(self) -> None:
         cfg, sheds = self.cfg, self.sheds
@@ -1231,15 +1256,15 @@ class DistrictBasinBuild:
         cfg, sheds = self.cfg, self.sheds
         taluks = self.cached("taluks.json", lambda: wfs("admin_master:administrative_boundary_taluk", f"district_lgd_code='{cfg.DISTRICT_LGD}'"))
         gw = json.loads((ROOT / "public/data/atlas/tn" / cfg.ATLAS_SLUG / "groundwater-taluks.json").read_text())
-        by_name = {r["locationName"].strip().lower(): r for r in gw["records"]}
+        by_name = {name_key(r["locationName"]): r for r in gw["records"]}
         admin, stage = [], []
         for f in taluks["features"]:
             g, name = shape(f["geometry"]).buffer(0), f["properties"]["taluk_name"].strip()
             sid = sheds.for_geom(g)
             admin.append(feat(mapping(g.simplify(0.0008)), {"name": name, "level": "taluk", "parentDistrict": cfg.DISTRICT_NAME, "shedId": sid}))
-            r = by_name.pop(name.lower(), None)
+            r = by_name.pop(name_key(cfg.TALUK_ALIASES.get(name, name)), None)
             if r is None:
-                raise SystemExit(f"groundwater: no IN-GRES record for taluk {name!r}")
+                raise SystemExit(f"groundwater: no IN-GRES record for taluk {name!r} (a spelling difference goes in TALUK_ALIASES)")
             stage.append(feat(mapping(g.simplify(0.0008)), {
                 "name": f"{name} taluk", "kind": r["category"].replace("_", "-"), "category": r["category"].replace("_", " ").title(),
                 "stageOfExtractionPct": round(r["stageOfExtractionPercent"], 1), "annualRechargeHam": round(r["annualRechargeHam"], 1),
@@ -1293,7 +1318,7 @@ class DistrictBasinBuild:
 
     def build_groundwater_wells(self) -> None:
         cfg, district, sheds = self.cfg, self.district, self.sheds
-        feats, dropped, outside = [], 0, 0
+        feats, dropped, outside, tagged = [], 0, 0, " or ".join(t["District"] for t, _ in self.NWDP_TAGS)
         for well_set in cfg.NWDP_WELL_SETS or NWDP_WELL_SETS:
             kind, resource_id, cache_name, label = well_set[:4]
             fields = well_set[4] if len(well_set) > 4 else None
@@ -1334,8 +1359,8 @@ class DistrictBasinBuild:
                     "shallowestMbgl": round(min(depths), 2), "deepestMbgl": round(max(depths), 2),
                     "firstReading": ok[0][0].strftime("%Y-%m-%d"), "readingsCount": len(ok), "shedId": sheds.for_point(pt),
                 }))
-        self.emit("groundwater-wells", feats, cfg.WELLS_PROVENANCE or f"National Water Data Portal (NWIC, nwdp.nwic.gov.in): groundwater level datasets for Tamil Nadu, {cfg.NWDP_DISTRICT}-tagged stations placed by their coordinates; depth in metres below ground level, sign convention read per station from its own median, sentinel values and readings outside the physical envelope dropped", "nwdp.nwic.gov.in datastore", by_kind=True)
-        print(f"    {outside} {cfg.NWDP_DISTRICT}-tagged stations fall outside the district polygon and are left out; {dropped} readings dropped as sentinel, sign-flipped or outside {GWL_ENVELOPE_M}")
+        self.emit("groundwater-wells", feats, cfg.WELLS_PROVENANCE or f"National Water Data Portal (NWIC, nwdp.nwic.gov.in): groundwater level datasets for Tamil Nadu, {tagged}-tagged stations placed by their coordinates; depth in metres below ground level, sign convention read per station from its own median, sentinel values and readings outside the physical envelope dropped", "nwdp.nwic.gov.in datastore", by_kind=True)
+        print(f"    {outside} {tagged}-tagged stations fall outside the district polygon and are left out; {dropped} readings dropped as sentinel, sign-flipped or outside {GWL_ENVELOPE_M}")
 
     def build_realtime_stations(self) -> None:
         sheds = self.sheds
@@ -1383,11 +1408,9 @@ class DistrictBasinBuild:
     def build_gauging_stations(self) -> None:
         cfg, sheds = self.cfg, self.sheds
         rivers = self.rivers_by_id()
-        # The portal tags some stations with an older district spelling (Kerala: PALGHAT beside PALAKKAD).
-        tags = [({"District": d}, "" if d == cfg.NWDP_DISTRICT else f"-{d.lower()}") for d in (cfg.NWDP_DISTRICT, *cfg.NWDP_DISTRICT_ALIASES)]
-        flow = [r for rid in cfg.CWC_DISCHARGE or CWC_DISCHARGE for tagged, tag in tags for r in self.nwdp_records(rid, tagged, tag)]
-        chem = [r for rid in (CWC_WQ_CHEMICAL if cfg.CWC_WQ_CHEMICAL is None else cfg.CWC_WQ_CHEMICAL) for tagged, tag in tags for r in self.nwdp_records(rid, tagged, tag)]
-        bio = [r for rid in (CWC_WQ_BIOLOGICAL if cfg.CWC_WQ_BIOLOGICAL is None else cfg.CWC_WQ_BIOLOGICAL) for tagged, tag in tags for r in self.nwdp_records(rid, tagged, tag)]
+        flow = [r for rid in cfg.CWC_DISCHARGE or CWC_DISCHARGE for tagged, tag in self.NWDP_TAGS for r in self.nwdp_records(rid, tagged, tag)]
+        chem = [r for rid in (CWC_WQ_CHEMICAL if cfg.CWC_WQ_CHEMICAL is None else cfg.CWC_WQ_CHEMICAL) for tagged, tag in self.NWDP_TAGS for r in self.nwdp_records(rid, tagged, tag)]
+        bio = [r for rid in (CWC_WQ_BIOLOGICAL if cfg.CWC_WQ_BIOLOGICAL is None else cfg.CWC_WQ_BIOLOGICAL) for tagged, tag in self.NWDP_TAGS for r in self.nwdp_records(rid, tagged, tag)]
         feats = []
         for station, river_id in cfg.CWC_STATIONS.items():
             mine = [r for r in flow if r["Station"] == station]

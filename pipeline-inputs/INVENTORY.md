@@ -56,6 +56,19 @@ Log:
 - 2026-09-18: directory created with the Hosur deep dive (Krishnagiri district map).
 - 2026-10-09: the Thenpennai monitoring record (TNPCB's filed monthly samples, the 2020 and 2024 surveys) and the treatment and supply record added; the sector lookup gained the TSDF kind.
 
+## basins/ (Tamil Nadu, statewide)
+
+Inputs shared by Tamil Nadu district maps built on `scripts/lib/tn_district_basin.py`, read through a config's `SECTOR_LOOKUP`.
+
+| File | Purpose | SHA-256 (first 16) | Provenance | Licence status |
+|---|---|---|---|---|
+| tn-tnpcb-type-sectors.json | Reviewed lookup: TNPCB industry type code to the sector class on the map, for every new Tamil Nadu district; every rule carries a description guard because codes mean different things in different districts | `5a9932f5477a6c7d` | Erode's and Krishnagiri's lookups merged; guards read from the distinct type strings in the TNGIS industry register pulls of 13 districts (12,695 units); review status inside the file (proposed) | Own work |
+
+Consumer: none yet (Erode and Krishnagiri read their own lookups until their next rebuild). Public exposure: downloadable via the public repo.
+
+Log:
+- 2026-10-20: added.
+
 ## ahmedabad/
 
 Inputs of `neer-vazhvu-api/scripts/build_ahmedabad_river_quality.py` (`public/data/river-quality-ahmedabad.json`).
