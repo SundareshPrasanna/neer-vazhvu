@@ -65,7 +65,9 @@ CWC_CLIP = ("77.65", "10.45", "78.69", "11.20")  # the district extent plus a ma
 CANAL_RIVERS = {"new-kattalai-canal": "New kattalai high level canal"}  # river_id -> the CWC canal line (can_name) a reader can select like a river
 CANAL_NAMES = {"new-kattalai-canal": "New Kattalai High Level Canal"}
 WATERWAYS_PROVENANCE = "Rivers: OpenStreetMap waterway courses (Overpass), clipped to the district plus 1.6 km so boundary rivers stay"
-CANALS_PROVENANCE = "CWC canal network (National Water Data Portal, 2025), cut to the district"
+CANALS_PROVENANCE = "CWC canal network (National Water Data Portal, 2025), cut to the district; lines CWC files under the Kalingarayan Anicut System, an Erode canal system, are left out until a source names them"
+# CWC files unnamed lines here under Erode's Kalingarayan system (Erode leaves out the same lines as lying outside it).
+CANAL_DROP = lambda p: p["prj_name"] == "Kalingarayan Anicut System"  # noqa: E731
 # CWC's gauging stations NWDP tags Karur (the portal's River column, daily rows): Nallamaranpatty (Cauvery, 15,356)
 CWC_STATIONS = {"NALLAMARANPATTY": "amaravathi"}  # CWC gauges (NWDP tags them with the district); the river is checked against the mapped course
 RESERVOIR_LEVELS = {}  # register name -> (CWC station, key, display name), where CWC_LEVEL_RESOURCES carries the dam

@@ -119,8 +119,9 @@ WATERSHED_LEVELS = (  # family, source column, level label, heavy (sliced per ca
 )
 # CPCB's Cauvery stretch in Tamil Nadu (year, priority, wording, start point). The 2025 stretch starts at TNPCB station 1320
 # (Virapalayam, Erode) and runs through CPCB's stations on the Cauvery branch at Musiri, Pettaivaithalai and Kumbakonam.
+CWC_RIVER_NETWORK = (f"{NWDP}/dataset/3209962f-d0ff-45b8-910a-209bf69a0ccf/resource/67c49daa-4eec-4747-baff-a7eacdb5bef9/download/river_network_shape.zip", "River_Network.shp")
 CAUVERY_PRS_2018 = (2018, "I", "Mettur to Mayiladuthurai", None)
-CAUVERY_PRS_2025 = (2025, "II", "Erode near Virapalayam to Pichavaram", (77.7538, 11.335724))
+CAUVERY_PRS_2025 = (2025, "II", "Erode near Virapalayam to Pitchavaram", (77.7538, 11.335724))  # CPCB's spelling
 PRS_POINT_MAX_KM = 0.5  # a stretch start or a transcribed outfall further than this from its river is a transcription error
 SHED_MIN_KM2 = 5.0  # boundary-mismatch slivers below this are dropped, and listed
 BOUNDARY_RIVER_BUFFER_DEG = 0.015  # ~1.6 km: keeps a river that runs along the district line
@@ -163,6 +164,8 @@ OPTIONAL = {
     "FRAME": None,
     # CPCB's Cauvery stretch (see build_cauvery_prs): the editions this district sits on, and the action plan's outfalls.
     "PRS_EDITIONS": (), "PRS_OUTFALLS": (),
+    # Rivers OSM leaves unnamed in the district, drawn from CWC's river network (river_id -> CWC rivname; CWC_RIVERS_FILE in CWC_LAYERS).
+    "CWC_RIVER_LINES": {}, "CWC_RIVERS_FILE": None,
     # Layers served as they are, cut to the district (see build_wfs_families).
     "WFS_FAMILIES": (),
     # The NWDP groundwater-level resources to read, when not Tamil Nadu's.
@@ -669,6 +672,13 @@ class DistrictBasinBuild:
             merged = MultiLineString(lines_only(part))
             feats.append(feat(mapping(merged), {"river_id": rid, "name": names[rid], "waterway": "canal", "lengthInDistrictKm": round(length_km(merged), 1),
                                                 "source": "CWC canal network (National Water Data Portal)"}))
+        for rid, cwc_name in cfg.CWC_RIVER_LINES.items():
+            lines = [shape(f["geometry"]) for f in self.cwc_layer(cfg.CWC_RIVERS_FILE)["features"] if f["properties"].get("rivname") == cwc_name]
+            if not lines:
+                raise SystemExit(f"rivers: no CWC river line named {cwc_name!r}")
+            merged = MultiLineString(lines_only(unary_union(lines).intersection(clip)))
+            feats.append(feat(mapping(merged), {"river_id": rid, "name": names[rid], "waterway": "river", "lengthInDistrictKm": round(length_km(merged), 1),
+                                                "source": "CWC river network (National Water Data Portal)"}))
         for (kind, rid), parts in sorted(groups.items()):
             merged = linemerge(MultiLineString([ln for ps, _ in parts for ln in ps]))
             if merged.geom_type == "LineString":
@@ -677,7 +687,7 @@ class DistrictBasinBuild:
                 "river_id": rid, "name": names[rid], "waterway": kind,
                 "lengthInDistrictKm": round(length_km(merged), 1), "osmWays": len(parts), "source": "OpenStreetMap",
             }))
-        source_file = "osm-waterways.json" + (f" + {cfg.CWC_CANALS_FILE}" if cfg.CANAL_RIVERS else "")
+        source_file = "osm-waterways.json" + (f" + {cfg.CWC_CANALS_FILE}" if cfg.CANAL_RIVERS else "") + (f" + {cfg.CWC_RIVERS_FILE}" if cfg.CWC_RIVER_LINES else "")
         self.emit("rivers", feats, cfg.WATERWAYS_PROVENANCE, source_file)
         for x in feats:
             print(f"    {x['properties']['name']:30} {x['properties']['lengthInDistrictKm']:6} km ({x['properties']['source']})")
@@ -1266,7 +1276,7 @@ class DistrictBasinBuild:
                 raise SystemExit(f"prs-drains: {name} plots {km:.2f} km from the {river_id} - check the transcription")
             drains.append(feat(mapping(pt), {
                 "name": name, "kind": "drain-inlet", "receivingWater": cfg.RIVER_NAMES.get(river_id, river_id),
-                "description": f"{note} Position is the plan's own GPS coordinate (p.{page}); the plan gives no flow or BOD for it.", "shedId": self.sheds.for_point(pt),
+                "description": f"{note} Position is the plan's own GPS coordinate (p.{page}).", "shedId": self.sheds.for_point(pt),
             }))
         if drains:
             self.emit("prs-drains", drains, "TNPCB, Action Plan on Rejuvenation of River Cauvery, Mettur to Mayiladuthurai stretch (2019): outfall names and GPS coordinates as printed", "PrsCauvery24919.pdf")

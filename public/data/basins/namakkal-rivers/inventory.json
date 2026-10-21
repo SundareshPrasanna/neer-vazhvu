@@ -30,16 +30,55 @@
    "sliced": false
   },
   "rivers": {
+   "featureCount": 3,
+   "sources": [
+    {
+     "file": "osm-waterways.json + cwc-canals-namakkal.geojson + cwc-rivers-namakkal.geojson",
+     "kind": null,
+     "count": 3,
+     "provenance": "Rivers: OpenStreetMap waterway courses (Overpass), clipped to the district plus 1.6 km so boundary rivers stay. The Thirumanimuthar: CWC river network (National Water Data Portal), which OSM does not name inside the district"
+    }
+   ],
+   "bytes": 29397,
+   "sliced": false
+  },
+  "prs": {
    "featureCount": 2,
    "sources": [
     {
-     "file": "osm-waterways.json + cwc-canals-namakkal.geojson",
+     "file": "cpcb-2025 + osm-waterways.json",
      "kind": null,
      "count": 2,
-     "provenance": "Rivers: OpenStreetMap waterway courses (Overpass), clipped to the district plus 1.6 km so boundary rivers stay"
+     "provenance": "CPCB, Polluted River Stretches for Restoration of Water Quality, 2018 and October 2025 (Annexure III A), drawn on the OpenStreetMap course of the Cauvery inside the district"
     }
    ],
-   "bytes": 15615,
+   "bytes": 14847,
+   "sliced": false
+  },
+  "prs-drains": {
+   "featureCount": 17,
+   "sources": [
+    {
+     "file": "PrsCauvery24919.pdf",
+     "kind": null,
+     "count": 17,
+     "provenance": "TNPCB, Action Plan on Rejuvenation of River Cauvery, Mettur to Mayiladuthurai stretch (2019): outfall names and GPS coordinates as printed"
+    }
+   ],
+   "bytes": 9543,
+   "sliced": false
+  },
+  "monitoring-points": {
+   "featureCount": 5,
+   "sources": [
+    {
+     "file": "cauvery-tn/wq-stations.geojson",
+     "kind": null,
+     "count": 5,
+     "provenance": "TNPCB stretch-wise monthly water-quality reports, January to December 2023 (the last year published); classes are the worst monthly use-based class of 2023; station points are town centres, as ingested for the Cauvery (Tamil Nadu) basin"
+    }
+   ],
+   "bytes": 1702,
    "sliced": false
   },
   "tanks": {
@@ -109,7 +148,7 @@
    "sources": [
     {
      "file": "generic_viewer:industry_cad_matched",
-     "kind": "cetp",
+     "kind": "cetp-proposed",
      "count": 1,
      "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: industry register matched to land parcels (generic_viewer:industry_cad_matched), Namakkal district; unit ids follow TNPCB's consent-register format, registrations 2015 to 2024; one point per unit at the mean of its parcel centres; sector from the reviewed TNPCB type-code lookup"
     },
@@ -120,20 +159,7 @@
      "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: industry register matched to land parcels (generic_viewer:industry_cad_matched), Namakkal district; unit ids follow TNPCB's consent-register format, registrations 2015 to 2024; one point per unit at the mean of its parcel centres; sector from the reviewed TNPCB type-code lookup"
     }
    ],
-   "bytes": 1733,
-   "sliced": false
-  },
-  "industrial-estates": {
-   "featureCount": 1,
-   "sources": [
-    {
-     "file": "cite:industrial_complex_boundary-*",
-     "kind": null,
-     "count": 1,
-     "provenance": "SIPCOT GIS (sipcotgis.tn.gov.in): industrial complex outlines, AriyurNadu; area as SIPCOT states it"
-    }
-   ],
-   "bytes": 595,
+   "bytes": 2127,
    "sliced": false
   },
   "quarries": {
@@ -347,22 +373,22 @@
    "sliced": false
   },
   "canals": {
-   "featureCount": 7,
+   "featureCount": 5,
    "sources": [
     {
      "file": "canal_network.zip",
      "kind": "distributary",
      "count": 4,
-     "provenance": "CWC canal network (National Water Data Portal, 2025), cut to the district"
+     "provenance": "CWC canal network (National Water Data Portal, 2025), cut to the district; lines CWC files under the Kalingarayan Anicut System, an Erode canal system, are left out until a source names them"
     },
     {
      "file": "canal_network.zip",
      "kind": "main",
-     "count": 3,
-     "provenance": "CWC canal network (National Water Data Portal, 2025), cut to the district"
+     "count": 1,
+     "provenance": "CWC canal network (National Water Data Portal, 2025), cut to the district; lines CWC files under the Kalingarayan Anicut System, an Erode canal system, are left out until a source names them"
     }
    ],
-   "bytes": 48696,
+   "bytes": 10119,
    "sliced": false
   },
   "command-areas": {
@@ -376,32 +402,6 @@
     }
    ],
    "bytes": 3121,
-   "sliced": false
-  },
-  "prs": {
-   "featureCount": 2,
-   "sources": [
-    {
-     "file": "cpcb-2025 + osm-waterways.json",
-     "kind": null,
-     "count": 2,
-     "provenance": "CPCB, Polluted River Stretches for Restoration of Water Quality, 2018 and October 2025 (Annexure III A), drawn on the OpenStreetMap course of the Cauvery inside the district"
-    }
-   ],
-   "bytes": 14846,
-   "sliced": false
-  },
-  "monitoring-points": {
-   "featureCount": 5,
-   "sources": [
-    {
-     "file": "cauvery-tn/wq-stations.geojson",
-     "kind": null,
-     "count": 5,
-     "provenance": "TNPCB stretch-wise monthly water-quality reports, January to December 2023 (the last year published); classes are the worst monthly use-based class of 2023; station points are town centres, as ingested for the Cauvery (Tamil Nadu) basin"
-    }
-   ],
-   "bytes": 1702,
    "sliced": false
   }
  }
