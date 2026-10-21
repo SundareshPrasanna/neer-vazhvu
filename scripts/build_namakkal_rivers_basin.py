@@ -22,7 +22,6 @@ Sources (fetched once, cached under .cache/namakkal-rivers/, gitignored):
   NWDP, CWC 'Canal Network' + 'Water Resource Project'  canals, command-areas (needs ogr2ogr once)
   TNGIS admin_master taluks + generic_viewer:block_boundary  admin-taluk, admin-block, groundwater-taluks
   TNGIS generic_viewer:industry_cad_matched             industries, treatment-plants
-  SIPCOT GIS industrial_complex_boundary-*              industrial-estates
 
 Inputs already in the repo:
   public/data/atlas/tn/namakkal/groundwater-taluks.json  groundwater-taluks (IN-GRES stage by taluk)
@@ -138,18 +137,31 @@ ENVELOPE_SOURCES = {
     **TN_ENVELOPE_SOURCES,
     "tngis": ("tngis-open-geoserver", "TNGIS open GeoServer (WFS): district, taluk, block and village panchayat boundaries, TN WRD sub-basins and reservoirs, micro-watershed atlas, all-water-bodies and all-tanks registers, mine leases, industry register matched to land parcels",
               "Tamil Nadu e-Governance Agency (TNGIS)", {"url": TNGIS}),
-    "sipcot": ("sipcot-gis-geoserver", "SIPCOT GIS (WFS): industrial complex outlines, AriyurNadu",
-               "State Industries Promotion Corporation of Tamil Nadu (SIPCOT)", {"url": "https://sipcotgis.tn.gov.in/"}),
     "osm": ("osm-overpass", "OpenStreetMap (Overpass API extract: named river courses)", "OpenStreetMap contributors", {}),
 }
 ENVELOPE_ARTIFACTS, ENVELOPE_INPUTS, ENVELOPE_NOTE = tn_envelope(BASIN_ID, ATLAS_SLUG, (
     "Namakkal district's rivers, groundwater and industry (scope namakkal-rivers; the district's own scope id is tn-namakkal). "
     "The district boundary is the frame and TN WRD's sub-basins, clipped to it, are the catchments (shedId)."))
 ENVELOPE_NOTE = ENVELOPE_NOTE.replace(f"basins/{BASIN_ID}/tnpcb-type-sectors.json", "basins/tn-tnpcb-type-sectors.json")  # SECTOR_LOOKUP is statewide
-for _family in ("reservoirs", "realtime-stations", "gauging-stations"):  # nothing to serve here (probe 2026-10-21)
+for _family in ("reservoirs", "realtime-stations", "gauging-stations", "industrial-estates"):  # nothing to serve here (probe 2026-10-21; the one SIPCOT layer is a tourism complex)
     del ENVELOPE_ARTIFACTS[_family]
     ENVELOPE_INPUTS.pop(_family, None)
-ENVELOPE_ARTIFACTS["inventory"] = [s for s in ENVELOPE_ARTIFACTS["inventory"] if s not in ("tnpcb-rt", "cwc-river")]
+ENVELOPE_ARTIFACTS["inventory"] = [s for s in ENVELOPE_ARTIFACTS["inventory"] if s not in ("tnpcb-rt", "cwc-river", "sipcot")]
+# The shared Cauvery stretch, TNPCB's 2023 stations and the action plan's outfalls.
+ENVELOPE_SOURCES.update({
+    "cpcb-prs": ("cpcb-prs-report", "CPCB, Polluted River Stretches for Restoration of Water Quality, 2018 and October 2025 (updated version)", "Central Pollution Control Board",
+                 {"url": "https://cpcb.gov.in/polluted-river-stretches/", "as_of": "2025-10"}),
+    "tnpcb-wq": ("tnpcb-prs-cauvery", "TNPCB stretch-wise monthly water-quality reports, January to December 2023 (the last year published)", "Tamil Nadu Pollution Control Board",
+                 {"url": "https://tnpcb.gov.in/pollutedriverstretches.php", "as_of": "2023-12"}),
+    "tnpcb-plan": ("tnpcb-prs-cauvery", "TNPCB, Action Plan on Rejuvenation of River Cauvery, Mettur to Mayiladuthurai stretch (Priority I), 2019", "Tamil Nadu Pollution Control Board",
+                   {"url": "https://tnpcb.gov.in/PDF/About_Us/projects/PR-Stretches/Water-QA-MN-report/actionplan/PrsCauvery24919.pdf", "as_of": "2019"}),
+    "cwc-rivers": ("nwic-nwdp-cwc-river-network", "CWC river network (River_Network), National Water Data Portal", "Central Water Commission, via the National Water Informatics Centre (NWIC)",
+                   {"url": f"{NWDP}/", "as_of": "2025-11"}),
+})
+_SHEDS, _RIVERS = (f"public/data/basins/{BASIN_ID}/{f}.geojson" for f in ("sub-hydrosheds", "rivers"))
+ENVELOPE_ARTIFACTS.update({"rivers": ["osm", "cwc-canals", "cwc-rivers", "tngis"], "prs": ["cpcb-prs", "osm", "tngis"], "monitoring-points": ["tnpcb-wq", "osm", "tngis"], "prs-drains": ["tnpcb-plan", "tngis"]})
+ENVELOPE_INPUTS.update({"prs": [_RIVERS], "monitoring-points": ["public/data/basins/cauvery-tn/wq-stations.geojson", _SHEDS], "prs-drains": [_RIVERS, _SHEDS]})
+ENVELOPE_ARTIFACTS["inventory"] += ["cpcb-prs", "tnpcb-wq", "tnpcb-plan", "cwc-rivers"]
 ENVELOPE_READINGS = TN_ENVELOPE_READINGS
 
 

@@ -114,6 +114,19 @@ for _family in ("reservoirs", "industrial-estates", "realtime-stations"):  # not
     del ENVELOPE_ARTIFACTS[_family]
     ENVELOPE_INPUTS.pop(_family, None)
 ENVELOPE_ARTIFACTS["inventory"] = [s for s in ENVELOPE_ARTIFACTS["inventory"] if s not in ("sipcot", "tnpcb-rt")]
+# The shared Cauvery stretch, TNPCB's 2023 stations and the action plan's outfalls.
+ENVELOPE_SOURCES.update({
+    "cpcb-prs": ("cpcb-prs-report", "CPCB, Polluted River Stretches for Restoration of Water Quality, 2018 and October 2025 (updated version)", "Central Pollution Control Board",
+                 {"url": "https://cpcb.gov.in/polluted-river-stretches/", "as_of": "2025-10"}),
+    "tnpcb-wq": ("tnpcb-prs-cauvery", "TNPCB stretch-wise monthly water-quality reports, January to December 2023 (the last year published)", "Tamil Nadu Pollution Control Board",
+                 {"url": "https://tnpcb.gov.in/pollutedriverstretches.php", "as_of": "2023-12"}),
+    "tnpcb-plan": ("tnpcb-prs-cauvery", "TNPCB, Action Plan on Rejuvenation of River Cauvery, Mettur to Mayiladuthurai stretch (Priority I), 2019", "Tamil Nadu Pollution Control Board",
+                   {"url": "https://tnpcb.gov.in/PDF/About_Us/projects/PR-Stretches/Water-QA-MN-report/actionplan/PrsCauvery24919.pdf", "as_of": "2019"}),
+})
+_SHEDS, _RIVERS = (f"public/data/basins/{BASIN_ID}/{f}.geojson" for f in ("sub-hydrosheds", "rivers"))
+ENVELOPE_ARTIFACTS.update({"rivers": ["osm", "cwc-canals", "tngis"], "prs": ["cpcb-prs", "osm", "tngis"], "monitoring-points": ["tnpcb-wq", "osm", "tngis"], "prs-drains": ["tnpcb-plan", "tngis"]})
+ENVELOPE_INPUTS.update({"prs": [_RIVERS], "monitoring-points": ["public/data/basins/cauvery-tn/wq-stations.geojson", _SHEDS], "prs-drains": [_RIVERS, _SHEDS]})
+ENVELOPE_ARTIFACTS["inventory"] += ["cpcb-prs", "tnpcb-wq", "tnpcb-plan"]
 ENVELOPE_READINGS = TN_ENVELOPE_READINGS
 
 
