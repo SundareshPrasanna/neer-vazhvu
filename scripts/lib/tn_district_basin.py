@@ -493,7 +493,7 @@ class DistrictBasinBuild:
         feats, dropped, geoms = [], [], {}
         for f in raw["features"]:
             name = re.sub(r"^\d+\.\s*", "", str(f["properties"].get("subbasin", "")).strip())
-            part = shape(f["geometry"]).buffer(0).intersection(district)
+            part = polys_only(shape(f["geometry"]).buffer(0).intersection(district))
             km2 = area_km2(part) if not part.is_empty else 0.0
             if km2 < SHED_MIN_KM2:
                 if km2 > 0:

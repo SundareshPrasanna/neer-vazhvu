@@ -1,0 +1,394 @@
+{
+ "basinId": "thanjavur-rivers",
+ "generatedFrom": "build_thanjavur_rivers_basin.py",
+ "generatedOn": "2026-10-21",
+ "families": {
+  "boundary": {
+   "featureCount": 1,
+   "sources": [
+    {
+     "file": "admin_master:administrative_boundary_district",
+     "kind": null,
+     "count": 1,
+     "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: district boundary, LGD code 586"
+    }
+   ],
+   "bytes": 25207,
+   "sliced": false
+  },
+  "sub-hydrosheds": {
+   "featureCount": 6,
+   "sources": [
+    {
+     "file": "generic_viewer:sub_basin",
+     "kind": null,
+     "count": 6,
+     "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: TN WRD sub-basins, clipped to the district boundary"
+    }
+   ],
+   "bytes": 25085,
+   "sliced": false
+  },
+  "rivers": {
+   "featureCount": 11,
+   "sources": [
+    {
+     "file": "osm-waterways.json + cwc-canals-thanjavur.geojson",
+     "kind": null,
+     "count": 11,
+     "provenance": "Rivers: OpenStreetMap waterway courses (Overpass), clipped to the district plus 1.6 km so boundary rivers stay"
+    }
+   ],
+   "bytes": 82555,
+   "sliced": false
+  },
+  "tanks": {
+   "featureCount": 753,
+   "sources": [
+    {
+     "file": "generic_viewer:all_tanks",
+     "kind": null,
+     "count": 753,
+     "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: all-tanks register (generic_viewer:all_tanks), Thanjavur district, the tanks the register names, shown at a point inside each; waterspread area computed from the polygon"
+    }
+   ],
+   "bytes": 190958,
+   "sliced": false
+  },
+  "industries": {
+   "featureCount": 311,
+   "sources": [
+    {
+     "file": "generic_viewer:industry_cad_matched",
+     "kind": "green-white",
+     "count": 70,
+     "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: industry register matched to land parcels (generic_viewer:industry_cad_matched), Thanjavur district; unit ids follow TNPCB's consent-register format, registrations 2015 to 2024; one point per unit at the mean of its parcel centres; sector from the reviewed TNPCB type-code lookup"
+    },
+    {
+     "file": "generic_viewer:industry_cad_matched",
+     "kind": "orange",
+     "count": 212,
+     "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: industry register matched to land parcels (generic_viewer:industry_cad_matched), Thanjavur district; unit ids follow TNPCB's consent-register format, registrations 2015 to 2024; one point per unit at the mean of its parcel centres; sector from the reviewed TNPCB type-code lookup"
+    },
+    {
+     "file": "generic_viewer:industry_cad_matched",
+     "kind": "red-chemicals",
+     "count": 2,
+     "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: industry register matched to land parcels (generic_viewer:industry_cad_matched), Thanjavur district; unit ids follow TNPCB's consent-register format, registrations 2015 to 2024; one point per unit at the mean of its parcel centres; sector from the reviewed TNPCB type-code lookup"
+    },
+    {
+     "file": "generic_viewer:industry_cad_matched",
+     "kind": "red-metal-treatment",
+     "count": 1,
+     "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: industry register matched to land parcels (generic_viewer:industry_cad_matched), Thanjavur district; unit ids follow TNPCB's consent-register format, registrations 2015 to 2024; one point per unit at the mean of its parcel centres; sector from the reviewed TNPCB type-code lookup"
+    },
+    {
+     "file": "generic_viewer:industry_cad_matched",
+     "kind": "red-other",
+     "count": 17,
+     "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: industry register matched to land parcels (generic_viewer:industry_cad_matched), Thanjavur district; unit ids follow TNPCB's consent-register format, registrations 2015 to 2024; one point per unit at the mean of its parcel centres; sector from the reviewed TNPCB type-code lookup"
+    },
+    {
+     "file": "generic_viewer:industry_cad_matched",
+     "kind": "red-paper",
+     "count": 1,
+     "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: industry register matched to land parcels (generic_viewer:industry_cad_matched), Thanjavur district; unit ids follow TNPCB's consent-register format, registrations 2015 to 2024; one point per unit at the mean of its parcel centres; sector from the reviewed TNPCB type-code lookup"
+    },
+    {
+     "file": "generic_viewer:industry_cad_matched",
+     "kind": "red-quarry-mining",
+     "count": 8,
+     "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: industry register matched to land parcels (generic_viewer:industry_cad_matched), Thanjavur district; unit ids follow TNPCB's consent-register format, registrations 2015 to 2024; one point per unit at the mean of its parcel centres; sector from the reviewed TNPCB type-code lookup"
+    }
+   ],
+   "bytes": 183696,
+   "sliced": false
+  },
+  "treatment-plants": {
+   "featureCount": 2,
+   "sources": [
+    {
+     "file": "generic_viewer:industry_cad_matched",
+     "kind": "stp",
+     "count": 2,
+     "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: industry register matched to land parcels (generic_viewer:industry_cad_matched), Thanjavur district; unit ids follow TNPCB's consent-register format, registrations 2015 to 2024; one point per unit at the mean of its parcel centres; sector from the reviewed TNPCB type-code lookup"
+    }
+   ],
+   "bytes": 1176,
+   "sliced": false
+  },
+  "quarries": {
+   "featureCount": 4,
+   "sources": [
+    {
+     "file": "generic_viewer:mines",
+     "kind": null,
+     "count": 4,
+     "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: mines and quarry lease areas"
+    }
+   ],
+   "bytes": 2336,
+   "sliced": false
+  },
+  "admin-taluk": {
+   "featureCount": 9,
+   "sources": [
+    {
+     "file": "admin_master:administrative_boundary_taluk",
+     "kind": null,
+     "count": 9,
+     "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: taluk boundaries, LGD district 586"
+    }
+   ],
+   "bytes": 40761,
+   "sliced": false
+  },
+  "groundwater-taluks": {
+   "featureCount": 9,
+   "sources": [
+    {
+     "file": "atlas/tn/thanjavur/groundwater-taluks.json",
+     "kind": "critical",
+     "count": 1,
+     "provenance": "IN-GRES (CGWB / IIT Hyderabad) dynamic groundwater assessment 2024-2025, stage of extraction by taluk, as served on the Thanjavur district page; taluk polygons from TNGIS"
+    },
+    {
+     "file": "atlas/tn/thanjavur/groundwater-taluks.json",
+     "kind": "over-exploited",
+     "count": 6,
+     "provenance": "IN-GRES (CGWB / IIT Hyderabad) dynamic groundwater assessment 2024-2025, stage of extraction by taluk, as served on the Thanjavur district page; taluk polygons from TNGIS"
+    },
+    {
+     "file": "atlas/tn/thanjavur/groundwater-taluks.json",
+     "kind": "semi-critical",
+     "count": 2,
+     "provenance": "IN-GRES (CGWB / IIT Hyderabad) dynamic groundwater assessment 2024-2025, stage of extraction by taluk, as served on the Thanjavur district page; taluk polygons from TNGIS"
+    }
+   ],
+   "bytes": 41927,
+   "sliced": false
+  },
+  "admin-block": {
+   "featureCount": 14,
+   "sources": [
+    {
+     "file": "generic_viewer:block_boundary",
+     "kind": null,
+     "count": 14,
+     "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: rural development block boundaries"
+    }
+   ],
+   "bytes": 63348,
+   "sliced": false
+  },
+  "admin-gp": {
+   "featureCount": 589,
+   "sources": [
+    {
+     "file": "tnrd:panchayat_boundary",
+     "kind": null,
+     "count": 589,
+     "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: village panchayat boundaries (tnrd:panchayat_boundary). Town panchayats, municipalities, the corporation and reserve forest are not village panchayats and are not in this layer"
+    }
+   ],
+   "bytes": 848585,
+   "sliced": true,
+   "shedKeys": [
+    "SB116",
+    "SB119",
+    "SB121",
+    "SB122",
+    "SB130",
+    "SB131"
+   ]
+  },
+  "waterbodies-major": {
+   "featureCount": 930,
+   "sources": [
+    {
+     "file": "generic_viewer:all_water_bodies",
+     "kind": null,
+     "count": 930,
+     "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: all water bodies register (generic_viewer:all_water_bodies), Thanjavur district; area computed from the polygon; a name is kept only where the register prints one rather than a class (Kuttai, Kulam, Odai, Stream) or the basin"
+    }
+   ],
+   "bytes": 661260,
+   "sliced": false
+  },
+  "waterbodies-minor": {
+   "featureCount": 4359,
+   "sources": [
+    {
+     "file": "generic_viewer:all_water_bodies",
+     "kind": null,
+     "count": 4359,
+     "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: all water bodies register (generic_viewer:all_water_bodies), Thanjavur district; area computed from the polygon; a name is kept only where the register prints one rather than a class (Kuttai, Kulam, Odai, Stream) or the basin"
+    }
+   ],
+   "bytes": 1430955,
+   "sliced": true,
+   "shedKeys": [
+    "SB116",
+    "SB119",
+    "SB121",
+    "SB122",
+    "SB130",
+    "SB131"
+   ]
+  },
+  "watersheds": {
+   "featureCount": 11,
+   "sources": [
+    {
+     "file": "generic_viewer:microwatersheds",
+     "kind": null,
+     "count": 11,
+     "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: micro-watershed atlas (generic_viewer:microwatersheds), dissolved on its 'watershed' code column and cut to the district"
+    }
+   ],
+   "bytes": 52757,
+   "sliced": false
+  },
+  "sub-watersheds": {
+   "featureCount": 43,
+   "sources": [
+    {
+     "file": "generic_viewer:microwatersheds",
+     "kind": null,
+     "count": 43,
+     "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: micro-watershed atlas (generic_viewer:microwatersheds), dissolved on its 'subwatersh' code column and cut to the district"
+    }
+   ],
+   "bytes": 102700,
+   "sliced": false
+  },
+  "mini-watersheds": {
+   "featureCount": 99,
+   "sources": [
+    {
+     "file": "generic_viewer:microwatersheds",
+     "kind": null,
+     "count": 99,
+     "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: micro-watershed atlas (generic_viewer:microwatersheds), dissolved on its 'mini' code column and cut to the district"
+    }
+   ],
+   "bytes": 143749,
+   "sliced": false
+  },
+  "micro-watersheds": {
+   "featureCount": 747,
+   "sources": [
+    {
+     "file": "generic_viewer:microwatersheds",
+     "kind": null,
+     "count": 747,
+     "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: micro-watershed atlas (generic_viewer:microwatersheds), dissolved on its 'microwater' code column and cut to the district"
+    }
+   ],
+   "bytes": 384198,
+   "sliced": true,
+   "shedKeys": [
+    "SB116",
+    "SB119",
+    "SB121",
+    "SB122",
+    "SB130",
+    "SB131"
+   ]
+  },
+  "groundwater-wells": {
+   "featureCount": 62,
+   "sources": [
+    {
+     "file": "nwdp.nwic.gov.in datastore",
+     "kind": "cgwb-manual",
+     "count": 24,
+     "provenance": "National Water Data Portal (NWIC, nwdp.nwic.gov.in): groundwater level datasets for Tamil Nadu, Thanjavur-tagged stations placed by their coordinates; depth in metres below ground level, sign convention read per station from its own median, sentinel values and readings outside the physical envelope dropped"
+    },
+    {
+     "file": "nwdp.nwic.gov.in datastore",
+     "kind": "cgwb-telemetry",
+     "count": 4,
+     "provenance": "National Water Data Portal (NWIC, nwdp.nwic.gov.in): groundwater level datasets for Tamil Nadu, Thanjavur-tagged stations placed by their coordinates; depth in metres below ground level, sign convention read per station from its own median, sentinel values and readings outside the physical envelope dropped"
+    },
+    {
+     "file": "nwdp.nwic.gov.in datastore",
+     "kind": "state-telemetry",
+     "count": 34,
+     "provenance": "National Water Data Portal (NWIC, nwdp.nwic.gov.in): groundwater level datasets for Tamil Nadu, Thanjavur-tagged stations placed by their coordinates; depth in metres below ground level, sign convention read per station from its own median, sentinel values and readings outside the physical envelope dropped"
+    }
+   ],
+   "bytes": 24130,
+   "sliced": false
+  },
+  "canals": {
+   "featureCount": 35,
+   "sources": [
+    {
+     "file": "canal_network.zip",
+     "kind": "distributary",
+     "count": 16,
+     "provenance": "CWC canal network (National Water Data Portal, 2025), cut to the district"
+    },
+    {
+     "file": "canal_network.zip",
+     "kind": "main",
+     "count": 10,
+     "provenance": "CWC canal network (National Water Data Portal, 2025), cut to the district"
+    },
+    {
+     "file": "canal_network.zip",
+     "kind": "minor",
+     "count": 9,
+     "provenance": "CWC canal network (National Water Data Portal, 2025), cut to the district"
+    }
+   ],
+   "bytes": 128198,
+   "sliced": false
+  },
+  "command-areas": {
+   "featureCount": 4,
+   "sources": [
+    {
+     "file": "command_area.zip",
+     "kind": "cauvery-delta-system",
+     "count": 1,
+     "provenance": "CWC 'Water Resource Project' command areas (National Water Data Portal, 2025), cut to the district; culturable command area and potential created are CWC's figures in thousand hectares, mapped areas are computed from the polygons"
+    },
+    {
+     "file": "command_area.zip",
+     "kind": "cauvery-mettur",
+     "count": 1,
+     "provenance": "CWC 'Water Resource Project' command areas (National Water Data Portal, 2025), cut to the district; culturable command area and potential created are CWC's figures in thousand hectares, mapped areas are computed from the polygons"
+    },
+    {
+     "file": "command_area.zip",
+     "kind": "kattalai",
+     "count": 1,
+     "provenance": "CWC 'Water Resource Project' command areas (National Water Data Portal, 2025), cut to the district; culturable command area and potential created are CWC's figures in thousand hectares, mapped areas are computed from the polygons"
+    },
+    {
+     "file": "command_area.zip",
+     "kind": "lower-coleroon-anicut-system",
+     "count": 1,
+     "provenance": "CWC 'Water Resource Project' command areas (National Water Data Portal, 2025), cut to the district; culturable command area and potential created are CWC's figures in thousand hectares, mapped areas are computed from the polygons"
+    }
+   ],
+   "bytes": 41657,
+   "sliced": false
+  },
+  "gauging-stations": {
+   "featureCount": 1,
+   "sources": [
+    {
+     "file": "nwdp.nwic.gov.in datastore",
+     "kind": null,
+     "count": 1,
+     "provenance": "Central Water Commission gauge, discharge and water quality sites, from the National Water Data Portal (NWIC): positions as printed; flow and water quality series in readings/"
+    }
+   ],
+   "bytes": 518,
+   "sliced": false
+  }
+ }
+}
