@@ -408,7 +408,7 @@ def scaffold(slug: str, write: bool) -> int:
         if write:
             (ROOT / rel).write_text(text)
     print(f"\nnext: fill the TODOs, run scripts/build_{a['py']}_rivers_basin.py, scripts/nvdm_envelope_district_basin.py scripts/build_{a['py']}_rivers_basin.py, "
-          f"then scripts/new_district_basin.py {slug} --register --write")
+          f"then scripts/new_district_basin.py {slug} --register --write, and regenerate schemas/nvdm/REFERENCE.md (scripts/build_nvdm_reference.py; the new scope is in it)")
     return 0
 
 

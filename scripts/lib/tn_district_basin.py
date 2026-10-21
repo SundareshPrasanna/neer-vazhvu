@@ -35,7 +35,7 @@ from datetime import date, datetime
 from pathlib import Path
 
 from shapely.geometry import LineString, MultiLineString, Point, mapping, shape
-from shapely.ops import linemerge, unary_union
+from shapely.ops import linemerge, substring, unary_union
 
 ROOT = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(ROOT / "scripts"))
@@ -117,6 +117,12 @@ WATERSHED_LEVELS = (  # family, source column, level label, heavy (sliced per ca
     ("mini-watersheds", "mini", "mini-watershed", False),
     ("micro-watersheds", "microwater", "micro-watershed", True),
 )
+# CPCB's Cauvery stretch in Tamil Nadu (year, priority, wording, start point). The 2025 stretch starts at TNPCB station 1320
+# (Virapalayam, Erode) and runs through CPCB's stations on the Cauvery branch at Musiri, Pettaivaithalai and Kumbakonam.
+CWC_RIVER_NETWORK = (f"{NWDP}/dataset/3209962f-d0ff-45b8-910a-209bf69a0ccf/resource/67c49daa-4eec-4747-baff-a7eacdb5bef9/download/river_network_shape.zip", "River_Network.shp")
+CAUVERY_PRS_2018 = (2018, "I", "Mettur to Mayiladuthurai", None)
+CAUVERY_PRS_2025 = (2025, "II", "Erode near Virapalayam to Pitchavaram", (77.7538, 11.335724))  # CPCB's spelling
+PRS_POINT_MAX_KM = 0.5  # a stretch start or a transcribed outfall further than this from its river is a transcription error
 SHED_MIN_KM2 = 5.0  # boundary-mismatch slivers below this are dropped, and listed
 BOUNDARY_RIVER_BUFFER_DEG = 0.015  # ~1.6 km: keeps a river that runs along the district line
 UA = {"User-Agent": "neer-vazhvu/basin-build"}
@@ -156,6 +162,10 @@ OPTIONAL = {
     "TALUK_ALIASES": {},
     # A frame read from a configured layer instead of TNGIS (see build_boundary / build_sheds).
     "FRAME": None,
+    # CPCB's Cauvery stretch (see build_cauvery_prs): the editions this district sits on, and the action plan's outfalls.
+    "PRS_EDITIONS": (), "PRS_OUTFALLS": (),
+    # Rivers OSM leaves unnamed in the district, drawn from CWC's river network (river_id -> CWC rivname; CWC_RIVERS_FILE in CWC_LAYERS).
+    "CWC_RIVER_LINES": {}, "CWC_RIVERS_FILE": None,
     # Layers served as they are, cut to the district (see build_wfs_families).
     "WFS_FAMILIES": (),
     # The NWDP groundwater-level resources to read, when not Tamil Nadu's.
@@ -493,7 +503,7 @@ class DistrictBasinBuild:
         feats, dropped, geoms = [], [], {}
         for f in raw["features"]:
             name = re.sub(r"^\d+\.\s*", "", str(f["properties"].get("subbasin", "")).strip())
-            part = shape(f["geometry"]).buffer(0).intersection(district)
+            part = polys_only(shape(f["geometry"]).buffer(0).intersection(district))
             km2 = area_km2(part) if not part.is_empty else 0.0
             if km2 < SHED_MIN_KM2:
                 if km2 > 0:
@@ -662,6 +672,13 @@ class DistrictBasinBuild:
             merged = MultiLineString(lines_only(part))
             feats.append(feat(mapping(merged), {"river_id": rid, "name": names[rid], "waterway": "canal", "lengthInDistrictKm": round(length_km(merged), 1),
                                                 "source": "CWC canal network (National Water Data Portal)"}))
+        for rid, cwc_name in cfg.CWC_RIVER_LINES.items():
+            lines = [shape(f["geometry"]) for f in self.cwc_layer(cfg.CWC_RIVERS_FILE)["features"] if f["properties"].get("rivname") == cwc_name]
+            if not lines:
+                raise SystemExit(f"rivers: no CWC river line named {cwc_name!r}")
+            merged = MultiLineString(lines_only(unary_union(lines).intersection(clip)))
+            feats.append(feat(mapping(merged), {"river_id": rid, "name": names[rid], "waterway": "river", "lengthInDistrictKm": round(length_km(merged), 1),
+                                                "source": "CWC river network (National Water Data Portal)"}))
         for (kind, rid), parts in sorted(groups.items()):
             merged = linemerge(MultiLineString([ln for ps, _ in parts for ln in ps]))
             if merged.geom_type == "LineString":
@@ -670,7 +687,7 @@ class DistrictBasinBuild:
                 "river_id": rid, "name": names[rid], "waterway": kind,
                 "lengthInDistrictKm": round(length_km(merged), 1), "osmWays": len(parts), "source": "OpenStreetMap",
             }))
-        source_file = "osm-waterways.json" + (f" + {cfg.CWC_CANALS_FILE}" if cfg.CANAL_RIVERS else "")
+        source_file = "osm-waterways.json" + (f" + {cfg.CWC_CANALS_FILE}" if cfg.CANAL_RIVERS else "") + (f" + {cfg.CWC_RIVERS_FILE}" if cfg.CWC_RIVER_LINES else "")
         self.emit("rivers", feats, cfg.WATERWAYS_PROVENANCE, source_file)
         for x in feats:
             print(f"    {x['properties']['name']:30} {x['properties']['lengthInDistrictKm']:6} km ({x['properties']['source']})")
@@ -1225,6 +1242,44 @@ class DistrictBasinBuild:
         self.emit("treatment-plants", plants, prov, "generic_viewer:industry_cad_matched", by_kind=True)
         print(f"    {len(units)} units in the register; {outside} fall outside the district polygon and are left out")
         print(f"    {no_centroid} parcel rows have no readable centroid and are skipped; {unplaced} units have no readable parcel and are left out")
+
+    def build_cauvery_prs(self) -> None:
+        """CPCB's Cauvery stretch editions on the district's mapped Cauvery, and the TNPCB action plan's outfalls (PRS_OUTFALLS)."""
+        cfg, rivers = self.cfg, self.rivers_by_id()
+        cauvery, feats = rivers["cauvery"], []
+        for year, priority, wording, start in cfg.PRS_EDITIONS:
+            reach = cauvery
+            if start and Point(start).distance(cauvery) * 110 <= PRS_POINT_MAX_KM:  # the stretch starts here: keep the reach below it
+                pt, geoms = Point(start), list(cauvery.geoms)
+                nearest = min(range(len(geoms)), key=lambda i: geoms[i].distance(pt))
+                parts = []
+                for i, g in enumerate(geoms):
+                    if i == nearest:
+                        a, c = substring(g, 0, g.project(pt)), substring(g, g.project(pt), g.length)
+                        parts.append(a if a.centroid.y < c.centroid.y else c)  # north to south at Virapalayam
+                    elif g.centroid.y < pt.y:
+                        parts.append(g)
+                reach = MultiLineString(parts)
+            km = round(length_km(reach), 1)
+            feats.append(feat(mapping(reach), {
+                "kind": "prs", "year": year, "priority": priority, "length_km": km, "river": "Cauvery",
+                "label": f"Polluted stretch {year}, inside the district ({km} km, Priority {priority})", "cpcbWording": wording,
+                "source": "CPCB stretch wording, drawn on the OpenStreetMap course of the Cauvery inside the district; the stretch continues beyond it",
+                "shedId": self.sheds.for_line(reach),
+            }))
+            print(f"    {year}: {km} km inside the district, Priority {priority}")
+        self.emit("prs", feats, "CPCB, Polluted River Stretches for Restoration of Water Quality, 2018 and October 2025 (Annexure III A), drawn on the OpenStreetMap course of the Cauvery inside the district", "cpcb-2025 + osm-waterways.json")
+        drains = []
+        for name, lat, lon, river_id, page, note in cfg.PRS_OUTFALLS:
+            pt = Point(*(dms(v) if isinstance(v, tuple) else v for v in (lon, lat)))
+            if (km := pt.distance(rivers[river_id]) * 110) > PRS_POINT_MAX_KM:
+                raise SystemExit(f"prs-drains: {name} plots {km:.2f} km from the {river_id} - check the transcription")
+            drains.append(feat(mapping(pt), {
+                "name": name, "kind": "drain-inlet", "receivingWater": cfg.RIVER_NAMES.get(river_id, river_id),
+                "description": f"{note} Position is the plan's own GPS coordinate (p.{page}).", "shedId": self.sheds.for_point(pt),
+            }))
+        if drains:
+            self.emit("prs-drains", drains, "TNPCB, Action Plan on Rejuvenation of River Cauvery, Mettur to Mayiladuthurai stretch (2019): outfall names and GPS coordinates as printed", "PrsCauvery24919.pdf")
 
     def build_estates(self) -> None:
         cfg, sheds = self.cfg, self.sheds

@@ -1,0 +1,551 @@
+{
+  "nvdm": "1.0",
+  "dataset": "basins/inventory",
+  "scope": {
+    "kind": "basin",
+    "id": "tiruchirappalli-rivers"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "tngis-open-geoserver",
+        "title": "TNGIS open GeoServer (WFS): district, taluk, block and village panchayat boundaries, TN WRD sub-basins and reservoirs, micro-watershed atlas, all-water-bodies and all-tanks registers, mine leases, industry register matched to land parcels",
+        "publisher": "Tamil Nadu e-Governance Agency (TNGIS)",
+        "license": "Tamil Nadu government data on an open GeoServer (WFS, no login); published with TNGIS's permission and with attribution.",
+        "role": "input",
+        "url": "https://tngis.tn.gov.in/tngismaps/ows"
+      },
+      {
+        "id": "osm-overpass",
+        "title": "OpenStreetMap (Overpass API extract: named river courses)",
+        "publisher": "OpenStreetMap contributors",
+        "license": "ODbL 1.0",
+        "role": "input"
+      },
+      {
+        "id": "sipcot-gis-geoserver",
+        "title": "SIPCOT GIS (WFS): industrial complex outlines, Tiruchirapalli, dtaManapparai, foodparkManapparai",
+        "publisher": "State Industries Promotion Corporation of Tamil Nadu (SIPCOT)",
+        "license": "LICENCE UNVERIFIED - see notes. Open SIPCOT GeoServer (WFS, no login); the site footer reads 'All Rights Reserved' and states no data terms; the reuse question sent for the Sriperumbudur corridor has no reply. Estate outlines only, published with attribution.",
+        "role": "input",
+        "url": "https://sipcotgis.tn.gov.in/"
+      },
+      {
+        "id": "ingres-gw-assessment-tn",
+        "title": "IN-GRES dynamic groundwater assessment 2024-2025, stage of extraction by taluk",
+        "publisher": "CGWB with IIT Hyderabad (IN-GRES)",
+        "license": "no explicit licence: the IN-GRES portal publishes no terms of use, no disclaimer and no copyright or licence statement anywhere; nothing has been established about who may redistribute this material or on what terms",
+        "role": "input",
+        "url": "https://ingres.iith.ac.in/",
+        "as_of": "2025"
+      },
+      {
+        "id": "nwic-nwdp-groundwater-level",
+        "title": "National Water Data Portal: Ground Water Level datasets for Tamil Nadu (CGWB telemetry 2026-2030, Tamil Nadu SW GW telemetry 2026-2030, CGWB manual quarterly 2021-2025)",
+        "publisher": "National Water Informatics Centre (NWIC), Ministry of Jal Shakti",
+        "license": "Government of India open data portal: its copyright policy permits reproduction free of charge in any format without specific permission, reproduced accurately and with the source prominently acknowledged; cited with attribution",
+        "role": "input",
+        "url": "https://nwdp.nwic.gov.in/"
+      },
+      {
+        "id": "nwic-nwdp-cwc-canal-network",
+        "title": "CWC canal network and water resource project (command area) layers, National Water Data Portal",
+        "publisher": "Central Water Commission, via the National Water Informatics Centre (NWIC)",
+        "license": "Government of India open data portal: its copyright policy permits reproduction free of charge in any format without specific permission, reproduced accurately and with the source prominently acknowledged; cited with attribution",
+        "role": "input",
+        "url": "https://nwdp.nwic.gov.in/",
+        "as_of": "2025"
+      },
+      {
+        "id": "nwic-nwdp-cwc-river-data",
+        "title": "CWC river discharge (manual daily) and surface water quality for Tamil Nadu, National Water Data Portal",
+        "publisher": "Central Water Commission, via the National Water Informatics Centre (NWIC)",
+        "license": "Government of India open data portal: its copyright policy permits reproduction free of charge in any format without specific permission, reproduced accurately and with the source prominently acknowledged; cited with attribution",
+        "role": "input",
+        "url": "https://nwdp.nwic.gov.in/"
+      },
+      {
+        "id": "tnsmart-rimes-reservoirs",
+        "title": "Tamil Nadu reservoir dashboard (TN-SMART): the day's storage, depth and percentage of capacity per reservoir",
+        "publisher": "RIMES, relaying Tamil Nadu's daily reservoir storage",
+        "license": "LICENCE UNVERIFIED - see notes. The dashboard states no terms of use, no copyright policy and no licence anywhere on the page; nothing has been established about who may redistribute this material. Storage readings are served as current facts with the dashboard named.",
+        "role": "input",
+        "url": "https://beta-tnsmart.rimes.int/index.php/Reservoir"
+      },
+      {
+        "id": "cpcb-prs-report",
+        "title": "CPCB, Polluted River Stretches for Restoration of Water Quality, 2018 and October 2025 (updated version)",
+        "publisher": "Central Pollution Control Board",
+        "license": "restrictive, permission required: the CPCB website policy permits material to be 'downloaded to file or printer without requiring specific prior permission', and 'Any other proposed use of the material is subject to the approval of competent authority of CPCB' - no redistribution without approval",
+        "role": "input",
+        "url": "https://cpcb.gov.in/polluted-river-stretches/",
+        "as_of": "2025-10"
+      },
+      {
+        "id": "tnpcb-prs-cauvery",
+        "title": "TNPCB stretch-wise monthly water-quality reports, January to December 2023 (the last year published)",
+        "publisher": "Tamil Nadu Pollution Control Board",
+        "license": "TN government publication, cited with attribution",
+        "role": "input",
+        "url": "https://tnpcb.gov.in/pollutedriverstretches.php",
+        "as_of": "2023-12"
+      }
+    ],
+    "method": "derived",
+    "produced_at": "2026-10-21",
+    "produced_by": "scripts/build_tiruchirappalli_rivers_basin.py",
+    "note": "Tiruchirappalli district's rivers, groundwater and industry (scope tiruchirappalli-rivers; the district's own scope id is tn-tiruchirappalli). The district boundary is the frame and TN WRD's sub-basins, clipped to it, are the catchments (shedId). The industry register holds only units TNGIS matched to a land parcel, so every count is a lower bound; sector comes from the reviewed TNPCB type-code lookup pipeline-inputs/basins/tn-tnpcb-type-sectors.json."
+  },
+  "basinId": "tiruchirappalli-rivers",
+  "generatedFrom": "build_tiruchirappalli_rivers_basin.py",
+  "generatedOn": "2026-10-21",
+  "families": {
+    "boundary": {
+      "featureCount": 1,
+      "sources": [
+        {
+          "file": "admin_master:administrative_boundary_district",
+          "kind": null,
+          "count": 1,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: district boundary, LGD code 591"
+        }
+      ],
+      "bytes": 25657,
+      "sliced": false
+    },
+    "sub-hydrosheds": {
+      "featureCount": 12,
+      "sources": [
+        {
+          "file": "generic_viewer:sub_basin",
+          "kind": null,
+          "count": 12,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: TN WRD sub-basins, clipped to the district boundary"
+        }
+      ],
+      "bytes": 36718,
+      "sliced": false
+    },
+    "rivers": {
+      "featureCount": 10,
+      "sources": [
+        {
+          "file": "osm-waterways.json + cwc-canals-tiruchirappalli.geojson",
+          "kind": null,
+          "count": 10,
+          "provenance": "Rivers: OpenStreetMap waterway courses (Overpass), clipped to the district plus 1.6 km so boundary rivers stay"
+        }
+      ],
+      "bytes": 73456,
+      "sliced": false
+    },
+    "prs": {
+      "featureCount": 2,
+      "sources": [
+        {
+          "file": "cpcb-2025 + osm-waterways.json",
+          "kind": null,
+          "count": 2,
+          "provenance": "CPCB, Polluted River Stretches for Restoration of Water Quality, 2018 and October 2025 (Annexure III A), drawn on the OpenStreetMap course of the Cauvery inside the district"
+        }
+      ],
+      "bytes": 18696,
+      "sliced": false
+    },
+    "monitoring-points": {
+      "featureCount": 5,
+      "sources": [
+        {
+          "file": "cauvery-tn/wq-stations.geojson",
+          "kind": null,
+          "count": 5,
+          "provenance": "TNPCB stretch-wise monthly water-quality reports, January to December 2023 (the last year published); classes are the worst monthly use-based class of 2023; station points are town centres, as ingested for the Cauvery (Tamil Nadu) basin"
+        }
+      ],
+      "bytes": 1726,
+      "sliced": false
+    },
+    "reservoirs": {
+      "featureCount": 2,
+      "sources": [
+        {
+          "file": "generic_viewer:reservoir",
+          "kind": null,
+          "count": 2,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: TN WRD reservoir register, waterspread polygons shown at a point inside each; waterspread area computed from the polygon"
+        }
+      ],
+      "bytes": 714,
+      "sliced": false
+    },
+    "tanks": {
+      "featureCount": 1262,
+      "sources": [
+        {
+          "file": "generic_viewer:all_tanks",
+          "kind": null,
+          "count": 1262,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: all-tanks register (generic_viewer:all_tanks), Tiruchirappalli district, the tanks the register names, shown at a point inside each; waterspread area computed from the polygon"
+        }
+      ],
+      "bytes": 325532,
+      "sliced": false
+    },
+    "industries": {
+      "featureCount": 501,
+      "sources": [
+        {
+          "file": "generic_viewer:industry_cad_matched",
+          "kind": "green-white",
+          "count": 111,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: industry register matched to land parcels (generic_viewer:industry_cad_matched), Tiruchirappalli district; unit ids follow TNPCB's consent-register format, registrations 2015 to 2024; one point per unit at the mean of its parcel centres; sector from the reviewed TNPCB type-code lookup"
+        },
+        {
+          "file": "generic_viewer:industry_cad_matched",
+          "kind": "orange",
+          "count": 264,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: industry register matched to land parcels (generic_viewer:industry_cad_matched), Tiruchirappalli district; unit ids follow TNPCB's consent-register format, registrations 2015 to 2024; one point per unit at the mean of its parcel centres; sector from the reviewed TNPCB type-code lookup"
+        },
+        {
+          "file": "generic_viewer:industry_cad_matched",
+          "kind": "red-chemicals",
+          "count": 2,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: industry register matched to land parcels (generic_viewer:industry_cad_matched), Tiruchirappalli district; unit ids follow TNPCB's consent-register format, registrations 2015 to 2024; one point per unit at the mean of its parcel centres; sector from the reviewed TNPCB type-code lookup"
+        },
+        {
+          "file": "generic_viewer:industry_cad_matched",
+          "kind": "red-metal-treatment",
+          "count": 6,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: industry register matched to land parcels (generic_viewer:industry_cad_matched), Tiruchirappalli district; unit ids follow TNPCB's consent-register format, registrations 2015 to 2024; one point per unit at the mean of its parcel centres; sector from the reviewed TNPCB type-code lookup"
+        },
+        {
+          "file": "generic_viewer:industry_cad_matched",
+          "kind": "red-other",
+          "count": 45,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: industry register matched to land parcels (generic_viewer:industry_cad_matched), Tiruchirappalli district; unit ids follow TNPCB's consent-register format, registrations 2015 to 2024; one point per unit at the mean of its parcel centres; sector from the reviewed TNPCB type-code lookup"
+        },
+        {
+          "file": "generic_viewer:industry_cad_matched",
+          "kind": "red-paper",
+          "count": 1,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: industry register matched to land parcels (generic_viewer:industry_cad_matched), Tiruchirappalli district; unit ids follow TNPCB's consent-register format, registrations 2015 to 2024; one point per unit at the mean of its parcel centres; sector from the reviewed TNPCB type-code lookup"
+        },
+        {
+          "file": "generic_viewer:industry_cad_matched",
+          "kind": "red-quarry-mining",
+          "count": 72,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: industry register matched to land parcels (generic_viewer:industry_cad_matched), Tiruchirappalli district; unit ids follow TNPCB's consent-register format, registrations 2015 to 2024; one point per unit at the mean of its parcel centres; sector from the reviewed TNPCB type-code lookup"
+        }
+      ],
+      "bytes": 291267,
+      "sliced": false
+    },
+    "treatment-plants": {
+      "featureCount": 1,
+      "sources": [
+        {
+          "file": "generic_viewer:industry_cad_matched",
+          "kind": "stp",
+          "count": 1,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: industry register matched to land parcels (generic_viewer:industry_cad_matched), Tiruchirappalli district; unit ids follow TNPCB's consent-register format, registrations 2015 to 2024; one point per unit at the mean of its parcel centres; sector from the reviewed TNPCB type-code lookup"
+        }
+      ],
+      "bytes": 591,
+      "sliced": false
+    },
+    "industrial-estates": {
+      "featureCount": 3,
+      "sources": [
+        {
+          "file": "cite:industrial_complex_boundary-*",
+          "kind": null,
+          "count": 3,
+          "provenance": "SIPCOT GIS (sipcotgis.tn.gov.in): industrial complex outlines, Tiruchirapalli, dtaManapparai, foodparkManapparai; area as SIPCOT states it"
+        }
+      ],
+      "bytes": 2997,
+      "sliced": false
+    },
+    "quarries": {
+      "featureCount": 29,
+      "sources": [
+        {
+          "file": "generic_viewer:mines",
+          "kind": null,
+          "count": 29,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: mines and quarry lease areas"
+        }
+      ],
+      "bytes": 12680,
+      "sliced": false
+    },
+    "admin-taluk": {
+      "featureCount": 11,
+      "sources": [
+        {
+          "file": "admin_master:administrative_boundary_taluk",
+          "kind": null,
+          "count": 11,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: taluk boundaries, LGD district 591"
+        }
+      ],
+      "bytes": 37448,
+      "sliced": false
+    },
+    "groundwater-taluks": {
+      "featureCount": 11,
+      "sources": [
+        {
+          "file": "atlas/tn/tiruchirappalli/groundwater-taluks.json",
+          "kind": "over-exploited",
+          "count": 4,
+          "provenance": "IN-GRES (CGWB / IIT Hyderabad) dynamic groundwater assessment 2024-2025, stage of extraction by taluk, as served on the Tiruchirappalli district page; taluk polygons from TNGIS"
+        },
+        {
+          "file": "atlas/tn/tiruchirappalli/groundwater-taluks.json",
+          "kind": "safe",
+          "count": 5,
+          "provenance": "IN-GRES (CGWB / IIT Hyderabad) dynamic groundwater assessment 2024-2025, stage of extraction by taluk, as served on the Tiruchirappalli district page; taluk polygons from TNGIS"
+        },
+        {
+          "file": "atlas/tn/tiruchirappalli/groundwater-taluks.json",
+          "kind": "semi-critical",
+          "count": 2,
+          "provenance": "IN-GRES (CGWB / IIT Hyderabad) dynamic groundwater assessment 2024-2025, stage of extraction by taluk, as served on the Tiruchirappalli district page; taluk polygons from TNGIS"
+        }
+      ],
+      "bytes": 38715,
+      "sliced": false
+    },
+    "admin-block": {
+      "featureCount": 14,
+      "sources": [
+        {
+          "file": "generic_viewer:block_boundary",
+          "kind": null,
+          "count": 14,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: rural development block boundaries"
+        }
+      ],
+      "bytes": 54559,
+      "sliced": false
+    },
+    "admin-gp": {
+      "featureCount": 404,
+      "sources": [
+        {
+          "file": "tnrd:panchayat_boundary",
+          "kind": null,
+          "count": 404,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: village panchayat boundaries (tnrd:panchayat_boundary). Town panchayats, municipalities, the corporation and reserve forest are not village panchayats and are not in this layer"
+        }
+      ],
+      "bytes": 521062,
+      "sliced": true,
+      "shedKeys": [
+        "SB112",
+        "SB116",
+        "SB118",
+        "SB119",
+        "SB125",
+        "SB128",
+        "SB129",
+        "SB132",
+        "SB30",
+        "SB45"
+      ]
+    },
+    "waterbodies-major": {
+      "featureCount": 1415,
+      "sources": [
+        {
+          "file": "generic_viewer:all_water_bodies",
+          "kind": null,
+          "count": 1415,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: all water bodies register (generic_viewer:all_water_bodies), Tiruchirappalli district; area computed from the polygon; a name is kept only where the register prints one rather than a class (Kuttai, Kulam, Odai, Stream) or the basin"
+        }
+      ],
+      "bytes": 771593,
+      "sliced": false
+    },
+    "waterbodies-minor": {
+      "featureCount": 2607,
+      "sources": [
+        {
+          "file": "generic_viewer:all_water_bodies",
+          "kind": null,
+          "count": 2607,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: all water bodies register (generic_viewer:all_water_bodies), Tiruchirappalli district; area computed from the polygon; a name is kept only where the register prints one rather than a class (Kuttai, Kulam, Odai, Stream) or the basin"
+        }
+      ],
+      "bytes": 909837,
+      "sliced": true,
+      "shedKeys": [
+        "SB112",
+        "SB116",
+        "SB118",
+        "SB119",
+        "SB122",
+        "SB125",
+        "SB128",
+        "SB129",
+        "SB132",
+        "SB30",
+        "SB45"
+      ]
+    },
+    "watersheds": {
+      "featureCount": 13,
+      "sources": [
+        {
+          "file": "generic_viewer:microwatersheds",
+          "kind": null,
+          "count": 13,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: micro-watershed atlas (generic_viewer:microwatersheds), dissolved on its 'watershed' code column and cut to the district"
+        }
+      ],
+      "bytes": 63772,
+      "sliced": false
+    },
+    "sub-watersheds": {
+      "featureCount": 37,
+      "sources": [
+        {
+          "file": "generic_viewer:microwatersheds",
+          "kind": null,
+          "count": 37,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: micro-watershed atlas (generic_viewer:microwatersheds), dissolved on its 'subwatersh' code column and cut to the district"
+        }
+      ],
+      "bytes": 117218,
+      "sliced": false
+    },
+    "mini-watersheds": {
+      "featureCount": 85,
+      "sources": [
+        {
+          "file": "generic_viewer:microwatersheds",
+          "kind": null,
+          "count": 85,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: micro-watershed atlas (generic_viewer:microwatersheds), dissolved on its 'mini' code column and cut to the district"
+        }
+      ],
+      "bytes": 158696,
+      "sliced": false
+    },
+    "micro-watersheds": {
+      "featureCount": 641,
+      "sources": [
+        {
+          "file": "generic_viewer:microwatersheds",
+          "kind": null,
+          "count": 641,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: micro-watershed atlas (generic_viewer:microwatersheds), dissolved on its 'microwater' code column and cut to the district"
+        }
+      ],
+      "bytes": 427826,
+      "sliced": true,
+      "shedKeys": [
+        "SB112",
+        "SB116",
+        "SB118",
+        "SB119",
+        "SB125",
+        "SB128",
+        "SB129",
+        "SB132",
+        "SB30",
+        "SB41",
+        "SB45"
+      ]
+    },
+    "groundwater-wells": {
+      "featureCount": 110,
+      "sources": [
+        {
+          "file": "nwdp.nwic.gov.in datastore",
+          "kind": "cgwb-manual",
+          "count": 66,
+          "provenance": "National Water Data Portal (NWIC, nwdp.nwic.gov.in): groundwater level datasets for Tamil Nadu, Tiruchirappalli-tagged stations placed by their coordinates; depth in metres below ground level, sign convention read per station from its own median, sentinel values and readings outside the physical envelope dropped"
+        },
+        {
+          "file": "nwdp.nwic.gov.in datastore",
+          "kind": "cgwb-telemetry",
+          "count": 14,
+          "provenance": "National Water Data Portal (NWIC, nwdp.nwic.gov.in): groundwater level datasets for Tamil Nadu, Tiruchirappalli-tagged stations placed by their coordinates; depth in metres below ground level, sign convention read per station from its own median, sentinel values and readings outside the physical envelope dropped"
+        },
+        {
+          "file": "nwdp.nwic.gov.in datastore",
+          "kind": "state-telemetry",
+          "count": 30,
+          "provenance": "National Water Data Portal (NWIC, nwdp.nwic.gov.in): groundwater level datasets for Tamil Nadu, Tiruchirappalli-tagged stations placed by their coordinates; depth in metres below ground level, sign convention read per station from its own median, sentinel values and readings outside the physical envelope dropped"
+        }
+      ],
+      "bytes": 41810,
+      "sliced": false
+    },
+    "canals": {
+      "featureCount": 44,
+      "sources": [
+        {
+          "file": "canal_network.zip",
+          "kind": "distributary",
+          "count": 19,
+          "provenance": "CWC canal network (National Water Data Portal, 2025), cut to the district"
+        },
+        {
+          "file": "canal_network.zip",
+          "kind": "main",
+          "count": 16,
+          "provenance": "CWC canal network (National Water Data Portal, 2025), cut to the district"
+        },
+        {
+          "file": "canal_network.zip",
+          "kind": "minor",
+          "count": 9,
+          "provenance": "CWC canal network (National Water Data Portal, 2025), cut to the district"
+        }
+      ],
+      "bytes": 125151,
+      "sliced": false
+    },
+    "command-areas": {
+      "featureCount": 3,
+      "sources": [
+        {
+          "file": "command_area.zip",
+          "kind": "kattalai",
+          "count": 1,
+          "provenance": "CWC 'Water Resource Project' command areas (National Water Data Portal, 2025), cut to the district; culturable command area and potential created are CWC's figures in thousand hectares, mapped areas are computed from the polygons"
+        },
+        {
+          "file": "command_area.zip",
+          "kind": "nandhiyar-channel",
+          "count": 1,
+          "provenance": "CWC 'Water Resource Project' command areas (National Water Data Portal, 2025), cut to the district; culturable command area and potential created are CWC's figures in thousand hectares, mapped areas are computed from the polygons"
+        },
+        {
+          "file": "command_area.zip",
+          "kind": "pullambadi-canal",
+          "count": 1,
+          "provenance": "CWC 'Water Resource Project' command areas (National Water Data Portal, 2025), cut to the district; culturable command area and potential created are CWC's figures in thousand hectares, mapped areas are computed from the polygons"
+        }
+      ],
+      "bytes": 14965,
+      "sliced": false
+    },
+    "gauging-stations": {
+      "featureCount": 2,
+      "sources": [
+        {
+          "file": "nwdp.nwic.gov.in datastore",
+          "kind": null,
+          "count": 2,
+          "provenance": "Central Water Commission gauge, discharge and water quality sites, from the National Water Data Portal (NWIC): positions as printed; flow and water quality series in readings/"
+        }
+      ],
+      "bytes": 1075,
+      "sliced": false
+    }
+  }
+}
