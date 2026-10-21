@@ -30,6 +30,27 @@ test("every registered city is keyed by its own id", () => {
   for (const [i, place] of places.entries()) assert.equal(place.cityId, CITY_IDS[i]);
 });
 
+// Two cities onboarded on parallel branches both pick "the last number + 10" and
+// the next free migration number; each branch passes alone, so the clash shows
+// only when the second rebases onto the first. These fail it there.
+test("no two cities share a listOrder", () => {
+  const seen = new Map<number, string>();
+  for (const p of places) {
+    const other = seen.get(p.listOrder);
+    assert.ok(!other, `${p.cityId} and ${other} both have listOrder ${p.listOrder}`);
+    seen.set(p.listOrder, p.cityId);
+  }
+});
+
+test("no two migrations share a number", () => {
+  const seen = new Map<string, string>();
+  for (const f of readdirSync(join(process.cwd(), "supabase", "migrations")).filter((f) => f.endsWith(".sql"))) {
+    const n = f.split("_")[0];
+    assert.ok(!seen.has(n), `migration ${n} is used twice: ${seen.get(n)} and ${f}`);
+    seen.set(n, f);
+  }
+});
+
 test("every city ships a dashboard and an About page", () => {
   for (const p of places) {
     assert.ok(p.routes.includes(""), `${p.cityId}: routes lacks the dashboard ("")`);

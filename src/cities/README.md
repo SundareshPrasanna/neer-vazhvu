@@ -22,8 +22,9 @@ This page is the reference for what goes in the folder.
 | `commitments.json`, `restoration-projects.json`, `water-bodies-flagship.json`, `allocations.json` | if the matching route is on | Curated research, one file per artifact: `payload` is exactly what the page shows, `build` is how the file is written. Built and checked by `neer-vazhvu-api/scripts/build_curated.py <family> --city <id>`. | `/<city>/commitments`, `/<city>/lake-restoration`, `/<city>/allocations` (through `public/data/<family>-<id>.json`) |
 | `pipeline.json` | if a shared pipeline covers the city | Settings only Python scripts read: the IMD rainfall grid point, the provisional-rainfall point, IN-GRES assessment units, elevation bands, adjudicated cross-city mentions. The app never imports it. | `scripts/city_manifest.py` |
 
-Copy the folder of the most similar city and edit it; that is quicker than
-starting from the table.
+Start from the most similar city's `config.ts`, `about.tsx` and `routes-off.ts`,
+and add each content file when you build its route: a copied content file
+publishes the other city's facts under the new id.
 
 Data files are not here. They are built into `public/data/<city>-*.json` and
 `public/geojson/<city>-*.geojson` and shipped through the data repository (see

@@ -67,20 +67,53 @@ default).
   database, refresh and review steps on your branch before opening it, so that
   nothing found later needs a second PR.
 
+## Research first
+
+Every config decision and every route rests on research, so do it before the
+build and keep it out of the repository (a git-excluded `.onboarding-state/`
+folder in your worktree works). Seven topics cover every route and every
+decision the build asks for:
+
+| Topic | Answers |
+|---|---|
+| Supply and hero | who supplies the city, from which sources, how much (dated); which hero mode is honest (step 2); tankers |
+| Daily feeds | which dam, rainfall, groundwater and river feeds publish daily, their history, format, licence, and whether the host answers from a data centre (step 8) |
+| Groundwater | the assessment units under the city, every edition; levels, quality, regulation |
+| Commitments, facts, Origins | dated government promises with their status; headline facts; the history and its licence-checked images |
+| Wards and routing | the corporation's legal scope and ward count, ward geometry, centre and box, the city's own helplines, citizen-report routing (step 9) |
+| Water bodies and restoration | official inventories, flagship lakes, restoration projects and court orders |
+| Rivers, flood, climate | rivers and drains, their quality stations, flood records, climate plans |
+
+Hold every claim to the same standard: the URL, the access date, a verbatim
+quote, the page, a second reading of any table number from the page image, and
+the source's licence or "no terms stated". News is a lead, never the source.
+[research-brief-template.md](research-brief-template.md) is a brief to hand to
+whoever researches each topic.
+
 ## Step 1: Create the city folder
 
-1. Copy the folder of the most similar city, for example
-   `cp -r src/cities/ahmedabad src/cities/coimbatore`. Ids are lowercase
+1. Create `src/cities/<id>/` with `config.ts`, `about.tsx` and `routes-off.ts`
+   copied from the most similar city, and nothing else yet. Add each content
+   file (`commitments.json`, `rivers.ts`, `story-en.tsx`, `pipeline.json`, ...)
+   when you build its route: a copied content file publishes the other city's
+   facts, and runs its pipeline settings, under the new id. Ids are lowercase
    (`a-z`, `0-9`, `-`) and permanent.
 2. In `config.ts` set `cityId` (the folder name), `listOrder` (its place in
    the city lists: the last city's number + 10, or a number between two
    cities), `displayName`, `stateCode`, `center`, `bbox`, and leave
-   `enabled: false` until step 11.
+   `enabled: false` until step 11. While the city is disabled a value research
+   has not settled yet (a ward count, a provisional centre) can be a
+   placeholder with a `TODO` comment.
 3. Run `npm run cities:gen`. It writes `src/cities/generated/` and adds the
    city's row to `schemas/nvdm/scopes.json`. If the city's state is new, it
-   stops and asks you to add the state's row first (copy an existing state row).
-   Then run `python3 scripts/build_nvdm_reference.py`.
-4. Run `npx tsc --noEmit` and `npm test`. The type checker and the onboarding
+   stops before writing anything and asks you to add the state's row first
+   (copy an existing state row). Then run `python3 scripts/build_nvdm_reference.py`.
+4. Write the seed migration now, `<n>_<id>_seed_disabled.sql` (step 7 has the
+   shape), and do not apply it yet: the onboarding contract needs it. Pick `<n>`
+   and `listOrder` after checking open pull requests (`gh pr list`) for numbers
+   another branch has taken; the contract test fails at rebase if two cities
+   share a `listOrder` or two migrations share a number.
+5. Run `npx tsc --noEmit` and `npm test`. The type checker and the onboarding
    contract (`src/lib/cities/onboarding-contract.test.ts`) list what the city
    is still missing. Work through them.
 
@@ -107,7 +140,7 @@ for how the city gets its water:
 |---|---|---|---|
 | `days-left` | the tracked dams ARE the city's supply | `defaultConsumptionMld`, `defaultDesalinationMld` | Chennai |
 | `allocation` | the dams are upstream irrigation reservoirs and the city has a published drinking-water allocation | `urbanSupply` | Madurai |
-| `cauvery-pumping` | the water is carried from far away and the limit is capacity against design | `hero_copy` in `<id>-supply-overview.json` | Bengaluru, Delhi, Pune, Ahmedabad |
+| `cauvery-pumping` | the water is carried from far away and the limit is capacity against design | `hero_copy` in `<id>-supply-overview.json` | Bengaluru, Delhi, Pune, Ahmedabad, Jaipur |
 | `drainage-capacity` | the city impounds nothing and its emergency is water it cannot get rid of | `drainageCapacity`, `rainfall-intensity-<id>.json` | Kolkata |
 | `flood-headroom` | the publisher gives live readings and the thresholds they are measured against | `floodChain` | Surat |
 
@@ -152,12 +185,19 @@ standard in [schemas/nvdm/](../../schemas/nvdm/README.md). New files must reach
 level L2. In practice:
 
 - **Register every source** in `scripts/source-registry/<id>.json` (copy a
-  recent city's), with each data file it feeds in `dependsOn`. A one-time
-  document is `closed` with an `as_of` date.
+  recent city's), with each data file it feeds in `dependsOn`, before the
+  first run of the script that cites it: writers read the licence from the
+  registry and stop on an unknown id. Notes that need the run's results can say
+  `TODO` until then. A one-time document is `closed` with an `as_of` date.
 - **Write through the writers**, `write_artifact` (`scripts/nvdm_write.py`) or
   `writeArtifact` (`scripts/lib/nvdm-write.ts`), with the envelope in the
   payload on the first write. A bare `json.dump` strips the envelope on the
-  next refresh, and `check-generator-drift.py` fails it.
+  next refresh, and `check-generator-drift.py` fails it. The writers keep the
+  envelope already on disk, so until the city's first data release, delete an
+  artifact and rebuild it after changing its provenance. `fetch-osm-layers.ts`
+  writes no envelope of its own: for a new city, write each layer file once by
+  hand with its envelope and an empty `features` list (copy another city's
+  envelope), then fetch.
 - **Licence wording is a closed list.** Use an id the registry already knows or
   the pattern `"<Publisher> publication, cited with attribution"`. Never put a
   licence string in a script; read it with `registry_license(source_id)`.
@@ -167,8 +207,8 @@ Shared pipelines that only need the city's settings, in
 
 | Section | Script | What it makes |
 |---|---|---|
-| `rainfall.imdGrid` | `neer-vazhvu-api/scripts/generate_imd_rainfall.py --city <id>` | `imd-rainfall-monthly-<id>.json`, the long-term series. Validate the grid cell against the nearest IMD observatory normal and say so in `note`. Run it on a machine IMD answers, and check the output is not all zeros. |
-| `rainfall.recent` | `neer-vazhvu-api/scripts/fetch_recent_rainfall.py --city <id>` | `rainfall-recent-<id>.json`, the provisional months. Use the same point as `imdGrid`. Every city must have this file. |
+| `rainfall.imdGrid` | `neer-vazhvu-api/scripts/generate_imd_rainfall.py --city <id>` | `imd-rainfall-monthly-<id>.json`, the long-term series. Validate the grid cell against the nearest IMD observatory's 1991-2020 normal, and each year against an independent gauge (a state's manual daily rainfall on NWDP, one value per day: some series repeat a day at two times); say so in `note`. A zero check is not enough: IMD's grid reads twice the gauges over interior Tamil Nadu in 2011 and 2012. Run it on a machine IMD answers. |
+| `rainfall.recent` | `neer-vazhvu-api/scripts/fetch_recent_rainfall.py --city <id>` | `rainfall-recent-<id>.json`, the provisional months, continuing the series above, so run `imdGrid` first. Use the same point as `imdGrid`. Every city must have this file. |
 | `ingres` | `neer-vazhvu-api/scripts/build_ingres_gwr.py --city <id>` | `gwr-blocks-<id>.json`, the IN-GRES groundwater assessment. Drill below the district when the district figure hides the city's unit. |
 | `elevationBands` | `neer-vazhvu-api/scripts/build_elevation_bands.py --city <id>` | `elevation-bands-<id>.geojson` (view only, never downloadable). |
 
@@ -203,6 +243,10 @@ separated data structures rather than mixed into logic.
 Facts and commitments carry statuses and dates that readers quote. Every
 status rests on a dated citation; a promise with no progress figure is
 `unverified`, and a passed date with no completion record is `overdue`.
+
+`npm run data:check` stays red while you build: every route not yet in
+`routes` needs a reason in `routes-off.ts`. Build the route or write its real
+reason; never "not built yet" to turn it green.
 
 When the data is built, regenerate the docs that describe it, from a clean
 checkout rebased on the latest `main` (scheduled refreshes land on `main`
@@ -253,7 +297,8 @@ three (Visakhapatnam's 057 to 059 are the worked example):
    `enabled: true` in the config.
 
 Apply the first two before opening the PR (a disabled city is harmless), then
-run any history backfill. Backfills fetch years of daily reports; run them in
+run any history backfill. Both write to the shared production database, so a
+maintainer applies them or gives the go-ahead for that city first. Backfills fetch years of daily reports; run them in
 small date chunks so one failed fetch does not lose a year, and keep the
 machine awake.
 
@@ -273,7 +318,10 @@ Where it runs depends on whether the publisher answers GitHub's servers:
 Prove the first scheduled run from where it will really run, before opening
 the PR: a workflow run on your branch, or a run of the local job. Then add the
 feed to the freshness check (`EXTRA_FEEDS` in `scripts/check-data-freshness.ts`
-for file feeds) so a stale feed raises an alert.
+for file feeds) so a stale feed raises an alert. A reservoir feed is checked
+automatically against a 4-day tolerance; a publisher with a seasonal cadence
+gets an entry in `RESERVOIR_SEASONAL_MAX_AGE`, calibrated from its real posting
+dates (Jaipur's is the worked example).
 
 ## Step 9: Citizen reports
 
@@ -283,7 +331,7 @@ the seven report roles, name the public body that handles it and the channels
 it officially publishes, each with the official page that says so. A body the
 whole state shares goes once in the state's `roles`. Never invent a channel: a
 body with none gets `channels: []`. The onboarding contract fails until every
-role resolves.
+role resolves; it checks enabled cities, so it bites at switch-on.
 
 ## Step 10: Check everything
 
@@ -309,13 +357,19 @@ catch their own errors and still render a shell. Drive every route against a
 control city and read what the script reports:
 
 ```bash
-npm run dev   # or a production build: npm run build && npm start
+NEXT_PUBLIC_PREVIEW_CITIES=<id> npm run dev   # a disabled city 404s without it
+# or a production build: NEXT_PUBLIC_PREVIEW_CITIES=<id> npm run build && npm start
 uvx --with playwright python scripts/check-city-surfaces.py --city <id> --control bangalore
 ```
 
 It flags blank values, `undefined`, and other cities' names on the page. An
 other-city mention that is true and needed (a river that flows into Delhi)
-goes in `surfaceAudit.adjudicated` in `pipeline.json` with the reason.
+goes in `surfaceAudit.adjudicated` in `pipeline.json` with the reason. My Ward
+reads nearly empty until a ward is picked; open it with `?ward=<n>` as well.
+
+A test you add that reads a city's file under `public/` must also accept the
+file when it is only tracked in git: the sample-corpus CI job prunes
+`public/data` to a few reference files.
 
 Last, review every claim a reader could quote: each number against its source,
 each status against its dated citation. Anything that cannot be verified ships
