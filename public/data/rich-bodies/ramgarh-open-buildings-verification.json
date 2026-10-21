@@ -1,0 +1,69 @@
+{
+  "nvdm": "1.0",
+  "dataset": "rich-bodies/open-buildings-verification",
+  "scope": {
+    "kind": "city",
+    "id": "jaipur"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "google-open-buildings",
+        "title": "Google Open Buildings v3 polygons",
+        "publisher": "Google Research",
+        "license": "CC BY 4.0 / ODbL",
+        "role": "input",
+        "as_of": "2023"
+      }
+    ],
+    "method": "gee",
+    "produced_at": "2026-10-21",
+    "produced_by": "scripts/verify_rich_body_open_buildings.py",
+    "note": "Building-count verification per zone; v3 reflects state around 2023."
+  },
+  "body_id": "ramgarh",
+  "computed_at": "2026-10-21T13:50:39.119361+00:00",
+  "data_source": {
+    "dataset": "GOOGLE/Research/open-buildings/v3/polygons",
+    "license": "CC BY 4.0 / ODbL",
+    "version": "v3 (released June 2023)",
+    "method": "Google's tree-based segmentation of high-res satellite imagery",
+    "known_limitations": [
+      "May under-detect low-rise informal structures in dense slum geometry",
+      "Confidence < 0.5 buildings excluded by default",
+      "Footprint dates are approximate; v3 reflects state around 2023"
+    ]
+  },
+  "regions": [
+    {
+      "region": "Body (primary)",
+      "building_count": 13,
+      "building_area_m2_sum": 377.3686990737915,
+      "building_area_ha": 0.04,
+      "by_confidence": {
+        "high": 7,
+        "medium": 6,
+        "low": 0
+      },
+      "region_area_ha": 328.06,
+      "built_up_fraction_pct": 0.01
+    },
+    {
+      "region": "Halo: 1km buffer - body",
+      "building_count": 1849,
+      "building_area_m2_sum": 91328.8310251236,
+      "building_area_ha": 9.13,
+      "by_confidence": {
+        "high": 1080,
+        "medium": 769,
+        "low": 0
+      },
+      "region_area_ha": 1708.0,
+      "built_up_fraction_pct": 0.53
+    }
+  ],
+  "headline_for_v0": [
+    "Inside primary boundary: 13 buildings covering 0 ha (0.0% of 328 ha).",
+    "Inside 1 km halo: 1,849 buildings covering 9 ha (0.5% of 1708 ha)."
+  ]
+}
