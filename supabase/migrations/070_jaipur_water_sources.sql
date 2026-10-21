@@ -1,5 +1,5 @@
 -- =============================================================
--- 066_jaipur_water_sources.sql
+-- 070_jaipur_water_sources.sql
 -- Jaipur's two tracked dams. reservoir_daily_v2 has a foreign key on
 -- (city_id, source_code): apply before the first scrape_rajasthan_wrd_dams.py
 -- --supabase. source_code = waterSources[].sourceCode = DB_SOURCES in the scraper.
@@ -8,12 +8,12 @@
 --   ramgarh  - Banganga (NRLD-2019 RA11MH0016, 1901). Former city source
 --              (SC 9 Nov 2017); 0.000 Mcum on every WRD date read 2023-2026.
 -- is_primary TRUE for Bisalpur only; the hero is the supply overview with
--- default_consumption_mld NULL (065), so no runway from a shared dam.
+-- default_consumption_mld NULL (069), so no runway from a shared dam.
 -- full_capacity_mcft is DESIGNED GROSS, not live: the WRD report prints gross
 -- storage and % of designed gross only, and the scraper writes that basis.
 -- Bisalpur 1,095.840 Mcum (= NRLD gross); Ramgarh 75.040 Mcum (2026; 75.022
 -- in 2025). FRL: Bisalpur 315.50 m; Ramgarh NULL (19.82 m is a gauge
--- reading). Coordinates: NRLD-2019, text and page image. Apply after 065.
+-- reading). Coordinates: NRLD-2019, text and page image. Apply after 069.
 -- =============================================================
 INSERT INTO water_sources (
   city_id, source_code, display_name, source_type,

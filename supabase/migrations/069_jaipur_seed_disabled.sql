@@ -1,5 +1,5 @@
 -- =============================================================
--- 065_jaipur_seed_disabled.sql
+-- 069_jaipur_seed_disabled.sql
 -- Seeds Jaipur as a registered but disabled standalone CITY.
 --
 -- Purpose: lets reservoir ingest write rows against city_id='jaipur'
@@ -7,8 +7,9 @@
 -- src/cities/jaipur/config.ts; a later enable migration keeps this
 -- column honest with it.
 --
--- Numbering: 064 is citizen_reports_updates (PR #471, applied to
--- production on 20 Oct 2026 ahead of its merge), so Jaipur takes 065.
+-- Numbering: 064 and 065 are citizen reports (PR #471; 064 applied ahead
+-- of its merge), 066-067 were Coimbatore's draft numbers (paused) and 068 is
+-- place-search requests, so Jaipur takes 069-071.
 --
 -- ward_count 150: LSG notification DLB/25/19631, 16 Sep 2025.
 -- Centre and box are provisional (OSM 2020 outline; no official 2025

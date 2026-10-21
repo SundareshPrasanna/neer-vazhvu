@@ -260,7 +260,7 @@ DAMS = {
     },
 }
 
-# Codes with a water_sources row (supabase/migrations/066_jaipur_water_sources.sql):
+# Codes with a water_sources row (supabase/migrations/070_jaipur_water_sources.sql):
 # reservoir_daily_v2 has a foreign key on it, so the two lists must match. The
 # other dams are kept in the artifact for the water-bodies pages.
 DB_SOURCES = ("bisalpur", "ramgarh")
