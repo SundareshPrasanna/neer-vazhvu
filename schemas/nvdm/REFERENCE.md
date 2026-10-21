@@ -119,7 +119,7 @@ An audited, artifact-level judgement that a NAMED restricted input does not encu
 | `method` | no | one of `geometry`, `published`, `crosswalk`, `manual` | How the relation was established (spec 4.5). Required, with evidence, on every intersects (enforced by scripts/validate_nvdm.py). geometry: the system's geometry in the repo was tested against the place's polygon. published: the source's publisher states it. crosswalk: joined through an identifier. manual: a reviewed mapping. |
 | `evidence` | no | string, min length 1 | A repo path or URL that lets the relation be re-checked: for geometry, the boundary or centerline that was tested. |
 
-## Registered scopes (60)
+## Registered scopes (62)
 
 Country is derived from the relations, never stored.
 
@@ -145,6 +145,7 @@ Country is derived from the relations, never stored.
 | `delhi` | city | Delhi | `india` | `india` | iso3166-2 union-territory `IN-DL` | - |
 | `gurugram` | city | Gurugram | `haryana` | `india` | - | - |
 | `hyderabad` | city | Hyderabad | `telangana` | `india` | - | - |
+| `jaipur` | city | Jaipur | `rajasthan` | `india` | - | - |
 | `madurai` | city | Madurai | `tamil-nadu` | `india` | - | - |
 | `nagpur` | city | Nagpur | `maharashtra` | `india` | - | - |
 | `pune` | city | Pune | `maharashtra` | `india` | - | - |
@@ -180,6 +181,7 @@ Country is derived from the relations, never stored.
 | `kerala` | state | Kerala | `india` | `india` | iso3166-2 state `IN-KL` | - |
 | `maharashtra` | state | Maharashtra | `india` | `india` | iso3166-2 state `IN-MH`, lgd state `27`, census-2011 state `27` | - |
 | `puducherry` | state | Puducherry | `india` | `india` | iso3166-2 union-territory `IN-PY` | - |
+| `rajasthan` | state | Rajasthan | `india` | `india` | iso3166-2 state `IN-RJ` | - |
 | `tamil-nadu` | state | Tamil Nadu | `india` | `india` | iso3166-2 state `IN-TN` | - |
 | `telangana` | state | Telangana | `india` | `india` | iso3166-2 state `IN-TS` | - |
 | `west-bengal` | state | West Bengal | `india` | `india` | iso3166-2 state `IN-WB` | - |

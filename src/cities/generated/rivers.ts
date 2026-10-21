@@ -15,6 +15,7 @@ import { RIVERS as nagpur } from "../nagpur/rivers";
 import { RIVERS as surat } from "../surat/rivers";
 import { RIVERS as ahmedabad } from "../ahmedabad/rivers";
 import { RIVERS as visakhapatnam } from "../visakhapatnam/rivers";
+import { RIVERS as jaipur } from "../jaipur/rivers";
 
 /** /[cityId]/rivers content (rivers.ts). */
 export const RIVERS_CONTENT: Partial<Record<CityId, CityRiversContent>> = {
@@ -30,4 +31,5 @@ export const RIVERS_CONTENT: Partial<Record<CityId, CityRiversContent>> = {
   surat: surat,
   ahmedabad: ahmedabad,
   visakhapatnam: visakhapatnam,
+  jaipur: jaipur,
 };

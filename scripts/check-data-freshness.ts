@@ -72,6 +72,35 @@ const RESERVOIR_MAX_AGE_OVERRIDES: Record<string, number> = {
   chennai: 7,
 };
 
+/**
+ * Publishers whose cadence is seasonal: daily through the monsoon, otherwise
+ * twice a month and posted late. One number cannot fit both - any tolerance
+ * wide enough for the dry months hides a monsoon outage for weeks.
+ *
+ * jaipur (Rajasthan WRD "Water Storage Data", local job): calibrated
+ * 2026-10-21 from the posted date of all 242 storage files, Jun 2025 - Oct
+ * 2026. The newest data date was at most 3 days old between 20 Jun and 10 Oct,
+ * and up to 84 days old otherwise (files for the 1st and 16th are uploaded in
+ * batches up to about 70 days late); 0 of 507 days exceeded 90.
+ */
+const RESERVOIR_SEASONAL_MAX_AGE: Record<
+  string,
+  { from: [number, number]; to: [number, number]; inSeason: number; offSeason: number }
+> = {
+  jaipur: { from: [6, 20], to: [10, 10], inSeason: 4, offSeason: 90 },
+};
+
+function reservoirMaxAgeDays(cityId: string, today = new Date()): number {
+  const seasonal = RESERVOIR_SEASONAL_MAX_AGE[cityId];
+  if (seasonal) {
+    const md = (today.getUTCMonth() + 1) * 100 + today.getUTCDate();
+    const from = seasonal.from[0] * 100 + seasonal.from[1];
+    const to = seasonal.to[0] * 100 + seasonal.to[1];
+    return md >= from && md <= to ? seasonal.inSeason : seasonal.offSeason;
+  }
+  return RESERVOIR_MAX_AGE_OVERRIDES[cityId] ?? RESERVOIR_MAX_AGE_DAYS;
+}
+
 /* ── Extra file feeds (weekly / city-specific artifacts) ───────────────── */
 // Register non-uniform feeds here. `dateFrom` supports a JSON field path
 // ("json:generated_at") or a regex over the raw file ("regex:<pattern>",
@@ -293,7 +322,7 @@ function deriveChecks(places: PlaceConfig[]): { checks: Check[]; problems: strin
           cityId,
           kind: "supabase-reservoir",
           table,
-          maxAgeDays: RESERVOIR_MAX_AGE_OVERRIDES[cityId] ?? RESERVOIR_MAX_AGE_DAYS,
+          maxAgeDays: reservoirMaxAgeDays(cityId),
           note: `${feedSources.length} reservoirs, legacy table`,
         });
       } else {
@@ -306,7 +335,7 @@ function deriveChecks(places: PlaceConfig[]): { checks: Check[]; problems: strin
             kind: "supabase-reservoir",
             table,
             sourceCode: s.sourceCode,
-            maxAgeDays: RESERVOIR_MAX_AGE_OVERRIDES[cityId] ?? RESERVOIR_MAX_AGE_DAYS,
+            maxAgeDays: reservoirMaxAgeDays(cityId),
             note: s.displayName,
           });
         }

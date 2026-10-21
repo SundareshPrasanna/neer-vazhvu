@@ -145,6 +145,12 @@ export interface WardProfile {
   industrial: WardIndustrialSection;
 
   groundwater_assessment?: WardGroundwaterAssessment;
+
+  /** Ward-table fields: a city without ward geometry (Jaipur) ships these and
+   *  none of the joined sections above. */
+  assembly_constituency?: string;
+  population?: number;
+  zone_office?: { phones?: string[]; email?: string };
 }
 
 interface RiverQuality {

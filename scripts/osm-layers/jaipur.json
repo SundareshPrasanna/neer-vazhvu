@@ -1,0 +1,81 @@
+{
+  "_doc": "Jaipur OSM layers for scripts/fetch-osm-layers.ts. Water bodies use a box much wider than the corporation (OSM's 2020 outline spans 26.77-27.02 N, 75.69-75.91 E): the city's flagship water bodies are WRD dams outside it - Ramgarh (27.05 N, 76.05 E), Kanota, Nevta and Chandlai - and only Mansagar, Talkatora, Maota and Sagar lie inside.",
+  "lang": "hi",
+  "layers": {
+    "water-bodies": {
+      "method": "assembled",
+      "_note": "Rivers are left out: 23 of the 71 water polygons in the city box are Dravyavati channel segments (water=river), which belong to the rivers page. OSM maps Ramgarh at about 112 ha against the 1,035 ha reservoir area in CWC's register, so the polygon shows where the dam is, not its full-supply extent.",
+      "bbox": "26.65,75.60,27.10,76.10",
+      "refLat": 26.9,
+      "exclude": [
+        "river",
+        "drain",
+        "wastewater"
+      ]
+    },
+    "rivers": {
+      "method": "walk",
+      "_note": "OSM maps the Dravyavati as water outlines (natural=water, water=river, 'Dravyavati River'; plus 'Amanishah Nala'), not a centre line: it draws as the channel's outline and its length_km is a perimeter (the river-quality builder uses JDA's 47.50 km). Banas clipped to the Bisalpur reach, Banganga to Ramgarh; the Dhund runs from Kanota dam past the Dravyavati confluence near 26.75 N.",
+      "bbox": "25.80,75.30,27.20,76.30",
+      "timeout": 150,
+      "select": [
+        "way[\"waterway\"=\"river\"][\"name\"~\"Dhund|Banas|Banganga|Amanisha\",i]",
+        "way[\"natural\"=\"water\"][\"name\"~\"Dravyavati|Amanishah\",i]"
+      ],
+      "rivers": [
+        {
+          "id": "dravyavati",
+          "match": [
+            "dravyavati",
+            "amanisha"
+          ],
+          "local": "द्रव्यवती नदी",
+          "waterway": "river",
+          "label": "Dravyavati"
+        },
+        {
+          "id": "dhund",
+          "match": [
+            "dhund"
+          ],
+          "local": "ढूंढ नदी",
+          "waterway": "river",
+          "label": "Dhund",
+          "clip": {
+            "south": 26.7
+          }
+        },
+        {
+          "id": "banas",
+          "match": [
+            "banas"
+          ],
+          "local": "बनास नदी",
+          "waterway": "river",
+          "label": "Banas",
+          "clip": {
+            "south": 25.8,
+            "north": 26.05,
+            "west": 75.3,
+            "east": 75.65
+          }
+        },
+        {
+          "id": "banganga",
+          "match": [
+            "banganga"
+          ],
+          "local": "बाणगंगा नदी",
+          "waterway": "river",
+          "label": "Banganga",
+          "clip": {
+            "south": 26.95,
+            "north": 27.2,
+            "west": 75.9,
+            "east": 76.2
+          }
+        }
+      ]
+    }
+  }
+}

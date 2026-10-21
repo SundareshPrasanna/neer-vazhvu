@@ -6,12 +6,13 @@
  * A failure names the city and what it is missing.
  */
 import { strict as assert } from "node:assert";
+import { execFileSync } from "node:child_process";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { test } from "node:test";
 import { scopeCountry, scopeIds, scopeKind } from "../scopes";
 import { CITY_IDS, tryGetPlaceConfig, type PlaceConfig } from "./index";
-import { riversVariant } from "./data-paths";
+import { riversVariant, wardProfilesFile } from "./data-paths";
 import { RIVERS_CONTENT } from "../../cities/generated/rivers";
 import { FLOOD_CONTENT } from "../../cities/generated/flood";
 import { listPublishedAtlasDistricts } from "../atlas/registry";
@@ -63,9 +64,23 @@ test("a flood-risk route has a renderer: the interactive variant, a flood map or
   }
 });
 
-test("a my-ward route has ward geometry", () => {
+// Without geometry (Jaipur: the 2025 ward map is a raster) the page is a ward table from the profiles file.
+// On disk or tracked in git: the sample-corpus job swaps public/data for a small sample set.
+const tracked = (path: string) => {
+  try {
+    execFileSync("git", ["ls-files", "--error-unmatch", path], { stdio: "ignore" });
+    return true;
+  } catch {
+    return false;
+  }
+};
+test("a my-ward route has ward geometry or a ward table", () => {
   for (const p of places.filter((p) => p.routes.includes("my-ward"))) {
-    assert.ok(p.wardsVintage, `${p.cityId}: "my-ward" is in routes but wardsVintage is null`);
+    const table = join("public", "data", wardProfilesFile(p.cityId));
+    assert.ok(
+      p.wardsVintage || existsSync(join(process.cwd(), table)) || tracked(table),
+      `${p.cityId}: "my-ward" is in routes but it has neither ward geometry (wardsVintage) nor a ward-profiles file`,
+    );
   }
 });
 

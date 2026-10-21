@@ -1,0 +1,545 @@
+{
+  "nvdm": "1.0",
+  "dataset": "data-root/river-quality",
+  "scope": {
+    "kind": "city",
+    "id": "jaipur"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "cpcb-nwmp-annual",
+        "title": "CPCB NWMP annual river water quality tables, 2018-2024, and the NWMP station list (October 2020)",
+        "publisher": "Central Pollution Control Board",
+        "license": "restrictive, permission required: the CPCB website policy permits material to be 'downloaded to file or printer without requiring specific prior permission', and 'Any other proposed use of the material is subject to the approval of competent authority of CPCB' - no redistribution without approval",
+        "role": "input"
+      },
+      {
+        "id": "cpcb-prs-report",
+        "title": "CPCB Polluted River Stretches: 2018 (as listed in CPCB's 2025 report and RSPCB's 2018 action plan), November 2022 (Lok Sabha USQ 1734, 05.12.2024) and 2025 (copy hosted by the Puducherry Pollution Control Committee) editions",
+        "publisher": "Central Pollution Control Board",
+        "license": "restrictive, permission required: the CPCB website policy permits material to be 'downloaded to file or printer without requiring specific prior permission', and 'Any other proposed use of the material is subject to the approval of competent authority of CPCB' - no redistribution without approval"
+      }
+    ],
+    "method": "pdf-extract",
+    "produced_at": "2026-10-21",
+    "produced_by": "neer-vazhvu-api/scripts/build_jaipur_river_quality.py",
+    "note": "Per-station yearly min and max as CPCB prints them; nothing averaged or interpolated. Read from the reviewed transcription in pipeline-inputs/jaipur/."
+  },
+  "place_id": "jaipur",
+  "last_updated": "2024",
+  "data_year_range": [
+    2018,
+    2024
+  ],
+  "source": "CPCB NWMP",
+  "source_label": "CPCB NWMP annual river data, 2018-2024",
+  "source_url": "https://cpcb.gov.in/nwmp-data/",
+  "_headline": "Highest BOD at Bisalpur dam, where Jaipur's water comes from: 1.6 mg/L in 2024. At Newta dam, fed from the city's Dravyavati: 36.5 mg/L. No agency publishes readings on the Dravyavati channel itself.",
+  "rivers": [
+    {
+      "id": "dravyavati",
+      "name": "Dravyavati",
+      "name_ta": "",
+      "length_km": 47.5,
+      "cpcb_class": "Not listed by name; the Newta dam stretch was Priority III (2018), I (2022) and II (2025)",
+      "description": "Jaipur's own river. JDA's 2017 environmental report calls it 'the active river of Jaipur which, over the time turned into a Nallah (Amanisha Nallah)'. It rises in the Nahargarh hills, takes the storm and waste water of the walled city and Sanganer, and 'ultimately discharges into Dhund River'. JDA signed the rejuvenation contract on 18.03.2016: Rs 1,470.85 crore to design and build a 47.50 km corridor and Rs 206.08 crore for ten years of operation and maintenance (Rajasthan High Court, order of 19.12.2024 in S.B. Civil Writ Petition 14997/2024).",
+      "notes": "No agency publishes water-quality readings on the Dravyavati channel. The readings here are CPCB's station 2952, 'River near Newta dam'. RSPCB's December 2018 action plan says Nevta dam 'is fed from Dravyavati River through a diversion channel' from Gular dam, so the readings show the water the river sends there, not the channel. CPCB has listed the stretch in each of its three polluted-stretch editions under other names: 'Banas, along Bisalpur Dam, Swaroopganj, Newta Dam', Priority III, BOD 13.2 mg/L (2018); 'Banas, Bassi to Bisalpur', Priority I, 35.7 mg/L, the same figure as Newta dam's 2019 maximum (November 2022); and 'Vishwamitri near Newta Dam, Jaipur to D/S Khalipur village', Priority II (2025). The 2025 report pairs Newta dam's 16 mg/L with 30 mg/L at Khalipur village, 'before meeting Jambuva river', a station the same report lists under Gujarat; Newta dam's own figure falls in CPCB's Priority III band (10.1 to 20 mg/L).",
+      "stations": [
+        {
+          "id": "nwmp-2952",
+          "nwmp_code": "2952",
+          "name": "River near Newta dam (CPCB 2952): a dam fed by a diversion from the Dravyavati, not the channel itself",
+          "name_ta": "",
+          "lat": null,
+          "lng": null,
+          "stretch": "Newta dam (indirect)",
+          "readings": [
+            {
+              "year": 2018,
+              "do_mgl": {
+                "min": 1.5,
+                "max": 3.1
+              },
+              "bod_mgl": {
+                "min": 3.9,
+                "max": 12.0
+              },
+              "ph": {
+                "min": 7.6,
+                "max": 8.5
+              },
+              "conductivity_us": {
+                "min": 1100.0,
+                "max": 3900.0
+              },
+              "nitrate_mgl": {
+                "min": 2.62,
+                "max": 3.16
+              },
+              "fecal_coliform_mpn": {
+                "min": 23.0,
+                "max": 75.0
+              }
+            },
+            {
+              "year": 2019,
+              "do_mgl": {
+                "min": null,
+                "max": 4.0
+              },
+              "bod_mgl": {
+                "min": 3.9,
+                "max": 35.7
+              },
+              "ph": {
+                "min": 8.3,
+                "max": 8.8
+              },
+              "conductivity_us": {
+                "min": 1130.0,
+                "max": 3500.0
+              },
+              "nitrate_mgl": {
+                "min": 1.8,
+                "max": 3.2
+              },
+              "fecal_coliform_mpn": {
+                "min": 64.0,
+                "max": 150.0
+              },
+              "below_detection": [
+                "do_min_mgl"
+              ]
+            },
+            {
+              "year": 2020,
+              "do_mgl": {
+                "min": 0.3,
+                "max": 7.3
+              },
+              "bod_mgl": {
+                "min": 2.8,
+                "max": 13.5
+              },
+              "ph": {
+                "min": 8.6,
+                "max": 9.3
+              },
+              "conductivity_us": {
+                "min": 950.0,
+                "max": 1710.0
+              },
+              "nitrate_mgl": {
+                "min": 1.71,
+                "max": 3.69
+              },
+              "fecal_coliform_mpn": {
+                "min": 93.0,
+                "max": 240.0
+              }
+            },
+            {
+              "year": 2021,
+              "do_mgl": {
+                "min": 0.4,
+                "max": 2.8
+              },
+              "bod_mgl": {
+                "min": 3.7,
+                "max": 9.1
+              },
+              "ph": {
+                "min": 8.0,
+                "max": 9.1
+              },
+              "conductivity_us": {
+                "min": 1150.0,
+                "max": 2230.0
+              },
+              "nitrate_mgl": {
+                "min": 0.3,
+                "max": 11.53
+              },
+              "fecal_coliform_mpn": {
+                "min": 64.0,
+                "max": 240.0
+              }
+            },
+            {
+              "year": 2022,
+              "do_mgl": {
+                "min": 1.6,
+                "max": 2.9
+              },
+              "bod_mgl": {
+                "min": 3.3,
+                "max": 5.4
+              },
+              "ph": {
+                "min": 7.97,
+                "max": 8.82
+              },
+              "conductivity_us": {
+                "min": 1918.0,
+                "max": 3040.0
+              },
+              "nitrate_mgl": {
+                "min": 2.58,
+                "max": 6.56
+              },
+              "fecal_coliform_mpn": {
+                "min": 130.0,
+                "max": 240.0
+              }
+            },
+            {
+              "year": 2023,
+              "do_mgl": {
+                "min": 0.6,
+                "max": 5.2
+              },
+              "bod_mgl": {
+                "min": 3.6,
+                "max": 16.0
+              },
+              "ph": {
+                "min": 7.8,
+                "max": 9.4
+              },
+              "conductivity_us": {
+                "min": 1434.0,
+                "max": 2440.0
+              },
+              "nitrate_mgl": {
+                "min": 1.12,
+                "max": 5.13
+              },
+              "fecal_coliform_mpn": {
+                "min": 70.0,
+                "max": 350.0
+              }
+            },
+            {
+              "year": 2024,
+              "do_mgl": {
+                "min": 1.0,
+                "max": 4.3
+              },
+              "bod_mgl": {
+                "min": 9.0,
+                "max": 36.5
+              },
+              "ph": {
+                "min": 8.3,
+                "max": 9.7
+              },
+              "conductivity_us": {
+                "min": 538.0,
+                "max": 3580.0
+              },
+              "nitrate_mgl": {
+                "min": 1.43,
+                "max": 5.0
+              },
+              "fecal_coliform_mpn": {
+                "min": 46.0,
+                "max": 430.0
+              }
+            }
+          ],
+          "pdf_pages": [
+            "2018 p.32",
+            "2019 p.21",
+            "2020 p.21",
+            "2021 p.34",
+            "2022 p.36",
+            "2023 p.35",
+            "2024 p.30"
+          ],
+          "coordinate_status": "unresolved",
+          "coordinate_note": "Not on the map. CPCB's station list (October 2020, PDF p.103) places it at 26.919491 N, 75.930328 E, which is Kanota dam on the Dhund, 0.37 km from station 4781. RSPCB's 2018 action plan (PDF p.19, Fig. 2.10) maps Nevta dam south-west of the city. Where the station is sampled is unresolved."
+        }
+      ]
+    },
+    {
+      "id": "dhund",
+      "name": "Dhund",
+      "name_ta": "",
+      "length_km": 29.4,
+      "cpcb_class": "'Kanota, along Sumel': Priority IV (November 2022); not listed in 2018 or 2025",
+      "description": "A seasonal river east and south of the city, into which the Dravyavati flows. Kanota dam, completed in 2001, stands on it (CWC National Register of Large Dams 2019, which spells it 'dhoond'); on 8 October 2026 the state's daily dam report showed Kanota full, at 14.13 million cubic metres.",
+      "notes": "CPCB has published one year of readings at Kanota dam, in its 2021 river tables; station 4781 is not in the 2018-2020 or 2022-2024 tables. CPCB's November 2022 polluted-stretch list gives 'Kanota, along Sumel' a maximum BOD of 9.5 mg/L, Priority IV; the 2018 and 2025 lists do not include it.",
+      "stations": [
+        {
+          "id": "nwmp-4781",
+          "nwmp_code": "4781",
+          "name": "Kanota dam, village Sumel, tehsil Bassi (CPCB 4781)",
+          "name_ta": "",
+          "lat": 26.918953,
+          "lng": 75.934049,
+          "stretch": "Kanota dam",
+          "readings": [
+            {
+              "year": 2021,
+              "do_mgl": {
+                "min": 1.1,
+                "max": 4.2
+              },
+              "bod_mgl": {
+                "min": 2.0,
+                "max": 5.2
+              },
+              "ph": {
+                "min": 7.7,
+                "max": 8.9
+              },
+              "conductivity_us": {
+                "min": 1180.0,
+                "max": 1990.0
+              },
+              "nitrate_mgl": {
+                "min": 0.3,
+                "max": 12.42
+              },
+              "fecal_coliform_mpn": {
+                "min": 75.0,
+                "max": 150.0
+              }
+            }
+          ],
+          "pdf_pages": [
+            "2021 p.56"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "banas",
+      "name": "Banas",
+      "name_ta": "",
+      "length_km": 54.1,
+      "cpcb_class": "Listed with Newta dam in 2018 (III) and 2022 (I); not listed at Bisalpur in 2025",
+      "description": "The river that carries most of Jaipur's water. Bisalpur dam on the Banas, completed in 1999 (CWC National Register of Large Dams 2019), is about 120 km from the city (CGWB, 2023); PHED's annual report gives the city 766.73 MLD on 31 December 2025, 590 MLD of it from Bisalpur.",
+      "notes": "At Bisalpur, CPCB's highest BOD reading was 1.6 to 3.5 mg/L a year from 2018 to 2024, within the 3 mg/L bathing limit in five of the seven years. CPCB's 2018 and 2022 Banas stretches ('along Bisalpur Dam, Swaroopganj, Newta Dam', III; 'Bassi to Bisalpur', I) take in Newta dam: the 2022 class rests on 35.7 mg/L, the same figure as Newta dam's highest in 2019, when Bisalpur's highest was 1.7. The 2025 edition lists the Banas only at Dhanari dam near Swaroopganj, Sirohi (Priority V), which RSPCB's 2018 plan places on the West Banas, the stretch that flows towards Gujarat.",
+      "stations": [
+        {
+          "id": "nwmp-2951",
+          "nwmp_code": "2951",
+          "name": "Bisalpur dam, Tonk district (CPCB 2951)",
+          "name_ta": "",
+          "lat": 25.905847,
+          "lng": 75.463861,
+          "stretch": "Bisalpur dam",
+          "readings": [
+            {
+              "year": 2018,
+              "do_mgl": {
+                "min": 4.2,
+                "max": 8.8
+              },
+              "bod_mgl": {
+                "min": 1.1,
+                "max": 3.2
+              },
+              "ph": {
+                "min": 7.3,
+                "max": 8.2
+              },
+              "conductivity_us": {
+                "min": 400.0,
+                "max": 900.0
+              },
+              "nitrate_mgl": {
+                "min": 2.1,
+                "max": 3.04
+              },
+              "fecal_coliform_mpn": {
+                "min": 7.0,
+                "max": 11.0
+              }
+            },
+            {
+              "year": 2019,
+              "do_mgl": {
+                "min": 4.1,
+                "max": 7.0
+              },
+              "bod_mgl": {
+                "min": 0.4,
+                "max": 1.7
+              },
+              "ph": {
+                "min": 7.6,
+                "max": 8.5
+              },
+              "conductivity_us": {
+                "min": 270.0,
+                "max": 590.0
+              },
+              "nitrate_mgl": {
+                "min": 1.6,
+                "max": 2.1
+              },
+              "fecal_coliform_mpn": {
+                "min": 7.0,
+                "max": 39.0
+              }
+            },
+            {
+              "year": 2020,
+              "do_mgl": {
+                "min": 4.5,
+                "max": 6.2
+              },
+              "bod_mgl": {
+                "min": null,
+                "max": 2.6
+              },
+              "ph": {
+                "min": 7.8,
+                "max": 8.4
+              },
+              "conductivity_us": {
+                "min": 280.0,
+                "max": 410.0
+              },
+              "nitrate_mgl": {
+                "min": 1.04,
+                "max": 1.82
+              },
+              "fecal_coliform_mpn": {
+                "min": 20.0,
+                "max": 39.0
+              },
+              "below_detection": [
+                "bod_min_mgl"
+              ]
+            },
+            {
+              "year": 2021,
+              "do_mgl": {
+                "min": 4.9,
+                "max": 7.8
+              },
+              "bod_mgl": {
+                "min": 1.0,
+                "max": 3.5
+              },
+              "ph": {
+                "min": 7.2,
+                "max": 8.3
+              },
+              "conductivity_us": {
+                "min": 310.0,
+                "max": 574.0
+              },
+              "nitrate_mgl": {
+                "min": 0.32,
+                "max": 3.25
+              },
+              "fecal_coliform_mpn": {
+                "min": 20.0,
+                "max": 64.0
+              }
+            },
+            {
+              "year": 2022,
+              "do_mgl": {
+                "min": 3.7,
+                "max": 6.2
+              },
+              "bod_mgl": {
+                "min": 1.1,
+                "max": 2.1
+              },
+              "ph": {
+                "min": 8.1,
+                "max": 8.55
+              },
+              "conductivity_us": {
+                "min": 525.0,
+                "max": 819.0
+              },
+              "nitrate_mgl": {
+                "min": 0.84,
+                "max": 3.43
+              },
+              "fecal_coliform_mpn": {
+                "min": 49.0,
+                "max": 110.0
+              }
+            },
+            {
+              "year": 2023,
+              "do_mgl": {
+                "min": 5.2,
+                "max": 6.6
+              },
+              "bod_mgl": {
+                "min": 1.0,
+                "max": 2.3
+              },
+              "ph": {
+                "min": 7.9,
+                "max": 8.5
+              },
+              "conductivity_us": {
+                "min": 386.0,
+                "max": 607.0
+              },
+              "nitrate_mgl": {
+                "min": 0.5,
+                "max": 1.82
+              },
+              "fecal_coliform_mpn": {
+                "min": 58.0,
+                "max": 170.0
+              }
+            },
+            {
+              "year": 2024,
+              "do_mgl": {
+                "min": 5.3,
+                "max": 7.3
+              },
+              "bod_mgl": {
+                "min": 1.0,
+                "max": 1.6
+              },
+              "ph": {
+                "min": 7.8,
+                "max": 8.6
+              },
+              "conductivity_us": {
+                "min": 342.0,
+                "max": 502.0
+              },
+              "nitrate_mgl": {
+                "min": 0.62,
+                "max": 1.82
+              },
+              "fecal_coliform_mpn": {
+                "min": 130.0,
+                "max": 280.0
+              }
+            }
+          ],
+          "pdf_pages": [
+            "2018 p.32",
+            "2019 p.21",
+            "2020 p.21",
+            "2021 p.34",
+            "2022 p.36",
+            "2023 p.35",
+            "2024 p.30"
+          ]
+        }
+      ]
+    }
+  ],
+  "_excluded": [
+    "2944 Jalmahal (Man Sagar lake), 2021-2024: a lake on the Darbhawati, not on a river this page draws; rows kept in pipeline-inputs/jaipur/ for the water-bodies page.",
+    "2952 coordinate: withheld, see the station's coordinate_note."
+  ]
+}

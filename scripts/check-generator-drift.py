@@ -407,6 +407,11 @@ BARE_WRITE = re.compile(
 # Producers allowed to write bare, with the reason. Empty today: every producer
 # of an enveloped artifact either preserves the envelope or emits its own.
 ENVELOPE_WRITE_ALLOWLIST: dict[str, str] = {
+    "neer-vazhvu-api/scripts/scrape_rajasthan_wrd_dams.py": (
+        "its two bare writes are the PDF-text cache (--cache) and the --out "
+        "backfill dump, both outside public/; its one serving artifact "
+        "(jaipur-dam-storage.json) goes through write_artifact"
+    ),
     "scripts/build_kabini_sources.py": (
         "the bare _write() targets STAGING files under .cache/kabini-sources/ "
         "(inputs to ingest_basin.py), never serving artifacts; its one serving "

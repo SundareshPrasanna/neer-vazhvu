@@ -11,9 +11,9 @@ This exists because a platform that treats data gaps as first-class has to be ab
 |---|---|
 | Suppressed freshness checks | 0 |
 | Artifacts with no registered upstream | 90 |
-| Routes a city deliberately does not ship | 50 |
-| Absences the product states on the page | 34 |
-| **Total** | **174** |
+| Routes a city deliberately does not ship | 54 |
+| Absences the product states on the page | 35 |
+| **Total** | **179** |
 
 **1 of these have no recorded rationale.** They are real, deliberate omissions whose original reason was never written down. They are marked rather than back-filled with a guess, because an invented justification reads as authoritative and is worse than an admitted blank. Each is a TODO: record the real reason, or ship the thing.
 
@@ -150,6 +150,10 @@ Derived by diffing each city against the union of every route any city ships, so
 | hyderabad | climate-risk | Not built for this city. |
 | hyderabad | my-ward | The 300-ward delimitation gazetted 25 Dec 2025 has no public geometry, and with the corporations under a Special Officer there are no sitting councillors to attach to a ward either. Returns with the ward build, following the Mumbai precedent. |
 | hyderabad | shoreline | Landlocked. |
+| jaipur | allocations | No public order states Jaipur's share of Bisalpur dam. A Water Resources Department study (February 2020) describes 11.1 TMC a year for Jaipur and the villages on its pipeline, 5.1 TMC for Ajmer and about 8 TMC for irrigation, but that is a description, not an allocation order, and no order has been found. An entitled-versus-received ledger cannot be drawn without it. PHED's draw by source is on the dashboard instead. |
+| jaipur | climate-risk | Not built for this city. The state's only climate plan (SAPCC 1.0, 2014) gives state-wide projections, and the sub-basin risk surface Chennai uses has not been run for the Banas or the Banganga. |
+| jaipur | shoreline | Jaipur is landlocked; it has no coastline. |
+| jaipur | tanker | PHED publishes summer tanker totals for the city (230 tankers making 1,283 trips a day at the June 2025 peak) but no register by area, month or price. The totals are on the dashboard. |
 | kolkata | climate-risk | Chennai's sub-basin climate risk comes from HydroBASINS level 12, a global product that would transfer here. It is genuinely buildable and simply not built yet, so this is a backlog item rather than a refusal. |
 | kolkata | my-ward | Ward-keyed surfaces are off until KMC wards 142-144 exist as geometry. 141 of 144 are mapped; the missing three are 18.93 km2, 9.2% of the city. KMC publishes no ward geometry through either its own portal or the newer DIGIT one, and OSM has no Kolkata ward relations at any admin_level, so this closes when someone digitises the 2012 delimitation, not by a better endpoint. |
 | kolkata | shoreline | Not a coastal city. Kolkata is a tidal river port roughly 130 km upstream of the Bay of Bengal; the riverbank/estuary variant of this surface is a different product and is unbuilt. |
@@ -199,6 +203,7 @@ Gaps the UI itself renders rather than hiding: the reason below is the copy a re
 | hyderabad | UI language: te | Advertised as coming soon and rendered as a disabled chip. The te dictionary is not populated, and must be translated by a native speaker rather than machine-generated, so the UI falls back to English by contract until it is. |
 | hyderabad | water source: Nagarjuna Sagar | HMWSSB publishes this level daily, but Nagarjuna Sagar is a parent Krishna storage reported for context, not a city source: it records a city draw of 0 MLD. Its level is the real constraint on Akkampally, which is why it is listed here. |
 | hyderabad | water source: Srisailam | HMWSSB publishes this level daily, but Srisailam is a parent Krishna storage reported for context, not a city source: it records a city draw of 0 MLD. Its level is the real constraint on Akkampally, which is why it is listed here. |
+| jaipur | UI language: hi | Advertised as coming soon and rendered as a disabled chip. The hi dictionary is not populated, and must be translated by a native speaker rather than machine-generated, so the UI falls back to English by contract until it is. |
 | kolkata | storage history chart | Kolkata impounds no water. It abstracts run-of-river from the Hooghly at Palta and pumps groundwater, so there is no storage level to chart even in principle. What would go here is daily abstraction or production volume, and no authority publishes it. Each source card below names who would have to. |
 | kolkata | UI language: bn | Advertised as coming soon and rendered as a disabled chip. The bn dictionary is not populated, and must be translated by a native speaker rather than machine-generated, so the UI falls back to English by contract until it is. |
 | kolkata | water source: Garden Reach Water Works | No public daily production series. 839.4 MLD is a design capacity; a further 225 MLD is described as under construction with no dated completion. |

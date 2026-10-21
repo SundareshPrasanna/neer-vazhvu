@@ -15,6 +15,9 @@ export interface WardSourceCopy {
   river?: TranslationEntry;
   /** Where the ward's lost water bodies were identified. */
   lostNote?: TranslationEntry;
+  /** The ward table (no-geometry cities): where zone, seat, population and
+   *  zone office come from. */
+  table?: TranslationEntry;
 }
 
 export interface QuickAction {

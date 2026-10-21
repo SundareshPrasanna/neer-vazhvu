@@ -24,6 +24,7 @@ export const CITY_ABOUT: Record<CityId, ComponentType<CityAboutSlotProps>> = {
   surat: dynamic(() => import("../surat/about")),
   ahmedabad: dynamic(() => import("../ahmedabad/about")),
   visakhapatnam: dynamic(() => import("../visakhapatnam/about")),
+  jaipur: dynamic(() => import("../jaipur/about")),
 };
 
 /** Each city's Origins story per language (src/cities/<id>/story-<lang>.tsx). */
@@ -71,5 +72,8 @@ export const CITY_STORIES: Partial<
   },
   visakhapatnam: {
     en: dynamic(() => import("../visakhapatnam/story-en")),
+  },
+  jaipur: {
+    en: dynamic(() => import("../jaipur/story-en")),
   },
 };

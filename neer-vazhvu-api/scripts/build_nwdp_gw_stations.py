@@ -50,8 +50,9 @@ from app.scrapers.well_levels import keep_mask, spike_mask, stuck_days  # noqa: 
 API = "https://nwdp.nwic.gov.in/api/3/action/datastore_search"
 PAGE = 32000
 # NWDP also writes -1.0 for a missed reading in the Gujarat state series
-# (one Ahmedabad piezometer is -1.0 end to end), beside WIMS's 0.0 and 1.0.
-PLACEHOLDERS = frozenset({0.0, 1.0, -1.0})
+# (one Ahmedabad piezometer is -1.0 end to end), beside WIMS's 0.0 and 1.0;
+# the Rajasthan state series writes 999.0.
+PLACEHOLDERS = frozenset({0.0, 1.0, -1.0, 999.0, -999.0})
 
 CITIES = {
     "ahmedabad": {
@@ -77,6 +78,72 @@ CITIES = {
         "district_tags": ["Ahmedabad", "Gandhinagar", "Surendranagar", "Sabarkantha"],
         "units": "public/geojson/ahmedabad-gwr-blocks.geojson",
         "start": "2021-01-01",
+    },
+    "jaipur": {
+        "district_label": "Jaipur",
+        "source_id": "nwic-nwdp-groundwater-rajasthan",
+        "state_agency": "Rajasthan Ground Water Department",
+        "well_type": "Telemetric piezometers (state and CGWB)",
+        "unit_label": "block",
+        # Telemetry only. Rajasthan's tags follow the pre-2023 districts, so
+        # "JAIPUR" covers the whole IN-GRES district (Kotputli and Viratnagar
+        # included) and stations are still placed by coordinates.
+        "resources": {
+            "Rajasthan GW": [
+                "2fe60c40-217d-43da-8927-d881c80d17d4",  # 2021-2025
+                "f33c4e60-7dbf-4b15-802a-ec8737cdd319",  # 2026-2030
+            ],
+            "CGWB": [
+                "467fe983-e1f0-4428-91b7-0ade87b39f6d",  # 2021-2025
+                "931ff862-f13e-4754-83f9-55e0dc894f2d",  # 2026-2030
+            ],
+        },
+        "district_tags": ["JAIPUR"],
+        "units": "public/geojson/jaipur-gwr-blocks.geojson",
+        "start": "2021-01-01",
+        # Steps the portal does not explain, found by screening every series
+        # for a month-to-month change over 20 m (2026-10-20).
+        "quality_notes": {
+            # Monthly means about 1.4-2.1 m from Feb 2024 to Oct 2025, then
+            # 43.42 (Feb 2026) and 45.64 (Mar 2026).
+            "Luniawas": (
+                "Readings sit about 2 m below ground until October 2025 and about 44 m "
+                "from February 2026. The portal does not explain the step, so compare "
+                "readings only within each stretch."
+            ),
+            # About 42 m to Jan 2025, 1.3-10 m Feb 2025 to Mar 2026, about 40 m
+            # again from May 2026.
+            "Trilokinathpura": (
+                "The level reads about 42 m below ground until January 2025, between 1 m "
+                "and 11 m from February 2025 to March 2026, and about 40 m again from May "
+                "2026. The portal does not explain the steps, so compare readings only "
+                "within each stretch."
+            ),
+            # 53-65 m in 2025, 11.6-19.4 m Jan-Mar 2026, 36-41 m from Apr 2026.
+            "TIGARIA_1": (
+                "Readings step from about 55-65 m below ground in 2025 to 12-19 m in early "
+                "2026 and about 36-41 m from April 2026. The portal does not explain the "
+                "steps, so compare readings only within each stretch."
+            ),
+            # 58-59 m Feb-Jun 2025, 92-96 m from Jan 2026.
+            "RJGW_8990": (
+                "Readings step from about 59 m below ground (2025) to about 92-96 m (2026) "
+                "across a gap of six months. The portal does not explain the step, so "
+                "compare readings only within each stretch."
+            ),
+            # About 56 m to June 2024, 18.3 m by August 2024, 7.6-13.3 m since.
+            "Jaisingpur Khor_1": (
+                "Readings rose from about 56 m below ground in mid-2024 to about 18 m by "
+                "August 2024 and have stayed under 15 m since. The portal gives no reason "
+                "for a rise this large, so treat the latest depth with care."
+            ),
+            # 77-103 m Feb-May 2025, about 33 m from Jul 2026.
+            "RJGW_9061": (
+                "Readings step from about 77-103 m below ground (early 2025) to about 33 m "
+                "(from July 2026) across a gap of more than a year. The portal does not "
+                "explain the step, so compare readings only within each stretch."
+            ),
+        },
     },
     "nagpur": {
         "district_label": "Nagpur",
