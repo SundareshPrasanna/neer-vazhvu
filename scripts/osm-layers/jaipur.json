@@ -15,9 +15,9 @@
     },
     "rivers": {
       "method": "walk",
-      "_note": "OSM maps the Dravyavati as water outlines (natural=water, water=river, 'Dravyavati River'; plus 'Amanishah Nala'), not a centre line: it draws as the channel's outline and its length_km is a perimeter (the river-quality builder uses JDA's 47.50 km). Banas clipped to the Bisalpur reach, Banganga to Ramgarh; the Dhund runs from Kanota dam past the Dravyavati confluence near 26.75 N.",
-      "bbox": "25.80,75.30,27.20,76.30",
-      "timeout": 150,
+      "_note": "OSM maps the Dravyavati as water outlines (natural=water, water=river, 'Dravyavati River'; plus 'Amanishah Nala'), not a centre line: it draws as the channel's outline and its length_km is a perimeter (the river-quality builder uses JDA's 47.50 km). The other three are drawn over their whole course as OSM maps it: the Banas from the Aravallis to near its Chambal confluence, the Dhund to the Morel, and Jaipur's Banganga from Bairath past Ramgarh towards Bharatpur. A different Banganga mapped near 25.1-25.45 N (Bundi) is clipped out.",
+      "bbox": "24.70,73.30,27.50,77.40",
+      "timeout": 240,
       "select": [
         "way[\"waterway\"=\"river\"][\"name\"~\"Dhund|Banas|Banganga|Amanisha\",i]",
         "way[\"natural\"=\"water\"][\"name\"~\"Dravyavati|Amanishah\",i]"
@@ -40,10 +40,7 @@
           ],
           "local": "ढूंढ नदी",
           "waterway": "river",
-          "label": "Dhund",
-          "clip": {
-            "south": 26.7
-          }
+          "label": "Dhund"
         },
         {
           "id": "banas",
@@ -52,13 +49,7 @@
           ],
           "local": "बनास नदी",
           "waterway": "river",
-          "label": "Banas",
-          "clip": {
-            "south": 25.8,
-            "north": 26.05,
-            "west": 75.3,
-            "east": 75.65
-          }
+          "label": "Banas"
         },
         {
           "id": "banganga",
@@ -69,10 +60,7 @@
           "waterway": "river",
           "label": "Banganga",
           "clip": {
-            "south": 26.95,
-            "north": 27.2,
-            "west": 75.9,
-            "east": 76.2
+            "south": 26.8
           }
         }
       ]

@@ -11,8 +11,8 @@ import type { CityRiversContent } from "@/content/rivers/types";
 // a lake on the Darbhawati and belongs to the water-bodies page.
 //
 // length_km_geom is the reach drawn in public/geojson/jaipur-rivers.geojson
-// (OSM, scripts/osm-layers/jaipur.json, method walk), measured on OSM data of
-// 20 Oct 2026; keep it in step with that file. The Dravyavati is the
+// (OSM, scripts/osm-layers/jaipur.json, method walk), each river's whole course
+// as OSM maps it, measured on OSM data of 22 Oct 2026; keep it in step with that file. The Dravyavati is the
 // exception: OSM maps it as a water outline, so the drawn length is not a river
 // length and JDA's corridor length (EIA/EMP Chapter 2, 2017, PDF p.2) is used.
 // Contract figures and dates: Rajasthan High Court, S.B. CWP 14997/2024, order
@@ -47,7 +47,7 @@ export const RIVERS: CityRiversContent = {
       display_name: "Dhund",
       display_name_hi: "ढूंढ",
       color: "#b45309",
-      length_km_geom: 29.4,
+      length_km_geom: 64.5,
       description:
         "A seasonal river east and south of the city, into which the Dravyavati flows. Kanota dam stands on it, completed in 2001 (CWC National Register of Large Dams 2019, which spells the river 'dhoond'). On 8 October 2026 the state's daily dam report showed Kanota full, at 14.13 million cubic metres. The district disaster plan lists Kanota Industrial Area and Dayodha among the places Kanota dam may affect.",
       upstream_terminus: "East of the city, above Kanota dam (Bassi tehsil)",
@@ -62,10 +62,10 @@ export const RIVERS: CityRiversContent = {
       display_name: "Banas",
       display_name_hi: "बनास",
       color: "#0891b2",
-      length_km_geom: 54.1,
+      length_km_geom: 545.7,
       description:
         "The river that carries most of Jaipur's water. Bisalpur dam on the Banas, completed in 1999 (CWC National Register of Large Dams 2019), is about 120 km from the city (CGWB, 2023). PHED's annual report puts the city's supply at 766.73 MLD on 31 December 2025, 590 MLD of it from Bisalpur and 176 MLD from 3,633 tube wells. The same reservoir also serves Ajmer, Tonk and irrigation.",
-      upstream_terminus: "South-west of Bisalpur, beyond this map",
+      upstream_terminus: "The Aravalli hills, far to the south-west (the map draws the whole course as OpenStreetMap maps it)",
       downstream_terminus: "The Chambal at Rameshwar Ghat (RSPCB's 2018 action plan)",
       feeds: "Jaipur city by pipeline from Bisalpur: 590 of 766.73 MLD on 31 December 2025 (PHED)",
       status:
@@ -76,7 +76,7 @@ export const RIVERS: CityRiversContent = {
       display_name: "Banganga",
       display_name_hi: "बाणगंगा",
       color: "#7c3aed",
-      length_km_geom: 39.1,
+      length_km_geom: 198.4,
       description:
         "A seasonal river north-east of the city. It fills Ramgarh lake, behind a dam the CWC National Register of Large Dams lists as completed in 1901, with a gross storage of 75 million cubic metres. The Supreme Court's judgment of 9 November 2017 records that its water went to irrigation until 1978 and then to Jaipur's drinking water, and CGWB's 2023 report says the lake 'has been dried up'; Jaipur's surface water now comes from Bisalpur.",
       upstream_terminus: "North of the city, through Shahpura, Bairath and Jamwa Ramgarh (CGWB, 2013)",
