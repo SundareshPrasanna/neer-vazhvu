@@ -1,0 +1,101 @@
+{
+ "_doc": [
+  "The one tannery common effluent treatment plant (CETP) in today's Vellore district, TALCO Pernambut, as listed by TNPCB (2020) and by the state's June 2026 progress report to NMCG, operating. No proposed CETP scheme for this district was found (the Department of Textiles' Nadanthai Vaazhi Cauvery schemes are in Erode and Namakkal districts, per the June 2026 report, p.3), so 'schemes' is empty.",
+  "Rows are transcribed from the PDFs and checked against the page's text layer (scripts/quotes.py) and read on the rendered page images (img/tnpcb-cetp-tannery-2020-p1-1.png, img/mpr-tn-2026-06-p55-55.png).",
+  "registerUnitId joins the plant to the TNGIS industry register's unit of the same name (treatment-plants.geojson, kind cetp, 1 unit). The join is by name and place and is the part to review: see joinBasis.",
+  "consentedKld repeats TNPCB's 2020 column headed 'CETP Consented Quantity (KLD)'; permittedKld its column 'Permitted quantity (in KLD)'; consentIssuedOn the column 'CTO issued on'; renewalValidTo the column 'RCO validity'. The June 2026 report gives the current renewal in mpr2026.renewalStatus. The engine (plant_facts) reads consentedKld, totalMembers, participatingMembers, permittedKld and mpr2026.",
+  "Left out: the list's other 12 tannery CETPs, printed in Tirupattoor, Ranipet, Erode, Dindigul, Tiruchirappalli and Chennai districts or with no district."
+ ],
+ "schemaVersion": 1,
+ "id": "vellore-rivers-cetp-schemes",
+ "review": {
+  "status": "proposed",
+  "extractedBy": "transcribed from the PDFs and checked by script against their text layers, 2026-10-22",
+  "verifiedBy": null,
+  "verifiedAt": null
+ },
+ "source": {
+  "title": "Details of Common Effluent Treatment Plants pertaining to the Cluster of Tannery Industries in Tamil Nadu",
+  "publisher": "Tamil Nadu Pollution Control Board",
+  "url": "https://tnpcb.gov.in/PDF/Information/cept/Tannery2020.pdf",
+  "listedOn": "https://tnpcb.gov.in/cept.php",
+  "retrieved": "2026-10-22",
+  "pdfCreated": "2020-07-14",
+  "sha256": "959911ff8bd5525fea4e23c9589c88a6ab2e0df1d25e0724a7639d44743c8e41"
+ },
+ "sources": [
+  {
+   "title": "Monthly Progress Report, Tamil Nadu, O.A. 673/2018, June 2026",
+   "publisher": "Government of Tamil Nadu, via NMCG",
+   "url": "https://nmcg.nic.in/writereaddata/fileupload/ngtmpr/43_Tamil%20Nadu%20-%20MPR%20June%202026.pdf",
+   "pages": [
+    52,
+    54,
+    55
+   ],
+   "sha256": "2e7205164da33c043948da63bf722fda8a35676c5fb70c48c38e8f2e8b41f2fb"
+  },
+  {
+   "title": "Vellore Citizens Welfare Forum v. Union of India, judgment of 28 August 1996",
+   "publisher": "Supreme Court of India (JUDIS copy)",
+   "url": "https://api.sci.gov.in/jonew/judis/15202.pdf",
+   "pages": [
+    7
+   ],
+   "sha256": "4829040ed88c46b51cfbee99912f3343ff367f92dcee870e399c1f44c46d2ff6"
+  }
+ ],
+ "totals": {
+  "velloreDistrictPlantsListed": 1,
+  "onRegister": 1,
+  "notOnRegister": 0,
+  "note": "The state's June 2026 report counts 36 existing CETPs in Tamil Nadu (p.52); its tannery rows 20 to 32 (pp.54-55) print one in Vellore District."
+ },
+ "schemes": [],
+ "existingPlants": [
+  {
+   "registerUnitId": "R15VBD1011647",
+   "tnpcbSl": 6,
+   "nameAsPrinted": "M/s TALCO Pernambut Tannery Effluent Treatment Company Ltd., Pernambut, Vellore District",
+   "consentedKld": 891,
+   "consentIssuedOn": "07.12.1996",
+   "renewalValidTo": "30.09.2020",
+   "totalMembers": 36,
+   "participatingMembers": 35,
+   "permittedPercent": "67%",
+   "permittedKld": 600,
+   "source": "TNPCB, Details of Common Effluent Treatment Plants pertaining to the Cluster of Tannery Industries in Tamil Nadu (Tannery2020.pdf), row 6, p.1",
+   "mpr2026": {
+    "sl": 24,
+    "locationAsPrinted": "M/s. Talco Pernambut Tannery Effluent Treatment Company Ltd., Pernambut, Vellore District",
+    "industrialUnitsConnected": 35,
+    "restrictedQuantityKld": 891,
+    "status": "Operation",
+    "ocems": "Connected",
+    "renewalStatus": "31/3/2028",
+    "renewalAsPrinted": "RCO valid up to 31/3/2028",
+    "compliance": "Complied",
+    "page": 55,
+    "source": "Tamil Nadu monthly progress report to NMCG in O.A. 673/2018, June 2026, 'STATUS OF COMPLIANCE AND OPERATION OF COMMON EFFLUENT TREATMENT PLANTS', Tannery CETPs in the State"
+   },
+   "supremeCourt1996": {
+    "nameAsPrinted": "M/s. TALCO Pernambut Tannery Effluent Treatment Co. Ltd., Bakkalapalli, Pernambut, Dist. North Arcot Ambedkar.",
+    "page": 7,
+    "note": "one of the seven CETPs the Court's order of 9 April 1996 lists as under operation; 'commissioned in January, 1996'"
+   },
+   "register": {
+    "name": "TALCO PERNAMBUT TANNERY EFFLUENT TREATMENT COMPANY LIMITED",
+    "village": "Chinnathamalsiruvu",
+    "taluk": "Pernampattu",
+    "registeredYear": "2015",
+    "lat": 12.91162,
+    "lon": 78.70388,
+    "shedId": "SB95",
+    "kmToMalattarMappedCourse": 1.54,
+    "kmToCwcGoddarVanka": 0.22,
+    "kmToPalarMappedCourse": 10.94
+   },
+   "joinBasis": "name; place agrees (Pernambut). The Supreme Court prints the address Bakkalapalli, the register Chinnathamalsiruvu: flag for review."
+  }
+ ]
+}
