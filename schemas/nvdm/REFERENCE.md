@@ -119,7 +119,7 @@ An audited, artifact-level judgement that a NAMED restricted input does not encu
 | `method` | no | one of `geometry`, `published`, `crosswalk`, `manual` | How the relation was established (spec 4.5). Required, with evidence, on every intersects (enforced by scripts/validate_nvdm.py). geometry: the system's geometry in the repo was tested against the place's polygon. published: the source's publisher states it. crosswalk: joined through an identifier. manual: a reviewed mapping. |
 | `evidence` | no | string, min length 1 | A repo path or URL that lets the relation be re-checked: for geometry, the boundary or centerline that was tested. |
 
-## Registered scopes (65)
+## Registered scopes (68)
 
 Country is derived from the relations, never stored.
 
@@ -138,10 +138,13 @@ Country is derived from the relations, never stored.
 | `mumbai-rivers` | basin | Mumbai rivers and lakes | - | `india` | - | intersects mumbai (geometry) |
 | `namakkal-rivers` | basin | Namakkal district rivers | - | `india` | - | intersects tn-namakkal (geometry) |
 | `palakkad-rivers` | basin | Palakkad district rivers | - | `india` | - | intersects kl-palakkad (geometry) |
+| `ranipet-rivers` | basin | Ranipet district rivers | - | `india` | - | intersects tn-ranipet (geometry) |
 | `salem-rivers` | basin | Salem district rivers | - | `india` | - | intersects tn-salem (geometry) |
 | `thanjavur-rivers` | basin | Thanjavur district rivers | - | `india` | - | intersects tn-thanjavur (geometry) |
 | `tiruchirappalli-rivers` | basin | Tiruchirappalli district rivers | - | `india` | - | intersects tn-tiruchirappalli (geometry) |
+| `tirupathur-rivers` | basin | Tirupathur district rivers | - | `india` | - | intersects tn-tirupathur (geometry) |
 | `tiruppur-rivers` | basin | Tiruppur district rivers | - | `india` | - | intersects tn-tiruppur (geometry) |
+| `vellore-rivers` | basin | Vellore district rivers | - | `india` | - | intersects tn-vellore (geometry) |
 | `ahmedabad` | city | Ahmedabad | `gujarat` | `india` | - | - |
 | `bangalore` | city | Bengaluru | `karnataka` | `india` | - | - |
 | `chennai` | city | Chennai | `tamil-nadu` | `india` | - | - |
