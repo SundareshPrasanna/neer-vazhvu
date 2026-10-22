@@ -15,6 +15,11 @@ export const RIVERS: CityRiversContent = {
   // Bopodi at 102.5 mg/L in 2024 - the sixth-highest of 756 locations
   // nationally, above the worst Delhi Yamuna station (85.0) and above the
   // Mithi at Mahim (80.0).
+  //
+  // The Bhima (to the Krishna), the Mula-Mutha (to the Bhima) and the Mutha
+  // Right Bank Canal (to its end near Indapur) are drawn over their whole
+  // course as OSM maps it (public/geojson/pune-rivers.geojson, OSM data of
+  // 22 Oct 2026); their length_km_geom is that drawn length.
   riverInfo: {
     mutha: {
       display_name: "Mutha",
@@ -55,7 +60,7 @@ export const RIVERS: CityRiversContent = {
     "mula-mutha": {
       display_name: "Mula-Mutha",
       display_name_mr: "\u092e\u0941\u0933\u093e-\u092e\u0941\u0920\u093e",
-      length_km_geom: 36.0,
+      length_km_geom: 70.5,
       description:
         "The combined river below the Sangam, and the one the JICA pollution-abatement programme is named for. PMC generates 980 MLD of sewage against 477 MLD of operating treatment capacity, so roughly 503 MLD - about half the city's sewage - reaches this channel untreated. The eleven plants of the JICA programme would add 396 MLD.",
       upstream_terminus: "Sangam, Pune",
@@ -111,7 +116,7 @@ export const RIVERS: CityRiversContent = {
     bhima: {
       display_name: "Bhima",
       display_name_mr: "\u092d\u0940\u092e\u093e",
-      length_km_geom: 73.6,
+      length_km_geom: 874.6,
       description:
         "The river everything above eventually drains into, and a Krishna tributary. CPCB files two Pune city stations under the Bhima, and its own label for the first reads \u201cRiver Bhima at Pune (Mutha River)\u201d - the board flagging that the water at Vithalwadi is the Mutha before it is anything else.",
       upstream_terminus: "Bhimashankar, Western Ghats",
@@ -142,7 +147,7 @@ export const RIVERS: CityRiversContent = {
     "mutha-canal": {
       display_name: "Mutha Right Bank Canal",
       display_name_mr: "\u092e\u0941\u0920\u093e \u0909\u091c\u0935\u093e \u0915\u093e\u0932\u0935\u093e",
-      length_km_geom: 45.6,
+      length_km_geom: 187.2,
       description:
         "Not a river. This is the irrigation canal that carries Khadakwasla water east to Daund and Indapur, and it is the other claimant in Pune's entitlement dispute: the Khadakwasla Complex is an irrigation project, 22.55 TMC of its 33.77 TMC of use is the irrigation provision, and MWRRA found in 2018 that the farmers on it \u201care deprived of their share\u201d. It is drawn because Pune's water argument is unreadable without it.",
       upstream_terminus: "Khadakwasla dam",

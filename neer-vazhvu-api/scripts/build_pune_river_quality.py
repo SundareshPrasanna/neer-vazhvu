@@ -188,9 +188,9 @@ RIVER_IDS = {
 LENGTH_KM = {
     "mutha": 34.9,
     "mula": 57.2,
-    "mula-mutha": 36.0,
+    "mula-mutha": 70.5,
     "pavana": 58.1,
-    "bhima": 73.6,
+    "bhima": 874.6,
     "indrayani": 61.4,
     "ghod": 0.0,
 }

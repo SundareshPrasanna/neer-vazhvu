@@ -6,9 +6,12 @@ import type { CityRiversContent } from "@/content/rivers/types";
 // carry no readings for the Nag; MPCB's index for its state stations is in the
 // river notes of public/data/river-quality-nagpur.json.
 //
-// length_km_geom is the mapped length inside the rivers frame
-// (public/geojson/nagpur-rivers.geojson, MRSAC drainage clipped to the frame;
-// the Nag is its main connected course only); keep it in step with that file. Nag project figures: NMC Budget 2025-26 narrative (PDF pp.10-11)
+// length_km_geom is the mapped length in public/geojson/nagpur-rivers.geojson:
+// for the Nag, Pili and Pora, MRSAC drainage clipped to the rivers frame (the
+// Nag is its main connected course only); the Kolar, Kanhan and Wainganga are
+// drawn over their whole course, MRSAC inside Maharashtra and, for the Kanhan
+// and Wainganga, OpenStreetMap in Madhya Pradesh (data of 22 Oct 2026). Keep
+// it in step with that file. Nag project figures: NMC Budget 2025-26 narrative (PDF pp.10-11)
 // and Budget 2026-27 (scan, OCR checked on page images pp.B-5 to B-7); GoM
 // Environment & CC GR RANYO-2024/PK82, 3 Mar 2025, p.2 (8 years from the GoI
 // order of 14.03.2023). Status phrases are translated from NMC's Marathi.
@@ -71,7 +74,7 @@ export const RIVERS: CityRiversContent = {
     kanhan: {
       display_name: "Kanhan",
       display_name_mr: "कन्हान",
-      length_km_geom: 141.0,
+      length_km_geom: 288.1,
       description:
         "The river below the city that the Nag and the Pili drain into, and one of Nagpur's sources of drinking water: NMC's Kanhan treatment plant is rated 240 MLD (NMC Environment Status Report 2023-24). MPCB's 2011 Nag River Basin Action Plan places the Nag's confluence at Agargaon, where station 1909 samples; its 2019 Kanhan action plan says near Ambhora. The same 2019 plan records the Vidarbha Paper Mills at Sinora as 'Closed last 5 years'; CPCB's names for stations 2170 and 2171 refer to the mill.",
       upstream_terminus: "Madhya Pradesh (CPCB lists a Kanhan stretch in Chhindwara district)",
@@ -89,7 +92,7 @@ export const RIVERS: CityRiversContent = {
     kolar: {
       display_name: "Kolar",
       display_name_mr: "कोलार",
-      length_km_geom: 72.8,
+      length_km_geom: 90.0,
       description:
         "A tributary from the north that passes Koradi and joins the Kanhan at Waregaon in Kamptee taluka. MPCB's 2019 action plan covers the stretch along Koradi; CPCB's 2025 report lists one polluted location, at Waregaon bridge.",
       upstream_terminus: "North of Nagpur, past Koradi",
@@ -103,11 +106,11 @@ export const RIVERS: CityRiversContent = {
     wainganga: {
       display_name: "Wainganga",
       display_name_mr: "वैनगंगा",
-      length_km_geom: 33.6,
+      length_km_geom: 671.8,
       description:
         "The larger river east of the city; the Kanhan joins it near Ambhora. MPCB samples it after the confluence at station 1910. Both official coordinates for that station are far from Ambhora, so it has no map marker; its readings are in the panel.",
       upstream_terminus: "Madhya Pradesh",
-      downstream_terminus: "Bhandara and Chandrapur districts (CPCB's polluted stretch runs to Ashti)",
+      downstream_terminus: "Joins the Wardha at about 19.57 N to form the Pranhita, past Bhandara and Chandrapur districts (CPCB's polluted stretch runs to Ashti)",
       feeds: "Bhandara and Chandrapur districts downstream",
       status: "CPCB Priority IV (2025, Bhandara to Ashti). MPCB monthly at Ambhora: BOD up to 4.2 mg/L in 2024.",
       cpcb_nwmp_stations: ["1910 Ambhora, after the Kanhan confluence (BOD 4.2 mg/L max, 2024; no map marker)"],

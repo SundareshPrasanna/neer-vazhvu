@@ -11,7 +11,8 @@
     },
     "rivers": {
       "method": "walk",
-      "bbox": "9.2,77.0,10.2,79.0",
+      "_note": "The box reaches 10.35 N so the Manjalar's upper course is in. The Manjalar and the Varaha draw only the river OSM names: their relations also file unnamed streams as 'tributary' members, which are left out.",
+      "bbox": "9.2,77.0,10.35,79.0",
       "select": [
         "way[\"waterway\"=\"river\"][\"name\"~\"Vaigai|Suruliyaru|Suruli|Manjalar|Varaha|Periyar\",i]",
         "relation[\"waterway\"=\"river\"][\"name\"~\"Vaigai|Suruliyaru|Suruli|Manjalar|Varaha|Periyar\",i]"
@@ -19,9 +20,9 @@
       "rivers": [
         { "id": "vaigai", "match": ["vaigai"], "local": "வைகை ஆறு", "waterway": "river" },
         { "id": "suruliyaru", "match": ["suruli"], "local": "சுருளியாறு", "waterway": "river" },
-        { "id": "manjalar", "match": ["manjalar"], "local": "மஞ்சளாறு", "waterway": "river" },
-        { "id": "varaha", "match": ["varaha"], "local": "வராஹா ஆறு", "waterway": "river" },
-        { "id": "periyar", "_note": "Kerala side; feeds the Vaigai via the Mullaperiyar tunnel.", "match": ["periyar"], "local": "பெரியாறு", "waterway": "river" }
+        { "id": "manjalar", "match": ["manjalar"], "local": "மஞ்சளாறு", "waterway": "river", "skipRoles": ["tributary"] },
+        { "id": "varaha", "match": ["varaha"], "local": "வராஹா ஆறு", "waterway": "river", "skipRoles": ["tributary"] },
+        { "id": "periyar", "_note": "Kerala side; feeds the Vaigai via the Mullaperiyar tunnel. Drawn from its source down to the Mullaperiyar dam (about 9.53 N, 77.144 E), where the page's text ends it; the clip drops the reach below the dam.", "match": ["periyar"], "local": "பெரியாறு", "waterway": "river", "clip": { "west": 77.146 } }
       ]
     },
     "localities": {

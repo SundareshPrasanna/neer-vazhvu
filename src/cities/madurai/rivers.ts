@@ -43,7 +43,7 @@ export const RIVERS: CityRiversContent = {
     periyar: {
       display_name: "Periyar (Kerala feeder)",
       display_name_ta: "பெரியார் (கேரளா ஊட்டி)",
-      length_km_geom: 121,
+      length_km_geom: 67,
       description:
         "Kerala-side river that feeds Vaigai through the 1886 Mullaperiyar tunnel. The 999-year lease deed makes Periyar a TN-operated source even though the reservoir sits in Kerala's Idukki district. ~80% of Vaigai's annual yield originates here.",
       description_ta:
@@ -81,7 +81,7 @@ export const RIVERS: CityRiversContent = {
     manjalar: {
       display_name: "Manjalar",
       display_name_ta: "மஞ்சளாறு",
-      length_km_geom: 27,
+      length_km_geom: 40,
       description:
         "Short Vaigai-basin tributary with its own dam (Manjalar Dam, Theni district) used for irrigation. Tilapia fishery noted in the reservoir.",
       description_ta:
@@ -100,7 +100,7 @@ export const RIVERS: CityRiversContent = {
     varaha: {
       display_name: "Varaha (Varaha Nadhi)",
       display_name_ta: "வராகா (வராக நதி)",
-      length_km_geom: 117,
+      length_km_geom: 41,
       description:
         "Vaigai-basin tributary; dammed at Sothuparai (Periyakulam taluk, Theni). Sothuparai is NOT on the daily TN Agri ARS portal so live storage data is PWD-memo-only.",
       description_ta:

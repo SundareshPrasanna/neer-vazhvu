@@ -29,9 +29,9 @@ Supply model in one line: Delhi owns no impounded storage - ~90% of raw water ar
 | **Fetched** | 2026-07-20 |
 | **Coverage** | 5 channels over the Yamuna-basin reach (Hathnikund -> Okhla bbox, deliberately wider than NCT - the rivers page is basin-scoped and labelled as such): `yamuna` (~499 km incl. braided sections), `wyc_munak` (~302 km Western Yamuna Canal / Munak carrier - the ~70% raw-water lifeline), `hindon` (~319 km), `sahibi` (~52 km), `najafgarh` (3 km of explicitly-named fragments) |
 
-**Naming caveat to resolve at rivers-page authoring:** OSM maps most of the Najafgarh drain's 57 km course as the Sahibi's engineered reach - the 52 km `sahibi` feature IS largely the drain. Decide the display split (natural upper Sahibi vs urban Najafgarh drain) before the page ships.
+**Naming, resolved 22 Oct 2026** (re-run through `scripts/fetch-osm-layers.ts`, `scripts/osm-layers/delhi.json`): `najafgarh` is OSM's 'Najafgarh Nallah' (way 164095236, from Jhajjar district in Haryana past the jheel) plus its last reach to the Yamuna, which OSM names 'Sahibi River' with alt_name 'Najafgarh Nallah' (~126 km drawn); `sahibi` is the reach OSM names 'Sahibi', in Rajasthan (27.79-28.00 N, ~57 km). The Eastern Yamuna Canal ('Poorvi Yamuna Nahar') is skipped, so `yamuna` is ~356 km. A 5.7 km 'Barapulla Nala' now draws under `barapullah`.
 
-**Known gaps:** no known OSM-named geometry for the Barapullah or Shahdara drains inside the bbox (queried 2026-07-20). Acquire via manual OSM way-ID curation or the IFC 2018 Drainage Master Plan in the flood-risk phase.
+**Known gaps:** no known OSM-named geometry for the Shahdara drain inside the bbox (queried 2026-07-20; OSM names 5.7 km of the Barapullah as of 22 Oct 2026). Acquire via manual OSM way-ID curation or the IFC 2018 Drainage Master Plan in the flood-risk phase.
 
 ## Jal Dharohar Water Bodies Census (893 census points)
 

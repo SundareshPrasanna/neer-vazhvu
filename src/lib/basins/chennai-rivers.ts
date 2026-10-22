@@ -29,7 +29,7 @@ export const CHENNAI_RIVERS: BasinManifest = {
       subHydroshedIds: ["COOUM"],
       color: "#2563eb",
       narrative:
-        "The Cooum runs ~42 km west-to-east through the heart of Chennai to the Bay of Bengal. CPCB rates it among the most polluted river stretches in India; the pollution is overwhelmingly municipal sewage, let out through dozens of stormwater-drain inlets along its length.",
+        "The Cooum runs ~74 km west-to-east, from the Kesavaram anicut west of the city through the heart of Chennai to the Bay of Bengal. CPCB rates it among the most polluted river stretches in India; the pollution is overwhelmingly municipal sewage, let out through dozens of stormwater-drain inlets along its length.",
     },
     {
       riverId: "adyar",

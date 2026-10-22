@@ -12,7 +12,7 @@ export const RIVERS: CityRiversContent = {
     yamuna: {
       display_name: "Yamuna",
       display_name_hi: "यमुना नदी",
-      length_km_geom: 499,
+      length_km_geom: 356,
       description:
         "The one river of Delhi's water story. Enters NCT at Palla meeting bathing-class BOD limits, absorbs the city's drains across the 22-km Wazirabad-Okhla stretch, and exits at Asgarpur with BOD 15-30x the limit and dissolved oxygen at NIL - the 2% of the river's length that carries ~80% of its pollution load. The reach mapped here runs from the Hathnikund barrage (Haryana) to the Okhla exit, the same span the flood page's 36-72 hour lead time is measured over.",
       upstream_terminus: "Hathnikund barrage (Haryana); Delhi entry at Palla",
@@ -47,10 +47,10 @@ export const RIVERS: CityRiversContent = {
     najafgarh: {
       display_name: "Najafgarh drain",
       display_name_hi: "नजफ़गढ़ नाला",
-      length_km_geom: 57,
+      length_km_geom: 126,
       description:
-        "The largest single source of the Yamuna's pollution: a 57-km engineered channel carrying roughly two-thirds of Delhi's sewage from the Najafgarh Jheel outfall through west and north Delhi to the river above Wazirabad. It is also a river in disguise - this is the Sahibi's colonial-era drainage channel (see the Sahibi entry). Mission Sahibi (2026) is dredging ~9.1 million cubic metres of silt from its bed; 12 decentralised STPs (Rs 860 cr) are approved along its length.",
-      upstream_terminus: "Najafgarh Jheel regulator (Delhi-Haryana border)",
+        "The largest single source of the Yamuna's pollution: a 57-km engineered channel carrying roughly two-thirds of Delhi's sewage from the Najafgarh Jheel outfall through west and north Delhi to the river above Wazirabad. The line on this map is the whole channel OpenStreetMap names Najafgarh Nallah, which starts further west in Haryana's Jhajjar district, so it is longer than the drain's Delhi reach. It is also a river in disguise - this is the Sahibi's colonial-era drainage channel (see the Sahibi entry). Mission Sahibi (2026) is dredging ~9.1 million cubic metres of silt from its bed; 12 decentralised STPs (Rs 860 cr) are approved along its length.",
+      upstream_terminus: "Jhajjar district, Haryana, where OpenStreetMap's channel begins; Delhi's drain starts at the Najafgarh Jheel regulator on the Delhi-Haryana border",
       downstream_terminus: "Yamuna at Wazirabad (Supplementary drain junction)",
       feeds: "Nothing - it drains; with Shahdara it delivers 84% of Delhi's Yamuna load",
       status: "DPCC monthly (May 2026): BOD 64 mg/l vs 30 standard at outfall; subdrains (Mungeshpur, Bupania) run 135-140",
@@ -66,9 +66,9 @@ export const RIVERS: CityRiversContent = {
     sahibi: {
       display_name: "Sahibi (the buried river)",
       display_name_hi: "साहिबी नदी",
-      length_km_geom: 52,
+      length_km_geom: 57,
       description:
-        "The river Delhi forgot it had. The Sahibi rises in Rajasthan's Aravallis, once terminated in the 226-sq-km Najafgarh Jheel, and its lower course was converted into the Najafgarh drain in the 1860s-1960s - which is why OSM maps this reach as 'Sahibi' while Delhi calls it a nala. The mapped geometry here is the surviving named reach; the jheel's 601-ha remnant is the largest water body in NCT.",
+        "The river Delhi forgot it had. The Sahibi rises in Rajasthan's Aravallis, once terminated in the 226-sq-km Najafgarh Jheel, and its lower course was converted into the Najafgarh drain in the 1860s-1960s. The line on this map is the reach OpenStreetMap names Sahibi, in Rajasthan up to about 28.0 N; the course between there and the Najafgarh drain is not on this map, and the drain is drawn as its own channel. The jheel's 601-ha remnant is the largest water body in NCT.",
       upstream_terminus: "Aravalli hills (Rajasthan/Haryana)",
       downstream_terminus: "Najafgarh Jheel -> Najafgarh drain (engineered continuation)",
       feeds: "Najafgarh Jheel wetland (remnant)",

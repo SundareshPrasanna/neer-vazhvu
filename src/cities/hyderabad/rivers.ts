@@ -5,11 +5,11 @@ export const RIVERS: CityRiversContent = {
   // "stations" listed are DPCC's monthly monitoring points (the highest-
   // cadence feed on the platform: public/data/dpcc-monthly-wq-delhi.json),
   // not CPCB NWMP - Delhi's own committee out-monitors the national
-  // programme. NAMING DECISION (documented in data-sources.md): OSM maps
-  // most of the Najafgarh drain's course as the Sahibi's engineered reach,
-  // so the `sahibi` geometry carries the natural-river framing and the
-  // `najafgarh` entry carries the drain story; the two entries cross-
-  // reference each other rather than pretending to be separate waters.
+  // programme. NAMING DECISION (documented in data-sources.md): the
+  // `najafgarh` geometry is OSM's 'Najafgarh Nallah' with its last reach to
+  // the Yamuna, and the `sahibi` geometry is the reach OSM names 'Sahibi' in
+  // Rajasthan; the two entries cross-reference each other because the drain
+  // is the Sahibi's engineered lower course.
   // Hyderabad. The page was stubbed for want of THIS block, not for want of
   // data: hyderabad-rivers.geojson has been in the repo since 26 Jul, and the
   // shared client treats river-quality / river-events / industrial-sources as
@@ -19,11 +19,14 @@ export const RIVERS: CityRiversContent = {
   // length_km_geom values are COMPUTED from the in-repo OSM geometry
   // (public/geojson/hyderabad-rivers.geojson, fetch-rivers-osm-hyderabad.ts),
   // the same basis every other city uses - not quoted from a secondary source.
+  // The Musi (to its Krishna confluence) and the Manjira (source to Godavari)
+  // are drawn over their whole course as OSM maps it, measured on OSM data of
+  // 22 Oct 2026; keep these values in step with that file.
   riverInfo: {
     musi: {
       display_name: "Musi",
       display_name_te: "\u0c2e\u0c42\u0c38\u0c40 \u0c28\u0c26\u0c3f",
-      length_km_geom: 244,
+      length_km_geom: 358,
       description:
         "The river Hyderabad was founded on, dammed to survive, and then discharged into. Osman Sagar (begun 1913, completed 1918) impounds it upstream of the city, built as flood control first and water supply second after the Great Musi Flood of 28 September 1908 took roughly 59,000 houses and breached 221 of the 788 tanks strung along the river. Below the city the Musi carries the sewage load: the state's own interception programme covers a 34 km reach from Bapu Ghat to Gowrelly, and the Musi Riverfront Development programme covers 55 km from Gandipet to Gowrelly. The tank cascade the river once organised is still traceable - 428 tanks linked by 411 flow paths, chains running up to nine deep.",
       upstream_terminus: "Anantagiri hills, Vikarabad district; Osman Sagar impounds the upper reach",
@@ -68,10 +71,10 @@ export const RIVERS: CityRiversContent = {
     manjira: {
       display_name: "Manjira",
       display_name_te: "\u0c2e\u0c02\u0c1c\u0c40\u0c30\u0c3e \u0c28\u0c26\u0c3f",
-      length_km_geom: 174,
+      length_km_geom: 739,
       description:
         "Not a Hyderabad river but a Hyderabad supply line: a Godavari tributary carrying two of HMWSSB's six sources, the Manjira and Singur reservoirs, from well outside the city. It is the oldest of the long-distance transfers the city now runs on, and the reason the twin reservoirs stopped being the whole story long before GO 111 was repealed.",
-      upstream_terminus: "Rises in the Western Ghats, Maharashtra; Singur reservoir on the middle reach",
+      upstream_terminus: "Rises in Patoda taluka of Beed district, Maharashtra, where OpenStreetMap maps its source; Singur reservoir on the middle reach",
       downstream_terminus: "Joins the Godavari",
       feeds: "Singur (29,917 mcft) and Manjira (1,500 mcft) - two of six HMWSSB sources",
       status:

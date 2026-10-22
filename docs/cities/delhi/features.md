@@ -36,9 +36,9 @@ Delhi's live layer is therefore **rainfall** (IMD 0.25° gridded history since 1
 
 ### Rivers (Yamuna-basin scope)
 
-- Five channels: Yamuna, the Western Yamuna Canal / Munak carrier, Hindon, and the Najafgarh and Sahibi courses - **the same water**, since OSM maps most of the Najafgarh drain as the Sahibi's engineered reach. The two entries cross-reference each other rather than pretending to be separate rivers.
+- Channels: Yamuna, the Western Yamuna Canal / Munak carrier, Hindon, the Najafgarh drain, the Sahibi and a short reach of the Barapullah drain. The Najafgarh drain and the Sahibi are **the same water** (the drain is the Sahibi's engineered lower course); each is drawn where OSM names it, the Sahibi in Rajasthan and the drain from Haryana to the Yamuna, and the two entries cross-reference each other.
 - **DPCC monthly water quality** - 8 Yamuna stations + ~39 drain points, the highest-cadence public river feed of any city here (every other city is on annual CPCB NWMP). The station panel is *derived* from the monthly file by `scripts/build-delhi-river-quality.ts` so panel and series cannot drift.
-- Gaps: Barapullah and Shahdara drains are unmapped in OSM under those names; the DPCC reports are scanned PDFs, so extension is an OCR task; the 13-plant CETP monthly archive (2019-2024, 62 bundles) is indexed with a transcribed sample but not bulk-extracted.
+- Gaps: the Shahdara drain is unmapped in OSM under that name, and only 5.7 km of the Barapullah is; the DPCC reports are scanned PDFs, so extension is an OCR task; the 13-plant CETP monthly archive (2019-2024, 62 bundles) is indexed with a transcribed sample but not bulk-extracted.
 
 ### Flood risk (narrative variant)
 
