@@ -26,9 +26,13 @@ OFFICIAL FIRST, with OpenStreetMap only where the official layer is silent.
     inside the city, so OSM names are joined by overlap and every feature says
     where its name came from (name_source).
   * RIVERS: MRSAC's drainage network (Water_Resources/MapServer/12) as the
-    official centrelines. It names the Pora, which OSM leaves unnamed. The
-    frame runs east to 79.65 E so the Kanhan meets the Wainganga at Ambhora.
-    Lines are clipped to that frame, so length_km is the length inside it.
+    official centrelines. It names the Pora, which OSM leaves unnamed. The Nag,
+    Pili and Pora are clipped to a frame that runs east to 79.65 E so the
+    Kanhan meets the Wainganga at Ambhora; their length_km is the length inside
+    it. The Kolar, Kanhan and Wainganga are drawn over their whole course:
+    MRSAC is queried over a wide frame, and because its layer stops at the
+    Maharashtra line, the Kanhan's and the Wainganga's reaches in Madhya
+    Pradesh come from OSM, taken only where OSM runs clear of MRSAC's line.
     The Nag keeps only its main connected course: MRSAC also labels a separate
     10.9 km channel "Nag Nadi" (class Dry, stream order rising southward), which
     drains south toward Hingna and cannot be the east-flowing Nag. OSM is the
@@ -89,6 +93,17 @@ UA = "neer-vazhvu (https://neervazhvu.org; civic water dashboard)"
 # frame lost every source reservoir but one).
 FRAME = (20.9, 78.75, 21.75, 79.45)
 RIVER_FRAME = (20.9, 78.75, 21.75, 79.65)
+# Rivers drawn over their whole course, and the frame that holds them.
+WHOLE_COURSE = ("kolar", "kanhan", "wainganga")
+WHOLE_FRAME = (19.4, 78.0, 22.6, 80.6)
+# Rivers MRSAC carries only inside Maharashtra: OSM adds the rest. An OSM piece
+# counts only if it runs more than about 0.5 km (0.005 deg) from MRSAC's line
+# and is at least 5 km long; shorter pieces are two tracings of one channel
+# drifting apart, not river MRSAC lacks. OSM's "Kolar" leaves MRSAC's Kolar
+# for a different channel to the south-west, so the Kolar stays MRSAC's.
+OSM_BEYOND_MRSAC = ("kanhan", "wainganga")
+BEYOND_DEG = 0.005
+BEYOND_MIN_KM = 5.0
 
 # Rivers whose MRSAC name also covers a disconnected channel that is not the
 # river: only the longest connected course is kept (see RIVERS in the docstring).
@@ -614,16 +629,18 @@ def build_water(
 
 
 def build_rivers(city) -> None:
-    names = ",".join(f"'{r[2]}'" for r in RIVERS)
-    segs = arcgis_features(
-        f"{MRSAC_WR}/12",
-        f"River_Name IN ({names})",
-        bbox=RIVER_FRAME,
-        fields="OBJECTID,River_Name,Description,Drainage_Order",
-    )
+    def mrsac(whole: bool, frame) -> list:
+        names = ",".join(f"'{r[2]}'" for r in RIVERS if (r[0] in WHOLE_COURSE) == whole)
+        return arcgis_features(
+            f"{MRSAC_WR}/12",
+            f"River_Name IN ({names})",
+            bbox=frame,
+            fields="OBJECTID,River_Name,Description,Drainage_Order",
+        )
+
+    segs = mrsac(False, RIVER_FRAME) + mrsac(True, WHOLE_FRAME)
     s, w, n, e = RIVER_FRAME
-    frame = box(w, s, e, n)
-    feats, fell_back = [], []
+    feats, fell_back, extended = [], [], []
     for rid, label, mrsac_name, variants in RIVERS:
         lines = [
             s["geometry"]["coordinates"]
@@ -642,7 +659,15 @@ def build_rivers(city) -> None:
                 f"{rid}: left-out channels {dropped} km, pinned {MAIN_COURSE_ONLY[rid]}"
             )
             print(f"  {rid}: main course kept, {dropped} km left out", file=sys.stderr)
-        coords = [rounded(line) for line in clip_to(lines, frame)]
+        osm_km = None
+        if source == "mrsac" and rid in OSM_BEYOND_MRSAC:
+            beyond = osm_beyond(lines, variants)
+            osm_km = round(sum(line_km(c) for c in beyond), 1)
+            lines, source = lines + beyond, "mrsac+osm"
+            extended.append(label)
+            print(f"  {rid}: {osm_km} km from OSM beyond MRSAC", file=sys.stderr)
+        fs, fw, fn, fe = WHOLE_FRAME if rid in WHOLE_COURSE else RIVER_FRAME
+        coords = [rounded(line) for line in clip_to(lines, box(fw, fs, fe, fn))]
         feats.append(
             {
                 "type": "Feature",
@@ -653,7 +678,8 @@ def build_rivers(city) -> None:
                     "length_km": round(sum(line_km(c) for c in coords), 1),
                     "segments": len(coords),
                     "source": source,
-                    "source_name": mrsac_name if source == "mrsac" else label,
+                    "source_name": label if source == "osm" else mrsac_name,
+                    **({"length_km_osm": osm_km} if osm_km is not None else {}),
                 },
                 "geometry": {"type": "MultiLineString", "coordinates": coords},
             }
@@ -667,11 +693,16 @@ def build_rivers(city) -> None:
             "url": f"{MRSAC_WR}/12",
         }
     ]
-    if fell_back:
+    if fell_back or extended:
+        uses = [f"fallback for {', '.join(fell_back)}"] if fell_back else []
+        if extended:
+            uses.append(
+                f"the {' and '.join(extended)} beyond MRSAC's Maharashtra layer"
+            )
         sources.append(
             {
                 "id": OSM_ID,
-                "title": f"OpenStreetMap waterways, fallback for {', '.join(fell_back)}",
+                "title": f"OpenStreetMap waterways: {'; '.join(uses)}",
                 "publisher": "OpenStreetMap contributors",
                 "license": registry_license(OSM_ID),
             }
@@ -687,18 +718,26 @@ def build_rivers(city) -> None:
             "produced_by": "neer-vazhvu-api/scripts/build_nagpur_geography.py",
             "note": (
                 f"MRSAC's named drainage segments for the Nag, Pili, Pora, Kanhan, Kolar and Wainganga, "
-                f"clipped to the frame {s}-{n} N, {w}-{e} E, one MultiLineString per river; the Nag is "
-                f"first because the rivers page opens the first river, and is its main connected course "
-                f"only (a separate 10.9 km channel MRSAC also names Nag Nadi drains south toward Hingna "
-                f"and is left out). length_km is the mapped length inside that frame, not the river's "
-                f"full course."
+                f"one MultiLineString per river. The Nag, Pili and Pora are clipped to the frame "
+                f"{s}-{n} N, {w}-{e} E, so their length_km is the length inside it; the Nag is first "
+                f"because the rivers page opens the first river, and is its main connected course only "
+                f"(a separate 10.9 km channel MRSAC also names Nag Nadi drains south toward Hingna and "
+                f"is left out). The Kolar, Kanhan and Wainganga are drawn over their whole course. "
+                f"MRSAC's layer stops at the Maharashtra line, so the Kanhan's and the Wainganga's "
+                f"reaches in Madhya Pradesh are OpenStreetMap's, taken where OSM runs more than about "
+                f"0.5 km from MRSAC's line in pieces of 5 km or more (length_km_osm); the two sources "
+                f"meet with a gap of under a kilometre. OSM's 'Kolar' follows a different channel "
+                f"south-west of MRSAC's, so the Kolar is MRSAC's alone."
             ),
         },
         "type": "FeatureCollection",
         "features": feats,
     }
     path = GEO_DIR / f"{city}-rivers.geojson"
-    write_artifact(path, out, compact=True)
+    # This producer owns the whole envelope, and its sources change with the
+    # run (OSM joins where a river runs beyond MRSAC); write_artifact would
+    # keep the copy already on disk.
+    path.write_text(json.dumps(out, ensure_ascii=False, separators=(",", ":")))
     print(
         "rivers: "
         + ", ".join(
@@ -710,16 +749,31 @@ def build_rivers(city) -> None:
     )
 
 
-def osm_river_lines(variants) -> list:
-    s, w, n, e = RIVER_FRAME
+def osm_river_lines(variants, frame=RIVER_FRAME) -> list:
+    """OSM's named ways for a river, with the member ways of its waterway
+    relation (some are unnamed), each way once."""
+    s, w, n, e = frame
     rx = "|".join(variants)
-    q = f'[out:json][timeout:180];way["waterway"="river"]["name"~"{rx}",i]({s},{w},{n},{e});out geom;'
-    doc = overpass(q)
-    return [
-        [(p["lon"], p["lat"]) for p in el["geometry"]]
-        for el in doc["elements"]
-        if el.get("geometry")
-    ]
+    sel = f'["waterway"="river"]["name"~"{rx}",i]({s},{w},{n},{e})'
+    doc = overpass(f"[out:json][timeout:180];(way{sel};relation{sel};);out geom;")
+    ways = {}
+    for el in doc["elements"]:
+        for m in el.get("members", []) if el["type"] == "relation" else [el]:
+            if m.get("type") == "way" and m.get("geometry"):
+                ways.setdefault(m.get("ref", m.get("id")), m["geometry"])
+    return [[(p["lon"], p["lat"]) for p in g] for g in ways.values()]
+
+
+def osm_beyond(mrsac_lines: list, variants) -> list:
+    """OSM's course of a river where MRSAC has no line for it."""
+    covered = unary_union([LineString(c) for c in mrsac_lines]).buffer(BEYOND_DEG)
+    out = []
+    for c in osm_river_lines(variants, WHOLE_FRAME):
+        rest = LineString(c).difference(covered)
+        for p in getattr(rest, "geoms", [rest]):
+            if p.geom_type == "LineString" and line_km(p.coords) >= BEYOND_MIN_KM:
+                out.append(list(p.coords))
+    return out
 
 
 def osm_water_doc() -> dict:

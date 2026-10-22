@@ -67,9 +67,9 @@ export const RIVERS: CityRiversContent = {
       display_name_ta: "ದಕ್ಷಿಣ ಪಿನಾಕಿನಿ",
       length_km_geom: 99,
       description:
-        "East-flowing river that originates in BBMP south and exits into Tamil Nadu, where it is called Ponnaiyar. Drains the Koramangala-Challaghatta valley downstream of Bellandur Lake. Carries the cumulative discharge of K&C Valley sewerage to the state border.",
+        "A river that rises north of the city near the Nandi Hills, runs south past Bengaluru's eastern edge and exits into Tamil Nadu, where it is called Ponnaiyar. Drains the Koramangala-Challaghatta valley downstream of Bellandur Lake. Carries the cumulative discharge of K&C Valley sewerage to the state border.",
       description_ta: "",
-      upstream_terminus: "Chennasandra / Begur area, BBMP south",
+      upstream_terminus: "Near the Nandi Hills, Chikkaballapur district, where OpenStreetMap maps its headwater (about 13.38-13.53 N); the line drawn here starts further south, at about 13.22 N in Devanahalli taluk",
       upstream_terminus_ta: "",
       downstream_terminus: "Tamil Nadu border (becomes Ponnaiyar)",
       downstream_terminus_ta: "",

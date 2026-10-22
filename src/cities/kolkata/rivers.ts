@@ -10,7 +10,7 @@ export const RIVERS: CityRiversContent = {
     hooghly: {
       display_name: "Hooghly",
       display_name_bn: "\u09b9\u09c1\u0997\u09b2\u09bf",
-      length_km_geom: 140,
+      length_km_geom: 172,
       description:
         "The distributary of the Ganga that Kolkata was built on, and the source of essentially all its drinking water. KMC abstracts at Palta, about 22 km north in Barrackpore, and at Garden Reach downstream - run-of-river, with no impounded storage anywhere in the system. The river is tidal this far inland, so quality readings swing with the tide.",
       upstream_terminus: "Farakka Barrage feeder canal (via the Bhagirathi)",
@@ -48,7 +48,7 @@ export const RIVERS: CityRiversContent = {
       description:
         "The channel that drains the East Kolkata Wetlands eastward towards the Sundarbans. It carried Kolkata's drainage until it silted up in the early twentieth century - the failure that created the wetland fishery system now treating 910 MLD of the city's sewage.",
       upstream_terminus: "East Kolkata Wetlands outfall",
-      downstream_terminus: "Raimangal estuary / Sundarbans",
+      downstream_terminus: "Raimangal estuary / Sundarbans. The map shows the 38 km OpenStreetMap names Bidyadhari Khaal, in North 24 Parganas between about 22.85 and 22.63 N; OpenStreetMap does not map the lower course to the Raimangal under this name, so the line stops there.",
       feeds: "Wetland fisheries; no drinking-water abstraction",
       status: "No public WBPCB series at the city end; monitored upstream at Haroa Bridge in North 24 Parganas.",
       cpcb_nwmp_stations: ["U/S of Bidyadhari river at Haroa Bridge"],

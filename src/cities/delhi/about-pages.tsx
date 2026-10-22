@@ -119,11 +119,12 @@ export function DelhiPageDescriptions({ cityId, cityName }: CityPagesProps) {
         <p className="text-slate-600 dark:text-slate-400">
           This page is Yamuna-basin scoped and labelled as such: the reach runs from the Hathnikund
           barrage in Haryana through the 22-km Wazirabad-to-Okhla city stretch that carries roughly
-          80% of the whole river&apos;s pollution load. Five channels are mapped - the Yamuna, the
-          Western Yamuna Canal / Munak carrier that is the city&apos;s lifeline, the Hindon, and the
-          Najafgarh and Sahibi courses, which are the same water: OpenStreetMap maps most of the
-          Najafgarh drain as the Sahibi&apos;s engineered reach, so the two entries cross-reference
-          each other rather than pretending to be separate rivers.
+          80% of the whole river&apos;s pollution load. The map draws the Yamuna, the Western Yamuna
+          Canal / Munak carrier that is the city&apos;s lifeline, the Hindon, the Najafgarh drain, the
+          Sahibi and a short reach of the Barapullah drain. The Najafgarh drain and the Sahibi are the
+          same water, since the drain is the Sahibi&apos;s engineered lower course; each is drawn where
+          OpenStreetMap names it (the Sahibi in Rajasthan, the drain from Haryana to the Yamuna), and
+          the two entries cross-reference each other rather than pretending to be separate rivers.
         </p>
         <p className="text-slate-600 dark:text-slate-400">
           Water quality is Delhi&apos;s one genuinely high-cadence public feed, and it is
@@ -151,8 +152,8 @@ export function DelhiPageDescriptions({ cityId, cityName }: CityPagesProps) {
           cannot be back-filled, and we have asked for the archive to be mirrored.
         </p>
         <p className="text-slate-600 dark:text-slate-400">
-          Known gaps: the Barapullah and Shahdara drains are not mapped under those names in
-          OpenStreetMap, and some monthly reports are pure image scans with no text in them at all,
+          Known gaps: the Shahdara drain is not mapped under that name in OpenStreetMap and only a
+          short reach of the Barapullah is, and some monthly reports are pure image scans with no text in them at all,
           which the parser cannot read. Where a drain&apos;s name comes through the scan garbled, it
           is matched against the known list of 39 and left out entirely if the match is not
           confident - never published under a guessed name.

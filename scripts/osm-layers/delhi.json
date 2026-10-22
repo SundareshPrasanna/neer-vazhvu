@@ -11,22 +11,23 @@
     },
     "rivers": {
       "method": "walk",
-      "_note": "Delhi's tributaries are engineered: the WYC/Munak carrier and the Najafgarh, Shahdara and Barapullah drains switch between canal and drain tags, hence per-channel waterways. Rivers are checked in order because the canal names contain 'yamuna'; the Eastern Yamuna Canal is a UP diversion outside Delhi's supply and would draw a phantom second Yamuna.",
-      "bbox": "28.30,76.30,30.50,77.85",
-      "timeout": 120,
+      "_note": "Delhi's tributaries are engineered: the WYC/Munak carrier and the Najafgarh, Shahdara and Barapullah drains switch between canal and drain tags, hence per-channel waterways. Rivers are checked in order because the canal names contain 'yamuna'; the Eastern Yamuna Canal (also mapped as 'Poorvi Yamuna Nahar') is a UP diversion outside Delhi's supply and would draw a phantom second Yamuna. The box reaches south and west for the Sahibi only; every other channel keeps the earlier box through the layer clip.",
+      "bbox": "27.70,76.20,30.50,77.85",
+      "timeout": 180,
+      "clip": { "south": 28.30, "west": 76.30, "north": 30.50, "east": 77.85 },
       "select": [
         "way[\"waterway\"~\"^(river|canal|drain)$\"][\"name\"~\"Yamuna|Hindon|Sahibi|Najafgarh|Barapulla|Shahdara|Munak\",i]",
         "relation[\"waterway\"~\"^(river|canal|drain)$\"][\"name\"~\"Yamuna|Hindon|Sahibi|Najafgarh|Barapulla|Shahdara|Munak\",i]"
       ],
-      "skip": ["eastern yamuna"],
+      "skip": ["eastern yamuna", "poorvi yamuna"],
       "rivers": [
         { "id": "wyc_munak", "match": ["western yamuna", "munak", "carrier lined"], "local": "पश्चिमी यमुना नहर (मुनक)", "waterway": "canal" },
-        { "id": "najafgarh", "match": ["najafgarh"], "local": "नजफ़गढ़ नाला", "waterway": "drain", "waterways": ["drain", "canal"] },
+        { "id": "najafgarh", "_note": "OSM's 'Najafgarh Nallah' (way 164095236) runs from Haryana past the jheel; its last reach to the Yamuna is a way OSM names 'Sahibi River' with alt_name 'Najafgarh Nallah', drawn here with the drain. Checked before the Sahibi, so that name lands here.", "match": ["najafgarh", "sahibi river"], "local": "नजफ़गढ़ नाला", "waterway": "drain", "waterways": ["drain", "canal"] },
         { "id": "barapullah", "match": ["barapulla"], "local": "बारापुला नाला", "waterway": "drain" },
         { "id": "shahdara", "match": ["shahdara"], "local": "शाहदरा नाला", "waterway": "drain", "waterways": ["drain", "canal"] },
-        { "id": "yamuna", "match": ["yamuna"], "local": "यमुना नदी", "waterway": "river" },
+        { "id": "yamuna", "match": ["yamuna"], "label": "Yamuna", "local": "यमुना नदी", "waterway": "river" },
         { "id": "hindon", "match": ["hindon"], "local": "हिंडन नदी", "waterway": "river" },
-        { "id": "sahibi", "_note": "The Sahibi's lower engineered course is the Najafgarh drain; OSM names the two reaches apart.", "match": ["sahibi", "sahibi nadi"], "local": "साहिबी नदी", "waterway": "river" }
+        { "id": "sahibi", "_note": "The reach OSM names 'Sahibi', in Rajasthan and Haryana (about 27.79-28.00 N), hence the box's south and west reach. Its lower engineered course is the Najafgarh drain, drawn under that id.", "match": ["sahibi", "sahibi nadi"], "local": "साहिबी नदी", "waterway": "river", "clip": { "south": 27.70, "west": 76.20 } }
       ]
     },
     "drainage": {

@@ -24,7 +24,19 @@ import { writeArtifact } from "./lib/nvdm-write";
 type LayerName = "water-bodies" | "rivers" | "drainage" | "localities" | "industrial-zones";
 type Coord = [number, number];
 interface Clip { south: number; north: number; west: number; east: number }
-interface River { id: string; match: string[]; local: string; waterway: string; waterways?: string[]; label?: string; clip?: Partial<Clip> }
+interface River {
+  id: string;
+  match: string[];
+  local: string;
+  waterway: string;
+  waterways?: string[];
+  label?: string;
+  clip?: Partial<Clip>;
+  /** The walk takes an unnamed way only if it lies wholly inside this box (keys default to the fetch bbox). */
+  walkBox?: Partial<Clip>;
+  /** Relation member roles left out, e.g. "tributary": OSM files other streams under the river's relation. */
+  skipRoles?: string[];
+}
 
 interface Layer {
   /** Assembly method, a key of METHODS. */
@@ -359,6 +371,9 @@ function relationOuterRing(rel: OsmElement, ways: Map<number, OsmElement>, nodes
 async function walk(_city: string, l: Layer, lang: string): Promise<Built> {
   const els = (await overpass(ql(l, "recurse"))).elements;
   const rivers = new Map(l.rivers!.map((r) => [r.id, r]));
+  const [south, west, north, east] = l.bbox.split(",").map(Number);
+  const box: Clip = { south, north, west, east };
+  const within = (c: Clip) => ([lon, lat]: Coord) => lat >= c.south && lat <= c.north && lon >= c.west && lon <= c.east;
   // First matching rule wins, so the config lists rivers in check order (Delhi's canals before "yamuna").
   const keyOf = (name: string) => {
     const lower = name.toLowerCase();
@@ -397,7 +412,9 @@ async function walk(_city: string, l: Layer, lang: string): Promise<Built> {
     if (el.type !== "relation" || !el.tags || !el.members) continue;
     const key = keyOf(nameOf(el.tags));
     if (!key) continue;
+    const skipRoles = rivers.get(key)!.skipRoles ?? [];
     for (const m of el.members) {
+      if (skipRoles.includes(m.role)) continue;
       const way = m.type === "way" ? wayMap.get(m.ref) : undefined;
       const coords = way ? coordsOf(way) : null;
       if (coords) add(key, nameOf(el.tags), coords, m.ref, el.id, true);
@@ -405,7 +422,9 @@ async function walk(_city: string, l: Layer, lang: string): Promise<Built> {
   }
 
   for (const [key, g] of groups) {
-    const accept = rivers.get(key)!.waterways ?? [rivers.get(key)!.waterway];
+    const r = rivers.get(key)!;
+    const accept = r.waterways ?? [r.waterway];
+    const walkIn = r.walkBox ? within({ ...box, ...r.walkBox }) : null;
     const seen = new Set(g.way_ids);
     const queue = [...g.way_ids];
     while (queue.length) {
@@ -420,7 +439,7 @@ async function walk(_city: string, l: Layer, lang: string): Promise<Built> {
           const nextKey = nextName ? keyOf(nextName) : null;
           if (nextKey && nextKey !== key) continue;
           const coords = coordsOf(next);
-          if (!coords) continue;
+          if (!coords || (walkIn && !coords.every(walkIn))) continue;
           seen.add(id);
           queue.push(id);
           g.segments.push(coords);
@@ -431,15 +450,12 @@ async function walk(_city: string, l: Layer, lang: string): Promise<Built> {
     }
   }
 
-  const [s, w, n, e] = l.bbox.split(",").map(Number);
-  const defaultClip = l.clip ?? { south: s, north: n, west: w, east: e };
+  const defaultClip = l.clip ?? box;
   const features = [];
   for (const [key, { segments, osm_ids, name }] of groups) {
     const r = rivers.get(key)!;
-    const c = { ...defaultClip, ...r.clip };
-    const clipped = segments
-      .map((seg) => seg.filter(([lon, lat]) => lat >= c.south && lat <= c.north && lon >= c.west && lon <= c.east))
-      .filter((seg) => seg.length >= 2);
+    const keep = within({ ...defaultClip, ...r.clip });
+    const clipped = segments.map((seg) => seg.filter(keep)).filter((seg) => seg.length >= 2);
     if (!clipped.length) continue;
     const km = clipped.reduce((sum, seg) => sum + haversineKm(seg), 0);
     features.push({

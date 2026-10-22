@@ -59,6 +59,7 @@ that tests the geometry rather than trusting it.
 Run:  python3 neer-vazhvu-api/scripts/build_pune_geography.py
       python3 neer-vazhvu-api/scripts/build_pune_geography.py --layer wards
       python3 neer-vazhvu-api/scripts/build_pune_geography.py --layer drainage
+      python3 neer-vazhvu-api/scripts/build_pune_geography.py --layer rivers
 """
 
 import argparse
@@ -119,6 +120,15 @@ OVERPASS = "https://overpass-api.de/api/interpreter"
 # Pune drinks from except Khadakwasla itself, missing from the city's own
 # water-body map while the dashboard's reservoir cards named them.
 BBOX = "18.3,73.4,18.95,74.05"
+
+# Three channels are drawn over their whole course as OSM maps it, not only
+# where they cross BBOX: the Bhima from Bhimashankar past Ujjani to the
+# Krishna, the Mula-Mutha to its Bhima confluence and the Mutha Right Bank
+# Canal to its end near 75.0 E. Exact names only, so this box can be wide.
+# Every other river keeps the ways that touch BBOX, which also keeps out the
+# second Mula, in Ahmednagar district at 19.27-19.53 N.
+WHOLE_COURSE_BBOX = "16.3,73.3,19.2,77.4"
+WHOLE_COURSE_NAMES = "^(Bhima|Mula-Mutha|Mutha Right Bank Canal)$"
 
 # Tagged as water in OSM, not a water body in any sense this platform means.
 # Swimming pools are the clear case; the rest is plumbing - a service
@@ -488,7 +498,10 @@ out geom;"""
         f"-> pune-water-bodies-current.geojson",
         file=sys.stderr,
     )
+    return build_rivers()
 
+
+def build_rivers() -> int:
     q2 = f"""[out:json][timeout:280];
 (
   way["waterway"="river"]({BBOX});
@@ -496,6 +509,13 @@ out geom;"""
 );
 out geom;"""
     data2 = _overpass(q2)
+    q3 = f"""[out:json][timeout:280];
+way["waterway"~"^(river|canal)$"]["name"~"{WHOLE_COURSE_NAMES}",i]({WHOLE_COURSE_BBOX});
+out geom;"""
+    in_box = {el["id"] for el in data2.get("elements", [])}
+    elements = data2.get("elements", []) + [
+        el for el in _overpass(q3).get("elements", []) if el["id"] not in in_box
+    ]
     # river_id is the join key the rivers page uses to attach its per-river
     # narrative (RIVER_INFO_BY_CITY in src/app/[cityId]/rivers/page.tsx).
     # OSM's `name` is not stable enough on its own: the Pavana appears as both
@@ -526,7 +546,7 @@ out geom;"""
         return None
 
     lines = []
-    for el in data2.get("elements", []):
+    for el in elements:
         geom = el.get("geometry") or []
         if len(geom) < 2:
             continue
@@ -626,7 +646,10 @@ out geom;"""
             "POLYGONS, not centrelines, so it cannot carry a river network.",
         ),
         "type": "FeatureCollection",
-        "_source": f"OpenStreetMap via Overpass, bbox {BBOX}",
+        "_source": (
+            f"OpenStreetMap via Overpass, bbox {BBOX}; the Bhima, Mula-Mutha and "
+            f"Mutha Right Bank Canal over {WHOLE_COURSE_BBOX}"
+        ),
         "features": lines,
     }
     write_artifact(GEO_DIR / "pune-rivers.geojson", out2, indent=None)
@@ -968,7 +991,7 @@ def main() -> int:
     ap.add_argument(
         "--layer",
         default="all",
-        choices=["all", "wards", "water", "drainage", "stps", "gwr"],
+        choices=["all", "wards", "water", "rivers", "drainage", "stps", "gwr"],
     )
     args = ap.parse_args()
     rc = 0
@@ -976,6 +999,8 @@ def main() -> int:
         rc |= build_wards()
     if args.layer in ("all", "water"):
         rc |= build_water_bodies_and_rivers()
+    if args.layer == "rivers":
+        rc |= build_rivers()
     if args.layer in ("all", "drainage"):
         rc |= build_drainage()
     if args.layer in ("all", "stps"):

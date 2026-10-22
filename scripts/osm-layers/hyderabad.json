@@ -4,18 +4,20 @@
   "layers": {
     "rivers": {
       "method": "walk",
-      "_note": "OSM maps the Musi as 'Musi River', 'Musi' and 'Musa' (name census 2026-07-26); they collapse to one river, checked last so Manjira, Esi and Haldi win first.",
-      "bbox": "17.05,77.60,18.05,79.20",
-      "timeout": 120,
+      "_note": "OSM maps the Musi as 'Musi River', 'Musi' and 'Musa' (name census 2026-07-26); they collapse to one river, checked last so Manjira, Esi and Haldi win first. The box is wide for two rivers drawn over their whole course as OSM maps it: the Manjira from its Maharashtra source (its first reach is tagged a stream, hence the third select) to the Godavari, and the Musi on to its Krishna confluence (about 16.69 N, 79.68 E). Every other river keeps the earlier box through the layer clip.",
+      "bbox": "16.60,75.30,18.95,79.75",
+      "timeout": 180,
+      "clip": { "south": 17.05, "west": 77.60, "north": 18.05, "east": 79.20 },
       "select": [
         "way[\"waterway\"~\"^(river|canal|drain)$\"][\"name\"~\"Musi|Musa|Esi|Manjira|Haldi|Kurel\",i]",
-        "relation[\"waterway\"~\"^(river|canal|drain)$\"][\"name\"~\"Musi|Musa|Esi|Manjira|Haldi|Kurel\",i]"
+        "relation[\"waterway\"~\"^(river|canal|drain)$\"][\"name\"~\"Musi|Musa|Esi|Manjira|Haldi|Kurel\",i]",
+        "way[\"waterway\"=\"stream\"][\"name\"~\"Manjira\",i]"
       ],
       "rivers": [
-        { "id": "manjira", "_note": "Supply side: Singur and the Manjira barrage.", "match": ["manjira"], "local": "మంజీరా నది", "waterway": "river" },
+        { "id": "manjira", "_note": "Supply side: Singur and the Manjira barrage.", "match": ["manjira"], "local": "మంజీరా నది", "waterway": "river", "clip": { "south": 17.5, "west": 75.3, "north": 18.95, "east": 78.3 } },
         { "id": "esi", "_note": "The tributary Himayat Sagar impounds; one OSM way carries the name.", "match": ["esi"], "local": "ఈసీ నది", "waterway": "river", "waterways": ["river", "stream"] },
         { "id": "haldi", "match": ["haldi"], "local": "", "waterway": "river", "waterways": ["river", "stream"] },
-        { "id": "musi", "match": ["musi", "musa"], "local": "మూసీ నది", "waterway": "river", "waterways": ["river", "stream"] }
+        { "id": "musi", "match": ["musi", "musa"], "local": "మూసీ నది", "waterway": "river", "waterways": ["river", "stream"], "clip": { "south": 16.6, "east": 79.75 } }
       ]
     }
   }

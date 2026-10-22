@@ -118,7 +118,7 @@ function English({ cityId, cityName }: CityPagesProps) {
 
       <SubSection id="page-rivers" title="Rivers">
         <p className="text-slate-600 dark:text-slate-400">
-          Vaigai-system scope: 304 km Vaigai mainstem, 121 km Periyar (Kerala feeder), 72 km Suruliyaru, 27 km Manjalar, 117 km Varaha tributaries. Per-river sidebar shows length, status, upstream/downstream termini, and feed.
+          Vaigai-system scope: 304 km Vaigai mainstem, 67 km Periyar (Kerala feeder, to the Mullaperiyar dam), 72 km Suruliyaru, 40 km Manjalar, 41 km Varaha tributaries. Per-river sidebar shows length, status, upstream/downstream termini, and feed.
         </p>
         <h4 className="text-sm font-semibold text-slate-800 dark:text-slate-200 pt-2">CPCB monitoring stations</h4>
         <p className="text-slate-600 dark:text-slate-400">

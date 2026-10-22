@@ -218,7 +218,7 @@ All landed 2026-07-26. Each names its script; provenance and licence are in the 
 | HMWSSB tankers | `public/data/hyderabad-tankers.json` | `neer-vazhvu-api/scripts/build_hyderabad_tankers.py` | 5,356,766 bookings, Jan 2022 to Aug 2026; 221 sections before the Feb 2026 re-cut |
 | CGWB groundwater wells | `public/data/hyderabad-cgwb-stations.json` | `neer-vazhvu-api/scripts/build_hyderabad_cgwb_stations.py` | 481 wells, 10,724 monthly readings |
 | TGDPS weather stations | `public/data/hyderabad-aws-stations.json` | `neer-vazhvu-api/scripts/fetch_tgdps_stations.py` | 161 in-city AWS with coordinates |
-| Rivers (Musi, Esi, Manjira, Haldi) | `public/geojson/hyderabad-rivers.geojson` | `scripts/fetch-osm-layers.ts --city hyderabad --layer rivers` | Musi ~244 km, Esi ~10 km |
+| Rivers (Musi, Esi, Manjira, Haldi) | `public/geojson/hyderabad-rivers.geojson` | `scripts/fetch-osm-layers.ts --city hyderabad --layer rivers` | Musi ~358 km, Esi ~10 km |
 | GHMC nalas | `public/geojson/hyderabad-nalas.geojson` | `neer-vazhvu-api/scripts/build_hyderabad_opencity_layers.py` | 96 nalas, 245 km |
 | Waterlogging points | `public/geojson/hyderabad-waterlogging.geojson` | same | 23 GHMC points |
 | Jal Dharohar census | `public/geojson/hyderabad-water-census.geojson` | same | 3,116 points |
@@ -263,7 +263,7 @@ All landed 2026-07-26. Each names its script; provenance and licence are in the 
   what resolves to a point. `values.jsp` returns only the latest reading with no archive, so the
   series accumulates from first collection; historical bulk is on data.telangana.gov.in.
 - **The Esi is under-mapped, not minor.** OSM carries a single 10 km way for the river Himayat
-  Sagar impounds, against 244 km for the Musi - and the Musi appears under three name variants
+  Sagar impounds, against 358 km for the Musi - and the Musi appears under three name variants
   that must be merged. A gap in the public map, not a fact about the river.
 
 ## Rich-Data Deep-Zoom Panel (5 Hyderabad flagship bodies)

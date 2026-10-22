@@ -10,19 +10,19 @@
     },
     "rivers": {
       "method": "walk",
-      "_note": "Wider than the water-body bbox for upstream reaches; the display clip is tighter, except the Kosasthalaiyar keeps its Ponneri-side approach.",
-      "bbox": "12.6,79.8,13.5,80.5",
+      "_note": "Wider than the water-body bbox for upstream reaches; the display clip is tighter for the Adyar and the Buckingham Canal. The Kosasthalaiyar runs west to 79.4 E to take in the upper river OSM spells 'Kortalaiyar' (one l), and the Cooum west to Kesavaram (village node 13.022 N, 79.749 E), where it leaves the Kortalaiyar. Both walk only through unnamed ways wholly inside their walkBox, so the unnamed streams west of Kesavaram, and the Kosasthalaiyar's course north to Poondi for the Cooum, stay out.",
+      "bbox": "12.6,79.4,13.5,80.5",
       "select": [
         "way[\"waterway\"=\"river\"]",
-        "relation[\"waterway\"=\"river\"][\"name\"~\"Cooum|Adyar|Kosasthalaiyar|Kortallaiyar\",i]",
+        "relation[\"waterway\"=\"river\"][\"name\"~\"Cooum|Adyar|Kosasthalaiyar|Kortallaiyar|Kortalaiyar\",i]",
         "way[\"waterway\"=\"canal\"][\"name\"~\"Buckingham\",i]",
         "relation[\"waterway\"=\"canal\"][\"name\"~\"Buckingham\",i]"
       ],
       "clip": { "south": 12.75, "north": 13.35, "west": 80.0, "east": 80.35 },
       "rivers": [
-        { "id": "cooum", "match": ["cooum", "koovam"], "local": "கூவம் ஆறு", "waterway": "river" },
+        { "id": "cooum", "match": ["cooum", "koovam"], "local": "கூவம் ஆறு", "waterway": "river", "clip": { "west": 79.74 }, "walkBox": { "west": 79.74, "north": 13.13 } },
         { "id": "adyar", "match": ["adyar"], "local": "அடையாறு", "waterway": "river" },
-        { "id": "kosasthalaiyar", "match": ["kosasthalaiyar", "kosasthalai", "kortallaiyar"], "local": "கொசஸ்தலையாறு", "waterway": "river", "clip": { "west": 79.8 } },
+        { "id": "kosasthalaiyar", "match": ["kosasthalaiyar", "kosasthalai", "kortallaiyar", "kortalaiyar"], "local": "கொசஸ்தலையாறு", "waterway": "river", "clip": { "west": 79.4 }, "walkBox": { "west": 79.74 } },
         { "id": "buckingham-canal", "match": ["buckingham"], "local": "பக்கிங்காம் கால்வாய்", "waterway": "canal" }
       ]
     },

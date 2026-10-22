@@ -244,7 +244,7 @@ JJM-WQMIS (`ejalshakti.gov.in/WQMIS`) for a current source.
 | | |
 |---|---|
 | **Method** | `scripts/fetch-osm-layers.ts --city kolkata --layer all` (city-generic, replaces the per-city clone pattern) |
-| **Result** | 5,526 water bodies (5,365 ha), 4 dissolved rivers (Hooghly 140 km, Saraswati 67, Adi Ganga 39, Bidyadhari 38), 182 drain segments, 765 localities (237 with Bengali names) |
+| **Result** | 5,526 water bodies (5,365 ha), 4 dissolved rivers (Hooghly 172 km, Saraswati 67, Adi Ganga 39, Bidyadhari 38), 182 drain segments, 765 localities (237 with Bengali names) |
 
 **Two bugs worth recording, both of the silent-wrongness kind:**
 - The first pull made **the Hooghly the largest "water body" in Kolkata**: 16 `water=river` polygons
