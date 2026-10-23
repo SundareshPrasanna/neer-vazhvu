@@ -2,11 +2,13 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { createRequire } from "node:module";
 
-const { itemAlerts, writeState } = createRequire(import.meta.url)("./rolling-alert.js");
+const require = createRequire(import.meta.url);
+const { digest, readDigest } = require("./rolling-alert.js");
+const knownBlocked = require("./known-blocked.json");
 
 type Issue = { number: number; title: string; body: string; state: string };
 
-/** The four octokit calls itemAlerts makes, over an in-memory issue list. */
+/** The four octokit calls digest makes, over an in-memory issue list. */
 function fakeGithub(issues: Issue[]) {
   const comments: { issue: number; body: string }[] = [];
   const rest = {
@@ -14,8 +16,10 @@ function fakeGithub(issues: Issue[]) {
       listForRepo: "list",
       create: async (o: { title: string; body: string }) =>
         void issues.push({ number: 100 + issues.length, title: o.title, body: o.body, state: "open" }),
-      update: async (o: { issue_number: number; body?: string; state?: string }) =>
-        void Object.assign(issues.find((i) => i.number === o.issue_number)!, o.body ? { body: o.body } : { state: o.state }),
+      update: async (o: { issue_number: number; title?: string; body?: string; state?: string }) => {
+        const { issue_number, ...fields } = o;
+        Object.assign(issues.find((i) => i.number === issue_number)!, fields);
+      },
       createComment: async (o: { issue_number: number; body: string }) =>
         void comments.push({ issue: o.issue_number, body: o.body }),
     },
@@ -24,46 +28,62 @@ function fakeGithub(issues: Issue[]) {
 }
 
 const context = { repo: { owner: "o", repo: "r" }, serverUrl: "https://github.com", runId: 1 };
-const item = (id: string, level = 0) => ({ id, title: `Stale feed: ${id}`, body: "row", summary: `${id} is stale`, level });
-const managed = (number: number, id: string, level = 0): Issue => ({
-  number, title: `Stale feed: ${id}`, body: writeState([`item:${id}`, `level:${level}`]), state: "open",
-});
+const register = {
+  entries: [{ match: ["hyderabad:reservoir:*"], reason: "HMWSSB quiet.", since: "2026-10-21", review: "2026-11-06" }],
+};
+const item = (id: string, level = 0) => ({ id, summary: `${id} is stale.`, level });
 const run = (github: unknown, o: object) =>
-  itemAlerts({ github, context, labels: ["pipeline-alert", "data-freshness"], footer: "", ...o });
+  digest({ github, context, channel: "freshness", note: "", register, today: "2026-10-23", ...o });
 
-test("a new stale feed opens its own issue beside a long-lived one", async () => {
-  const issues = [managed(1, "bangalore:wris-groundwater", 2)];
+test("a new break is named in the title and notifies; a known-blocked one does neither", async () => {
+  const issues: Issue[] = [];
   const { github, comments } = fakeGithub(issues);
-  await run(github, { items: [item("bangalore:wris-groundwater", 2), item("chennai:reservoir")] });
-  assert.deepEqual(issues.map((i) => [i.title, i.state]), [
-    ["Stale feed: bangalore:wris-groundwater", "open"],
-    ["Stale feed: chennai:reservoir", "open"],
-  ]);
+  await run(github, { items: [item("hyderabad:reservoir:singur"), item("hyderabad:reservoir:manjira")] });
+  assert.equal(issues[0].title, "Pipeline alerts: nothing new (+2 known blocked)");
+  await run(github, { items: [item("hyderabad:reservoir:singur"), item("hyderabad:reservoir:manjira")] });
   assert.equal(comments.length, 0);
+  await run(github, { channel: "atlas-refresh", scope: ["atlas-refresh:erode"], items: [item("atlas-refresh:erode")] });
+  assert.equal(issues.length, 1);
+  assert.equal(issues[0].title, "Pipeline alerts: atlas-refresh:erode (+2 known blocked)");
+  assert.match(comments[0].body, /atlas-refresh:erode/);
 });
 
-test("a comment only when the level rises", async () => {
-  const issues = [managed(1, "a", 1)];
+test("a channel keeps the others' items, and scope keeps its own unread ones", async () => {
+  const issues: Issue[] = [];
+  const { github } = fakeGithub(issues);
+  await run(github, { channel: "atlas-refresh", scope: ["atlas-refresh:erode"], items: [item("atlas-refresh:erode")] });
+  await run(github, { items: [item("a"), item("b")] });
+  await run(github, { scope: ["a"], items: [] });
+  const { channels } = readDigest(issues[0].body);
+  assert.deepEqual(Object.keys(channels["atlas-refresh"].items), ["atlas-refresh:erode"]);
+  assert.deepEqual(Object.keys(channels.freshness.items), ["b"]);
+});
+
+test("a comment when a level rises, and when a block passes its review date", async () => {
+  const issues: Issue[] = [];
   const { github, comments } = fakeGithub(issues);
-  await run(github, { items: [item("a", 1)] });
-  assert.equal(comments.length, 0);
-  await run(github, { items: [item("a", 2)] });
-  assert.deepEqual(comments.map((c) => c.issue), [1]);
-  await run(github, { items: [item("a", 2)] });
+  await run(github, { items: [item("a", 1), item("hyderabad:reservoir:singur")] });
+  await run(github, { items: [item("a", 2), item("hyderabad:reservoir:singur")] });
   assert.equal(comments.length, 1);
+  await run(github, { items: [item("a", 2), item("hyderabad:reservoir:singur")], today: "2026-11-07" });
+  assert.equal(comments.length, 2);
+  assert.match(comments[1].body, /singur.*Known blocked until 2026-11-06/);
 });
 
-test("a recovered feed closes; an unread feed and an unmanaged issue are left alone", async () => {
-  const rolling: Issue = { number: 271, title: "Data freshness: stale feeds", body: "<!--alert-state:a|b-->", state: "open" };
-  const issues = [managed(1, "recovered"), managed(2, "unread"), rolling];
+test("closes when nothing is flagged; a later break opens a new digest", async () => {
+  const issues: Issue[] = [];
   const { github } = fakeGithub(issues);
-  await run(github, { items: [], unknown: ["unread"] });
-  assert.deepEqual(issues.map((i) => i.state), ["closed", "open", "open"]);
+  await run(github, { items: [item("a")] });
+  await run(github, { items: [] });
+  assert.equal(issues[0].state, "closed");
+  await run(github, { items: [item("b")] });
+  assert.deepEqual(issues.map((i) => i.state), ["closed", "open"]);
 });
 
-test("nothing closes when the checker did not finish", async () => {
-  const issues = [managed(1, "a")];
-  const { github } = fakeGithub(issues);
-  await run(github, { items: [item("checker")], complete: false });
-  assert.deepEqual(issues.map((i) => i.state), ["open", "open"]);
+test("known-blocked.json entries are complete and dated", () => {
+  const date = /^\d{4}-\d{2}-\d{2}$/;
+  for (const e of knownBlocked.entries) {
+    assert.ok(e.match.length && e.match.every((m: unknown) => typeof m === "string" && m), JSON.stringify(e));
+    assert.ok(e.reason && date.test(e.since) && date.test(e.review) && e.since <= e.review, JSON.stringify(e));
+  }
 });

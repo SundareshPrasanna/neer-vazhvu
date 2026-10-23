@@ -123,65 +123,141 @@ async function rollingAlert({ github, context, title, labels, report, keys, foot
 }
 
 /**
- * One issue per flagged item, for a channel where a long-lived item must not
- * hide a new one. The freshness channel's rolling issue stayed open 46 days on
- * one dead upstream while other feeds went stale inside it as comments nobody
- * read. Here:
+ * ONE digest issue for every pipeline alert, with a known-blocked state.
  *
- *   - an item opens its own issue; the new issue is the notification
- *   - the body is rewritten each run; a comment only when the item's `level`
- *     rises (the checker decides what a level is)
- *   - the issue closes itself when the item is no longer flagged
+ * WHY. itemAlerts gave each stale feed its own issue, so a long-lived item
+ * could not hide a new one (the rolling freshness issue had stayed open 46 days
+ * on one dead upstream while new stale feeds went by as comments). By
+ * 2026-10-23 that meant 28 open issues, most of them for sources already known
+ * to be blocked - the JJM login wall in front of ten Atlas directories, Satara
+ * since 2 Oct, Hyderabad's reservoirs - and the two that needed a person (a
+ * migration never applied, a BMC fetch that failed) sat in the pile.
  *
- * Issues are matched by the state marker in the body, not the title.
+ * Here:
+ *   - the freshness check and the Atlas refresh each write into the same
+ *     issue; a run replaces only its own channel's items, and
+ *     with `scope` only the items it actually looked at
+ *   - an item matched by an entry in known-blocked.json is listed under that
+ *     entry's reason and never notifies; on the entry's review date it counts
+ *     as new again, so a block cannot go quiet for good
+ *   - every other item needs a look: named in the title, listed first, and a
+ *     comment (the notification) only when one appears or its level rises
+ *   - the issue closes itself when nothing is flagged
  *
- * @param {object} o
- * @param {{id: string, title: string, body: string, summary: string, level: number}[]} o.items
- * @param {string[]} [o.unknown]   ids that could not be checked this run: left as they are
- * @param {boolean} [o.complete]   false when `items` is not the full picture: nothing closes
+ * State is JSON in an HTML comment at the end of the body. Two channels
+ * writing in the same second would drop the earlier update until that channel
+ * runs again; the schedules (06:30 UTC daily, Atlas on the 2nd, one district
+ * at a time) keep that unlikely.
  */
-async function itemAlerts({ github, context, labels, items, unknown = [], complete = true, footer }) {
+const DIGEST_OPEN = "<!--alert-digest:";
+// eslint-disable-next-line @typescript-eslint/no-require-imports -- CommonJS, loaded by actions/github-script
+const KNOWN_BLOCKED = require("./known-blocked.json");
+
+function readDigest(body) {
+  const i = body ? body.indexOf(DIGEST_OPEN) : -1;
+  if (i === -1) return null;
+  return JSON.parse(body.slice(i + DIGEST_OPEN.length, body.indexOf(MARKER_CLOSE, i)));
+}
+
+// "--" only occurs inside JSON strings, where - reads back the same.
+const writeDigest = (state) => `${DIGEST_OPEN}${JSON.stringify(state).replace(/--/g, "-\\u002d")}${MARKER_CLOSE}`;
+
+const pattern = (p) => new RegExp(`^${p.split("*").map((s) => s.replace(/[.+?^${}()|[\]\\]/g, "\\$&")).join(".*")}$`);
+
+/**
+ * @param {object} o
+ * @param {string} o.channel          freshness | atlas-refresh
+ * @param {{id: string, summary: string, detail?: string, level: number}[]} o.items  flagged now
+ * @param {string[]} [o.scope]        ids this run looked at; the channel's other items are kept.
+ *                                    Omitted = the whole channel.
+ * @param {string} o.note             handling notes for the channel
+ */
+async function digest({
+  github, context, channel, items, scope, note,
+  register = KNOWN_BLOCKED,
+  today = new Date().toISOString().slice(0, 10),
+}) {
   const { owner, repo } = context.repo;
   const runUrl = `${context.serverUrl}/${owner}/${repo}/actions/runs/${context.runId}`;
   const open = await github.paginate(github.rest.issues.listForRepo, {
-    owner, repo, labels: labels[0], state: "open", per_page: 100,
+    owner, repo, labels: "pipeline-alert", state: "open", per_page: 100,
   });
-  const field = (issue, name) =>
-    readState(issue.body).find((k) => k.startsWith(`${name}:`))?.slice(name.length + 1);
-  const managed = open.filter((i) => field(i, "item") !== undefined);
+  const existing = open.find((i) => readDigest(i.body));
+  const state = existing ? readDigest(existing.body) : { channels: {}, needs: {} };
 
-  for (const item of items) {
-    const body = [
-      item.summary, "", item.body, "", footer, "", `**Run:** ${runUrl}`, "",
-      "This issue is rewritten in place on every run and closes itself when the",
-      "item clears. A comment here means it has got worse.",
-      "",
-      writeState([`item:${item.id}`, `level:${item.level}`]),
-    ].join("\n");
-    const existing = managed.find((i) => field(i, "item") === item.id);
-    if (!existing) {
-      await github.rest.issues.create({ owner, repo, title: item.title, labels, body });
-      continue;
-    }
-    const before = Number(field(existing, "level"));
-    await github.rest.issues.update({ owner, repo, issue_number: existing.number, body });
-    if (item.level > before) {
+  const before = state.channels[channel]?.items ?? {};
+  state.channels[channel] = {
+    note, run: runUrl, ran: today,
+    items: Object.fromEntries([
+      ...(scope ? Object.entries(before).filter(([id]) => !scope.includes(id)) : []),
+      ...items.map((i) => [i.id, { summary: i.summary, detail: i.detail, level: i.level, since: before[i.id]?.since ?? today }]),
+    ]),
+  };
+
+  const all = Object.values(state.channels).flatMap((c) => Object.entries(c.items).map(([id, i]) => ({ id, ...i })));
+  if (all.length === 0) {
+    if (existing) {
       await github.rest.issues.createComment({
         owner, repo, issue_number: existing.number,
-        body: `Still flagged: ${item.summary}\n\n**Run:** ${runUrl}`,
+        body: `All clear as of this run - nothing is flagged.\n\n**Run:** ${runUrl}`,
       });
+      await github.rest.issues.update({ owner, repo, issue_number: existing.number, state: "closed" });
     }
+    return;
   }
+  for (const i of all) {
+    const entry = register.entries.find((e) => e.match.some((p) => pattern(p).test(i.id)));
+    if (entry && entry.review >= today) i.block = entry;
+    else if (entry) i.lapsed = entry;
+  }
+  const needs = all.filter((i) => !i.block);
+  const blocked = all.filter((i) => i.block);
+  const worse = needs.filter((i) => !(i.id in state.needs) || i.level > state.needs[i.id]);
+  state.needs = Object.fromEntries(needs.map((i) => [i.id, i.level]));
 
-  if (!complete) return;
-  const keep = new Set([...items.map((i) => i.id), ...unknown]);
-  for (const issue of managed.filter((i) => !keep.has(field(i, "item")))) {
-    await github.rest.issues.createComment({
-      owner, repo, issue_number: issue.number,
-      body: `Cleared as of this run.\n\n**Run:** ${runUrl}`,
-    });
-    await github.rest.issues.update({ owner, repo, issue_number: issue.number, state: "closed" });
+  const head = needs.length === 0 ? "nothing new" : needs.length <= 3 ? needs.map((i) => i.id).join(", ") : `${needs.length} need a look`;
+  const title = `Pipeline alerts: ${head}${blocked.length ? ` (+${blocked.length} known blocked)` : ""}`;
+  const line = (i) =>
+    `- **${i.id}** - ${i.summary}${i.detail ? ` ${i.detail}` : ""} (${i.since === today ? "new today" : `since ${i.since}`})` +
+    (i.lapsed ? ` Known blocked until ${i.lapsed.review}: ${i.lapsed.reason} Recheck, then move the review date or remove the entry.` : "");
+  const lines = [
+    `**${needs.length} need a look, ${blocked.length} known blocked.** Updated ${today}.`,
+    "",
+    "### Needs a look",
+    ...(needs.length ? needs.map(line) : ["Nothing. Everything flagged is known blocked."]),
+  ];
+  if (blocked.length) {
+    lines.push("", `<details><summary>Known blocked (${blocked.length})</summary>`, "");
+    for (const e of register.entries) {
+      const its = blocked.filter((i) => i.block === e);
+      if (its.length)
+        lines.push(`**${e.reason}** Since ${e.since}, review ${e.review}${e.issue ? `, tracked in #${e.issue}` : ""}.`, "", ...its.map((i) => `- ${i.id} - ${i.summary}`), "");
+    }
+    lines.push("</details>");
   }
+  const unused = register.entries.filter((e) => !all.some((i) => i.block === e || i.lapsed === e));
+  lines.push(
+    "", "### Notes",
+    "- To mark an item known blocked, add it to `.github/workflows/lib/known-blocked.json` with the reason and a review date. On that date it comes back here as needing a look.",
+    ...unused.map((e) => `- Matches nothing flagged, so it can come out of known-blocked.json: ${e.reason}`),
+    ...Object.entries(state.channels).map(([name, c]) => `- **${name}** (last run ${c.ran}, [log](${c.run})): ${c.note}`),
+    "",
+    "This issue is rewritten in place by every alert run and closes itself when nothing is flagged. A comment here means something new needs a look.",
+    "",
+    writeDigest(state),
+  );
+  const body = lines.join("\n");
+
+  if (!existing) {
+    await github.rest.issues.create({ owner, repo, title, labels: ["pipeline-alert"], body });
+    return;
+  }
+  await github.rest.issues.update({ owner, repo, issue_number: existing.number, title, body });
+  if (worse.length)
+    await github.rest.issues.createComment({
+      owner, repo, issue_number: existing.number,
+      body: [`**Needs a look (${worse.length}):**`, ...worse.map(line), "", `**Run:** ${runUrl}`].join("\n"),
+    });
 }
 
-module.exports = { rollingAlert, itemAlerts, readState, writeState, diff };
+module.exports = { rollingAlert, digest, readState, writeState, readDigest, diff };
