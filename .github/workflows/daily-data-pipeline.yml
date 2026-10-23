@@ -33,6 +33,9 @@ jobs:
       # datacenter IPs, so this step tolerates up to 4 days of stale data
       # before failing. Each city has its own primary-supply scraper step;
       # they run independently so one city failing doesn't block the others.
+      # No alert of its own: the runner times out connecting to CMWSSB (every
+      # run sampled Sep-Oct 2026), the laptop job loads the day, and the freshness
+      # check alerts when Chennai's reservoirs pass 7 days.
       - name: Scrape Chennai (CMWSSB) -> Supabase
         id: scrape
         continue-on-error: true
@@ -200,23 +203,6 @@ jobs:
         run: |
           npm ci
           npx tsx scripts/generate-narratives.ts
-
-      - name: Report the CMWSSB scrape to the pipeline alert digest
-        if: ${{ always() && (steps.scrape.outcome == 'failure' || steps.scrape.outcome == 'success') }}
-        uses: actions/github-script@v7
-        env:
-          OUTCOME: ${{ steps.scrape.outcome }}
-        with:
-          script: |
-            const { digest } = require('./.github/workflows/lib/rolling-alert.js');
-            await digest({
-              github, context, channel: 'daily-pipeline',
-              items: process.env.OUTCOME === 'failure'
-                ? [{ id: 'cmwssb-scrape', level: 0, summary: 'The CMWSSB reservoir scrape failed after all retries; post-scrape intelligence ran on existing data.' }]
-                : [],
-              note: 'CMWSSB scrape, 06:00 IST daily. Common causes: the site is down, the runner IP is blocked, '
-                + 'or the page structure changed.',
-            });
 
   # Monthly job runs on days 1-3 for groundwater + risk scoring + ward narratives
   monthly-pipeline:

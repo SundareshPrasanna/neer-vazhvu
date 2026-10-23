@@ -42,10 +42,10 @@ test("a new break is named in the title and notifies; a known-blocked one does n
   assert.equal(issues[0].title, "Pipeline alerts: nothing new (+2 known blocked)");
   await run(github, { items: [item("hyderabad:reservoir:singur"), item("hyderabad:reservoir:manjira")] });
   assert.equal(comments.length, 0);
-  await run(github, { channel: "daily-pipeline", items: [item("cmwssb-scrape")] });
+  await run(github, { channel: "atlas-refresh", scope: ["atlas-refresh:erode"], items: [item("atlas-refresh:erode")] });
   assert.equal(issues.length, 1);
-  assert.equal(issues[0].title, "Pipeline alerts: cmwssb-scrape (+2 known blocked)");
-  assert.match(comments[0].body, /cmwssb-scrape/);
+  assert.equal(issues[0].title, "Pipeline alerts: atlas-refresh:erode (+2 known blocked)");
+  assert.match(comments[0].body, /atlas-refresh:erode/);
 });
 
 test("a channel keeps the others' items, and scope keeps its own unread ones", async () => {

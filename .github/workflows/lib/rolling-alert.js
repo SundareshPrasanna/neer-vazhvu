@@ -130,12 +130,12 @@ async function rollingAlert({ github, context, title, labels, report, keys, foot
  * on one dead upstream while new stale feeds went by as comments). By
  * 2026-10-23 that meant 28 open issues, most of them for sources already known
  * to be blocked - the JJM login wall in front of ten Atlas directories, Satara
- * since 2 Oct, Hyderabad's reservoirs - and the one real break that week,
- * CMWSSB failing in CI, was two more issues in the pile.
+ * since 2 Oct, Hyderabad's reservoirs - and the two that needed a person (a
+ * migration never applied, a BMC fetch that failed) sat in the pile.
  *
  * Here:
- *   - the freshness check, the daily pipeline and the Atlas refresh each write
- *     into the same issue; a run replaces only its own channel's items, and
+ *   - the freshness check and the Atlas refresh each write into the same
+ *     issue; a run replaces only its own channel's items, and
  *     with `scope` only the items it actually looked at
  *   - an item matched by an entry in known-blocked.json is listed under that
  *     entry's reason and never notifies; on the entry's review date it counts
@@ -146,8 +146,8 @@ async function rollingAlert({ github, context, title, labels, report, keys, foot
  *
  * State is JSON in an HTML comment at the end of the body. Two channels
  * writing in the same second would drop the earlier update until that channel
- * runs again; the schedules (00:30 and 06:30 UTC daily, Atlas on the 2nd, one
- * district at a time) keep that unlikely.
+ * runs again; the schedules (06:30 UTC daily, Atlas on the 2nd, one district
+ * at a time) keep that unlikely.
  */
 const DIGEST_OPEN = "<!--alert-digest:";
 // eslint-disable-next-line @typescript-eslint/no-require-imports -- CommonJS, loaded by actions/github-script
@@ -166,7 +166,7 @@ const pattern = (p) => new RegExp(`^${p.split("*").map((s) => s.replace(/[.+?^${
 
 /**
  * @param {object} o
- * @param {string} o.channel          freshness | daily-pipeline | atlas-refresh
+ * @param {string} o.channel          freshness | atlas-refresh
  * @param {{id: string, summary: string, detail?: string, level: number}[]} o.items  flagged now
  * @param {string[]} [o.scope]        ids this run looked at; the channel's other items are kept.
  *                                    Omitted = the whole channel.
