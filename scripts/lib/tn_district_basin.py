@@ -171,8 +171,10 @@ OPTIONAL = {
     "PRS_DRAINS_SOURCE": ("TNPCB, Action Plan on Rejuvenation of River Cauvery, Mettur to Mayiladuthurai stretch (2019): outfall names and GPS coordinates as printed", "PrsCauvery24919.pdf"),
     # A CEPI area's frame (see build_cepi): points, name, statedKm2, facts, provenance, sourceFile.
     "CEPI": None,
-    # Rivers OSM leaves unnamed in the district, drawn from CWC's river network (river_id -> CWC rivname; CWC_RIVERS_FILE in CWC_LAYERS).
-    "CWC_RIVER_LINES": {}, "CWC_RIVERS_FILE": None,
+    # Rivers OSM leaves unnamed in the district, drawn from CWC's river network (river_id -> CWC rivname, or (rivname, UID_River)
+    # where CWC gives two rivers one name; CWC_RIVERS_FILE in CWC_LAYERS). CWC_LINE_TRIMS: river_id -> the river whose course
+    # it doubles, so the CWC line is drawn only where that course does not already run.
+    "CWC_RIVER_LINES": {}, "CWC_RIVERS_FILE": None, "CWC_LINE_TRIMS": {},
     # Unnamed OSM ways that are plainly a mapped river's course, joined to it at both ends (OSM way id -> river_id).
     "OSM_WAY_RIVERS": {},
     # Layers served as they are, cut to the district (see build_wfs_families).
@@ -681,10 +683,12 @@ class DistrictBasinBuild:
             merged = MultiLineString(lines_only(part))
             feats.append(feat(mapping(merged), {"river_id": rid, "name": names[rid], "waterway": "canal", "lengthInDistrictKm": round(length_km(merged), 1),
                                                 "source": "CWC canal network (National Water Data Portal)"}))
-        for rid, cwc_name in cfg.CWC_RIVER_LINES.items():
-            lines = [shape(f["geometry"]) for f in self.cwc_layer(cfg.CWC_RIVERS_FILE)["features"] if f["properties"].get("rivname") == cwc_name]
+        for rid, ref in cfg.CWC_RIVER_LINES.items():
+            cwc_name, uid = (ref, None) if isinstance(ref, str) else ref
+            lines = [shape(f["geometry"]) for f in self.cwc_layer(cfg.CWC_RIVERS_FILE)["features"]
+                     if f["properties"].get("rivname") == cwc_name and uid in (None, f["properties"].get("UID_River"))]
             if not lines:
-                raise SystemExit(f"rivers: no CWC river line named {cwc_name!r}")
+                raise SystemExit(f"rivers: no CWC river line named {cwc_name!r}" + (f" with UID {uid}" if uid else ""))
             merged = MultiLineString(lines_only(unary_union(lines).intersection(clip)))
             feats.append(feat(mapping(merged), {"river_id": rid, "name": names[rid], "waterway": "river", "lengthInDistrictKm": round(length_km(merged), 1),
                                                 "source": "CWC river network (National Water Data Portal)"}))
@@ -696,6 +700,10 @@ class DistrictBasinBuild:
                 "river_id": rid, "name": names[rid], "waterway": kind,
                 "lengthInDistrictKm": round(length_km(merged), 1), "osmWays": len(parts), "source": "OpenStreetMap",
             }))
+        for rid, other in cfg.CWC_LINE_TRIMS.items():  # 150 m covers the two sources' drawing of one course
+            x, o = (next(f for f in feats if f["properties"]["river_id"] == r) for r in (rid, other))
+            kept = MultiLineString(lines_only(shape(x["geometry"]).difference(shape(o["geometry"]).buffer(0.00135))))
+            x["geometry"], x["properties"]["lengthInDistrictKm"] = mapping(kept), round(length_km(kept), 1)
         source_file = "osm-waterways.json" + (f" + {cfg.CWC_CANALS_FILE}" if cfg.CANAL_RIVERS else "") + (f" + {cfg.CWC_RIVERS_FILE}" if cfg.CWC_RIVER_LINES else "")
         self.emit("rivers", feats, cfg.WATERWAYS_PROVENANCE, source_file)
         for x in feats:
@@ -1195,7 +1203,7 @@ class DistrictBasinBuild:
                 facts = {"kind": "cetp-operating", "status": f"Operating: consent issued {r['consentIssuedOn']}, renewal valid to {r['renewalValidTo']} (TNPCB list, 2020)",
                          "consentedKld": r["consentedKld"], "memberUnits": r["totalMembers"], "participatingMembers": r["participatingMembers"], "permittedKld": r.get("permittedKld")}
                 if m := r.get("mpr2026"):  # the state's newer report: its status and renewal replace the 2020 list's
-                    facts |= {"status": f"Status '{m['status']}', consent renewed to {m['renewalStatus']}, compliance '{m['compliance']}' (Tamil Nadu report to NMCG, June 2026, p.{m['page']}); "
+                    facts |= {"kind": "cetp-not-operating" if m["status"].lower().startswith("not") else "cetp-operating", "status": f"Status '{m['status']}', consent renewed to {m['renewalStatus']}, compliance '{m['compliance']}' (Tamil Nadu report to NMCG, June 2026, p.{m['page']}); "
                                         f"consented {r['consentedKld']:,} KLD in TNPCB's 2020 list", "unitsConnected2026": m["industrialUnitsConnected"], "restrictedKld2026": m["restrictedQuantityKld"]}
                 return facts
         raise SystemExit(f"treatment plants: register unit {unit_id} is a common treatment plant with no row in {self.cfg.CETP_SCHEMES.name}")
@@ -1340,9 +1348,13 @@ class DistrictBasinBuild:
                 f"{SIPCOT}?{urllib.parse.urlencode({'service': 'WFS', 'version': '1.0.0', 'request': 'GetFeature', 'typeName': f'cite:industrial_complex_boundary-{park}', 'outputFormat': 'application/json', 'srsName': 'EPSG:4326'})}"))
             for f in raw["features"]:
                 g, p = shape(f["geometry"]).buffer(0), f["properties"]
-                feats.append(feat(mapping(g.simplify(0.0002)), {
+                served = g.simplify(0.0002)
+                stated, outline = round(float(p["ind_cmplx_area_acre"]), 1), area_km2(served) * 247.105
+                fits = outline / 3 <= stated <= outline * 3  # a stated area far from the outline's own is not shown as fact
+                feats.append(feat(mapping(served), {
                     "name": p.get("ind_cmplx_name"), "kind": "sipcot-estate", "complexNo": p.get("ind_cmplx_no"),
-                    "areaAcres": round(float(p["ind_cmplx_area_acre"]), 1), "agency": "SIPCOT", "shedId": sheds.for_geom(g),
+                    **({"areaAcres": stated} if fits else {"areaNote": f"SIPCOT's area field reads {stated:,} acres, which does not fit this outline ({outline:.1f} acres computed from it), so it is not shown."}),
+                    "agency": "SIPCOT", "shedId": sheds.for_geom(g),
                 }))
         self.emit("industrial-estates", feats, cfg.ESTATES_PROVENANCE, cfg.ESTATES_SOURCE_FILE)
 

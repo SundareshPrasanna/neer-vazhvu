@@ -1,0 +1,160 @@
+{
+ "_doc": [
+  "Tirupathur district's tannery common effluent treatment plants (CETPs), as listed by TNPCB (2020) and by the state's June 2026 progress report to NMCG: three, all in operation. Both lists place all three in 'Tirupattoor District' (TNPCB's row 7 prints 'Tirupattoor Dstrict'). TNPCB's 2020 list and the June 2026 report also list M/s TALCO Pernambut Tannery Effluent Treatment Company (Pernambut, Vellore District), which is in Vellore district and is left out.",
+  "Rows are transcribed from the PDFs and each row is checked by script (scripts/verify.py) against the page's text layer, as table cells on one line; the tables were also read from the rendered page images (img/tannery2020-1.png, img/mpr2606-54-54.png, img/mpr2606-55-55.png).",
+  "registerUnitId joins each plant to the TNGIS industry register's unit (treatment-plants.geojson, kind cetp, 2 units). The joins are by name and are the part to review: see joinBasis.",
+  "consentedKld is TNPCB's 2020 column 'CETP Consented Quantity (KLD)'; consentIssuedOn is the column 'CTO issued on' and renewalValidTo the column 'RCO validity'; permittedPercent and permittedKld are the columns '% Permitted quantity (in KLD)' and 'Permitted quantity (in KLD)'. The June 2026 report's renewal column is printed as a sentence; mpr2026.renewalStatus gives its date in the form the engine's status line expects, and renewalStatusAsPrinted the sentence.",
+  "notOnRegister: the Ambur plant's Maligaithope sector, which has no register unit. No official source read prints its location, so it is not drawn.",
+  "History, not plants: the 1996 Supreme Court judgment lists two 'TALCO Vaniyambadi Tanners Enviro Control Systems Ltd.' CETPs, at Vaniyambattu and at Udayendiram, Vaniyambadi (p.7); neither name is on TNPCB's 2020 list or the June 2026 report."
+ ],
+ "schemaVersion": 1,
+ "id": "tirupathur-rivers-cetp-schemes",
+ "review": {
+  "status": "proposed",
+  "extractedBy": "transcribed from the PDFs and checked by script against their text layers, 2026-10-22",
+  "verifiedBy": null,
+  "verifiedAt": null
+ },
+ "source": {
+  "title": "Details of Common Effluent Treatment Plants pertaining to the Cluster of Tannery Industries in Tamil Nadu",
+  "publisher": "Tamil Nadu Pollution Control Board",
+  "url": "https://tnpcb.gov.in/PDF/Information/cept/Tannery2020.pdf",
+  "listedOn": "https://tnpcb.gov.in/cept.php",
+  "retrieved": "2026-10-22",
+  "pdfCreated": "2020-07-14"
+ },
+ "sources": [
+  {
+   "title": "Monthly Progress Report, Tamil Nadu, O.A. 673/2018, June 2026",
+   "publisher": "Government of Tamil Nadu, via NMCG",
+   "url": "https://nmcg.nic.in/writereaddata/fileupload/ngtmpr/43_Tamil%20Nadu%20-%20MPR%20June%202026.pdf",
+   "pages": [
+    53,
+    54,
+    55
+   ]
+  },
+  {
+   "title": "Vellore Citizens Welfare Forum v. Union of India, judgment of 28 August 1996",
+   "publisher": "Supreme Court of India",
+   "url": "https://api.sci.gov.in/jonew/judis/15202.pdf",
+   "pages": [
+    7
+   ],
+   "use": "history only"
+  }
+ ],
+ "totals": {
+  "tirupathurPlantsListed": 3,
+  "onRegister": 2,
+  "notOnRegister": 1,
+  "tnpcb2020ConsentedKldSum": 6661,
+  "tnpcb2020PermittedKldSum": 3480,
+  "tnpcb2020TotalMembersSum": 199,
+  "tnpcb2020ParticipatingMembersSum": 173,
+  "mpr2026UnitsConnectedSum": 188,
+  "mpr2026RestrictedQuantityKldSum": 6661,
+  "note": "Sums are computed here over the three Tirupathur rows (TNPCB 2020 rows 4, 5 and 7; June 2026 rows 22, 23 and 25)."
+ },
+ "schemes": [],
+ "existingPlants": [
+  {
+   "registerUnitId": "R15VBD340029",
+   "tnpcbSl": 4,
+   "nameAsPrinted": "M/s. Ambur Tannery Effluent Treatment Company Limited, Thuthipet Sector, Ambur,Tirupattoor District",
+   "consentedKld": 2219,
+   "consentIssuedOn": "27.01.1997",
+   "renewalValidTo": "30.09.2020",
+   "totalMembers": 49,
+   "participatingMembers": 38,
+   "permittedPercent": "51.8 %",
+   "permittedKld": 1150,
+   "source": "TNPCB, Details of Common Effluent Treatment Plants pertaining to the Cluster of Tannery Industries in Tamil Nadu (Tannery2020.pdf), row 4, p.1",
+   "mpr2026": {
+    "sl": 22,
+    "locationAsPrinted": "M/s. Ambur Tannery Effluent Treatment Company Limited, Thuthipet Sector, Ambur, Tirupattoor District",
+    "noOfCetps": 1,
+    "industrialUnitsConnected": 44,
+    "restrictedQuantityKld": 2219,
+    "status": "Operation",
+    "ocems": "Connected",
+    "renewalStatus": "31/3/2028",
+    "renewalStatusAsPrinted": "Consent to Operate (CTO) (Direct) valid up to 31/3/2028",
+    "compliance": "Complied",
+    "page": 54,
+    "source": "Tamil Nadu monthly progress report to NMCG in O.A. 673/2018, June 2026, 'STATUS OF COMPLIANCE AND OPERATION OF COMMON EFFLUENT TREATMENT PLANTS', section 'Tannery CETPs in the State'"
+   },
+   "register": {
+    "name": "AMBUR TANNERY EFFLUENT TREATMENT COMPANY LTD, THUTHIPET SECTOR,",
+    "village": "Periavarikkam",
+    "taluk": "Ambur",
+    "lat": 12.8123,
+    "lon": 78.71551,
+    "kmToPalarMappedCourse": 0.87
+   },
+   "joinBasis": "name: the register's 'AMBUR TANNERY EFFLUENT TREATMENT COMPANY LTD, THUTHIPET SECTOR,' and both lists' 'Ambur Tannery Effluent Treatment Company Limited, Thuthipet Sector'. To review: the register places the unit in Periavarikkam village, Ambur taluk, not Thuthipattu.",
+   "history1996": "The 1996 judgment lists 'M/s. TALCO Ambur Tannery Effluent Treatment Co. Ltd., Thuthipet Sector, Ambur' among the CETPs (Supreme Court, 28 August 1996, p.7)."
+  },
+  {
+   "registerUnitId": "R15VBD3248010",
+   "tnpcbSl": 7,
+   "nameAsPrinted": "M/s. Vanitec Limited Valayampet Vaniyambadi, Tirupattoor Dstrict",
+   "consentedKld": 3342,
+   "consentIssuedOn": "27.01.1997",
+   "renewalValidTo": "30.09.2020",
+   "totalMembers": 133,
+   "participatingMembers": 123,
+   "permittedPercent": "60 %",
+   "permittedKld": 2000,
+   "source": "TNPCB, Details of Common Effluent Treatment Plants pertaining to the Cluster of Tannery Industries in Tamil Nadu (Tannery2020.pdf), row 7, p.1",
+   "mpr2026": {
+    "sl": 25,
+    "locationAsPrinted": "M/s. Vanitec Limited Valayampet, Vaniyambadi, Tirupattoor District",
+    "noOfCetps": 1,
+    "industrialUnitsConnected": 132,
+    "restrictedQuantityKld": 3342,
+    "status": "Operation",
+    "ocems": "Connected",
+    "renewalStatus": "31/3/2028",
+    "renewalStatusAsPrinted": "CTO Direct valid up to 31/3/2028",
+    "compliance": "Complied",
+    "page": 55,
+    "source": "Tamil Nadu monthly progress report to NMCG in O.A. 673/2018, June 2026, 'STATUS OF COMPLIANCE AND OPERATION OF COMMON EFFLUENT TREATMENT PLANTS', section 'Tannery CETPs in the State'"
+   },
+   "register": {
+    "name": "VANITEC LIMITED",
+    "village": "Valayampattu",
+    "taluk": "Vaniyambadi",
+    "lat": 12.69497,
+    "lon": 78.63255,
+    "kmToPalarMappedCourse": 0.45
+   },
+   "joinBasis": "name and village: the register's 'VANITEC LIMITED' in Valayampattu village, Vaniyambadi taluk, and both lists' 'Vanitec Limited Valayampet'. To review: the spelling Valayampet (lists) against Valayampattu (register)."
+  }
+ ],
+ "notOnRegister": [
+  {
+   "tnpcbSl": 5,
+   "nameAsPrinted": "M/s Ambur Tannery Effluent Treatment Company Ltd, Maligaithope Sector, Ambur, Tirupattoor District.",
+   "consentedKld": 1100,
+   "consentIssuedOn": "11.05.1998",
+   "renewalValidTo": "30.09.2020",
+   "totalMembers": 17,
+   "participatingMembers": 12,
+   "permittedPercent": "30%",
+   "permittedKld": 330,
+   "mpr2026": {
+    "sl": 23,
+    "industrialUnitsConnected": 12,
+    "restrictedQuantityKld": 1100,
+    "status": "Operation",
+    "ocems": "Connected",
+    "renewalStatus": "31/3/2028",
+    "renewalStatusAsPrinted": "Renewal Consent Order (RCO) valid up to 31/3/2028",
+    "compliance": "Complied",
+    "page": 54
+   },
+   "why": "No unit in the TNGIS industry register (the register's two CETP-type units, type code 1078, are Vanitec and the Thuthipet sector)."
+  }
+ ]
+}

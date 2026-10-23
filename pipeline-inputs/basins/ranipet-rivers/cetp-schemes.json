@@ -1,0 +1,235 @@
+{
+ "_doc": [
+  "Ranipet district's four tannery common effluent treatment plants (CETPs), as listed by TNPCB (2020, rows 8 to 11) and by the state's June 2026 progress report to NMCG (rows 26 to 29). No proposed CETP scheme for Ranipet is in the June 2026 report's list of proposed CETPs (p.58, ten schemes in Erode and Namakkal districts), so \"schemes\" is empty.",
+  "Names are as printed, except that the June 2026 report's dashes are written as hyphens. Rows are transcribed from the PDFs and each is checked by script against the page's text layer (receipts.md); the tables were also read from the rendered page images (img/tannery2020-1.png, -2.png, img/mpr2606-p55-55.png).",
+  "registerUnitId joins each plant to the TNGIS industry register's unit by name (treatment-plants.geojson, kind cetp, 3 units). The join is the part to review: see joinBasis, especially R15VLR3022741, whose register name lacks 'SIDCO'.",
+  "Column mapping (TNPCB 2020): consentedKld is the column headed CETP Consented Quantity (KLD); permittedKld the column Permitted quantity (in KLD), with permittedPct; consentIssuedOn the column CTO issued on; renewalValidTo the column RCO validity; totalMembers the column Total member tanneries; participatingMembers the column Participating members (headers checked on p.1). The June 2026 report's renewal status is in mpr2026.renewalStatus, and renewalStatusAsPrinted keeps its words.",
+  "The June 2026 report lists Visharam (R15VLR557636) as 'Not in Operation (Temporary)' with compliance 'NA'; the engine serves it as kind cetp-not-operating, from that status.",
+  "notOnRegister: the SIPCOT-SIDCO Phase II Entrepreneur Finished Leather Effluent Treatment Co. (TNPCB row 10, June 2026 row 28) has no register unit and no official coordinates in the documents read, so it is not drawn."
+ ],
+ "schemaVersion": 1,
+ "id": "ranipet-rivers-cetp-schemes",
+ "review": {
+  "status": "proposed",
+  "extractedBy": "transcribed from the PDFs and checked by script against their text layers, 2026-10-22",
+  "verifiedBy": null,
+  "verifiedAt": null
+ },
+ "source": {
+  "title": "Details of Common Effluent Treatment Plants pertaining to the Cluster of Tannery Industries in Tamil Nadu",
+  "publisher": "Tamil Nadu Pollution Control Board",
+  "url": "https://tnpcb.gov.in/PDF/Information/cept/Tannery2020.pdf",
+  "listedOn": "https://tnpcb.gov.in/cept.php",
+  "retrieved": "2026-10-22",
+  "pdfCreated": "2020-07-14"
+ },
+ "sources": [
+  {
+   "title": "Monthly Progress Report, Tamil Nadu, O.A. 673/2018, June 2026",
+   "publisher": "Government of Tamil Nadu, via NMCG",
+   "url": "https://nmcg.nic.in/writereaddata/fileupload/ngtmpr/43_Tamil%20Nadu%20-%20MPR%20June%202026.pdf",
+   "pages": [
+    52,
+    54,
+    55,
+    58
+   ]
+  },
+  {
+   "title": "Evaluation of CEPI score and action plan for CEPI area of SIPCOT Industrial Complex, Ranipet (submitted January 2020)",
+   "publisher": "Tamil Nadu Pollution Control Board",
+   "url": "https://tnpcb.gov.in/PDF/About_Us/projects/CEPI/CEPI_VeloreRpt4920.pdf",
+   "pages": [
+    10,
+    30,
+    31,
+    33,
+    48,
+    49
+   ]
+  },
+  {
+   "title": "Vellore Citizens Welfare Forum v. Union of India, judgment of 28.08.1996",
+   "publisher": "Supreme Court of India",
+   "url": "https://api.sci.gov.in/jonew/judis/15202.pdf",
+   "pages": [
+    7
+   ],
+   "use": "history: two of these plants were among the seven CETPs NEERI found in operation in 1996"
+  }
+ ],
+ "totals": {
+  "ranipetPlantsListed": 4,
+  "onRegister": 3,
+  "notOnRegister": 1,
+  "tnpcb2020ConsentedKldSum": 11960,
+  "tnpcb2020PermittedKldSum": 6775,
+  "tnpcb2020TotalMembersSum": 217,
+  "tnpcb2020ParticipatingMembersSum": 205,
+  "mpr2026UnitsConnectedSum": 230,
+  "mpr2026RestrictedQuantityKldSum": 8000,
+  "mpr2026InOperation": 2,
+  "mpr2026NotInOperationTemporary": 2,
+  "note": "Sums computed here over the four Ranipet rows."
+ },
+ "schemes": [],
+ "existingPlants": [
+  {
+   "registerUnitId": "R15VLR255207",
+   "tnpcbSl": 8,
+   "nameAsPrinted": "M/s. Ranipet Tannery Effluent Treatment Company Limited (RANITEC), Ranipet District",
+   "consentedKld": 4500,
+   "consentIssuedOn": "01.02.2013",
+   "renewalValidTo": "30.09.2020",
+   "totalMembers": 82,
+   "participatingMembers": 82,
+   "permittedPct": "80%",
+   "permittedKld": 3600,
+   "check": "row 8",
+   "source": "TNPCB, Details of Common Effluent Treatment Plants pertaining to the Cluster of Tannery Industries in Tamil Nadu (Tannery2020.pdf), row 8, p.1",
+   "mpr2026": {
+    "sl": 26,
+    "locationAsPrinted": "M/s. Ranipet Tannery Effluent Treatment Company Limited (RANITEC), Ranipet District",
+    "industrialUnitsConnected": 92,
+    "restrictedQuantityKld": 4500,
+    "status": "Operation",
+    "ocems": "Connected",
+    "renewalStatus": "31/3/2028",
+    "renewalStatusAsPrinted": "RCO valid up to 31/3/2028",
+    "compliance": "Complied",
+    "page": 55,
+    "source": "Tamil Nadu monthly progress report to NMCG in O.A. 673/2018, June 2026, table 'STATUS OF COMPLIANCE AND OPERATION OF COMMON EFFLUENT TREATMENT PLANTS', section Tannery CETPs in the State",
+    "check": "row 26"
+   },
+   "register": {
+    "name": "RANIPET TANNERY EFFLUENT TREATMENT COMPANY",
+    "village": "Vannivedu",
+    "taluk": "Walajah",
+    "registeredYear": "2015",
+    "office": "DEE Vellore",
+    "lat": 12.92046,
+    "lon": 79.35002,
+    "kmToPalarMappedCourse": 1.45,
+    "kmToPonnaiMappedCourse": 7.86
+   },
+   "joinBasis": "name: the register's RANIPET TANNERY EFFLUENT TREATMENT COMPANY is TNPCB's Ranipet Tannery Effluent Treatment Company Limited (RANITEC) without \"Limited\".",
+   "notes": "The policy note 2026-27 records that this CETP 'has obtained central Govt. approvals and TNPCB NOC for an upgradation that includes a common salt purification plant' (p.121). Its 1996 predecessor, M/s. TALCO Ranipet Tannery Effluent Treatment Co. Ltd., was the first of the seven CETPs NEERI found in operation (Supreme Court judgment of 28.08.1996, p.7); that it is the same plant is not stated in the documents read."
+  },
+  {
+   "registerUnitId": "R15VLR3022741",
+   "tnpcbSl": 9,
+   "nameAsPrinted": "M/s. Ranipet SIDCO finished Leather Effluent Treatment Company Limited, Ranipet District.",
+   "consentedKld": 2500,
+   "consentIssuedOn": "17.12.1996",
+   "renewalValidTo": "30.09.2020",
+   "totalMembers": 79,
+   "participatingMembers": 78,
+   "permittedPct": "75%",
+   "permittedKld": 1875,
+   "check": "row 9",
+   "source": "TNPCB, Details of Common Effluent Treatment Plants pertaining to the Cluster of Tannery Industries in Tamil Nadu (Tannery2020.pdf), row 9, p.2",
+   "mpr2026": {
+    "sl": 27,
+    "locationAsPrinted": "M/s. Ranipet SIDCO Leather Effluent Treatment Company Limited, Ranipet District",
+    "industrialUnitsConnected": 82,
+    "restrictedQuantityKld": 2500,
+    "status": "Operation",
+    "ocems": "Connected",
+    "renewalStatus": "31/3/2028",
+    "renewalStatusAsPrinted": "RCO valid up to 31/3/2028",
+    "compliance": "Complied",
+    "page": 55,
+    "source": "Tamil Nadu monthly progress report to NMCG in O.A. 673/2018, June 2026, table 'STATUS OF COMPLIANCE AND OPERATION OF COMMON EFFLUENT TREATMENT PLANTS', section Tannery CETPs in the State",
+    "check": "row 27"
+   },
+   "register": {
+    "name": "RANIPET FINISHED LEATHERS EFFLUENT TREATMENT COMPANY LTD.",
+    "village": "Karai",
+    "taluk": "Walajah",
+    "registeredYear": "2015",
+    "office": "DEE Vellore",
+    "lat": 12.94729,
+    "lon": 79.31408,
+    "kmToPalarMappedCourse": 3.08,
+    "kmToPonnaiMappedCourse": 4.47
+   },
+   "joinBasis": "name, TO REVIEW: the register's RANIPET FINISHED LEATHERS EFFLUENT TREATMENT COMPANY LTD. (Karai) matches TNPCB row 9 (Ranipet SIDCO finished Leather Effluent Treatment Company) on every word but SIDCO; row 10 (SIPCOT-SIDCO Phase II Entrepreneur Finished Leather Effluent Treatment Co.) also carries 'Finished Leather'. TNPCB's CEPI plan names both as the two CETPs of the CEPI area, the first as Ranipet SIDCO Finished Leather Effluent Treatment Company Limited, CETP Phase 1, 1875 KLD, row 9's permitted quantity (pp.30-31). The register point lies 0.59 km from the CEPI core frame and in neither SIPCOT outline.",
+   "notes": "Its 1996 name, M/s. Ranipet SIDCO Finished Leather Effluent Treatment Co. Pvt. Ltd., is fifth of the seven CETPs NEERI found in operation (Supreme Court judgment of 28.08.1996, p.7)."
+  },
+  {
+   "registerUnitId": "R15VLR557636",
+   "tnpcbSl": 11,
+   "nameAsPrinted": "M/s. Visharam Tanners Enviro Control Systems (P) Ltd., Melvisharam, Ranipet District",
+   "consentedKld": 3400,
+   "consentIssuedOn": "13.11.1996",
+   "renewalValidTo": "30.09.2020",
+   "totalMembers": 36,
+   "participatingMembers": 26,
+   "permittedPct": "17.64%",
+   "permittedKld": 600,
+   "check": "row 11",
+   "source": "TNPCB, Details of Common Effluent Treatment Plants pertaining to the Cluster of Tannery Industries in Tamil Nadu (Tannery2020.pdf), row 11, p.2",
+   "mpr2026": {
+    "sl": 29,
+    "locationAsPrinted": "M/s. Visharam Tanners Enviro Control Systems (p) Ltd., Melvisharam, Ranipet District",
+    "industrialUnitsConnected": 36,
+    "restrictedQuantityKld": 600,
+    "status": "Not in Operation (Temporary)",
+    "ocems": "Connected",
+    "renewalStatus": "31/3/2027",
+    "renewalStatusAsPrinted": "RCO valid up to 31/3/2027",
+    "compliance": "NA",
+    "page": 55,
+    "source": "Tamil Nadu monthly progress report to NMCG in O.A. 673/2018, June 2026, table 'STATUS OF COMPLIANCE AND OPERATION OF COMMON EFFLUENT TREATMENT PLANTS', section Tannery CETPs in the State",
+    "check": "row 29"
+   },
+   "register": {
+    "name": "VISHARAM TANNERS ENVIRO CONTROL SYSTEMS PRIVATE LIMITED",
+    "village": "Visharam",
+    "taluk": "Walajah",
+    "registeredYear": "2015",
+    "office": "DEE Vellore",
+    "lat": 12.90497,
+    "lon": 79.2787,
+    "kmToPalarMappedCourse": 2.14,
+    "kmToPonnaiMappedCourse": 2.54
+   },
+   "joinBasis": "name: the register's VISHARAM TANNERS ENVIRO CONTROL SYSTEMS PRIVATE LIMITED is TNPCB's Visharam Tanners Enviro Control Systems (P) Ltd.",
+   "notes": "Not in operation (temporary) in June 2026: see the engine caution in _doc."
+  }
+ ],
+ "notOnRegister": [
+  {
+   "tnpcbSl": 10,
+   "nameAsPrinted": "SIPCOT-SIDCO Phase II Entrepreneur Finished Leather Effluent Treatment Co. Ltd., Ranipet District",
+   "consentedKld": 1560,
+   "consentIssuedOn": "09.03.2002",
+   "renewalValidTo": "30.09.2020",
+   "totalMembers": 20,
+   "participatingMembers": 19,
+   "permittedPct": "44.9%",
+   "permittedKld": 700,
+   "check": "row 10",
+   "source": "TNPCB, Details of Common Effluent Treatment Plants pertaining to the Cluster of Tannery Industries in Tamil Nadu (Tannery2020.pdf), row 10, p.2",
+   "mpr2026": {
+    "sl": 28,
+    "locationAsPrinted": "M/s. SIPCOT - SIDCO Phase II Entrepreneur Finished Leather Effluent Treatment Co. Ltd.,Ranipet,Dist",
+    "industrialUnitsConnected": 20,
+    "restrictedQuantityKld": 400,
+    "status": "Not in Operation (Temporary)",
+    "ocems": "Connected",
+    "renewalStatus": "31/3/2027",
+    "renewalStatusAsPrinted": "RCO valid up to 31/3/2027",
+    "compliance": "NA",
+    "page": 55,
+    "source": "Tamil Nadu monthly progress report to NMCG in O.A. 673/2018, June 2026, table 'STATUS OF COMPLIANCE AND OPERATION OF COMMON EFFLUENT TREATMENT PLANTS', section Tannery CETPs in the State",
+    "check": "row 28"
+   },
+   "register": null,
+   "joinBasis": "no unit of this name on the TNGIS register (the register holds only units matched to a land parcel); not drawn. TNPCB's CEPI plan places it in the CEPI area, with 700 KLD reused in process by member industries (pp.30-31).",
+   "notes": "The June 2026 report prints the dash in \"SIPCOT - SIDCO\" as an en dash; written here as a hyphen."
+  }
+ ],
+ "history1996": "NEERI's report of 12 February 1996, as the Supreme Court's order of 9 April 1996 quotes it: 'only 7 CETPs are under operation, while 10 are under construction and 13 are proposed'; the first and fifth are 'M/s. TALCO Ranipet Tannery Effluent Treatment Co. Ltd. Ranipet, Dist. North Arcot Ambedkar.' and 'M/s. Ranipet SIDCO Finished Leather Effluent Treatment Co. Pvt. Ltd., Ranipet, Dist. North Arcot Ambedkar.' (judgment of 28.08.1996, p.7).",
+ "stateTotals": "The June 2026 report counts 36 existing CETPs in the state, 32 in operation, 2 not in operation and 2 not in operation (temporary) (p.52); the two temporary ones are Ranipet's rows 28 and 29."
+}

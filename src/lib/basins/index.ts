@@ -11,10 +11,13 @@ import { KRISHNAGIRI_RIVERS } from "./krishnagiri-rivers";
 import { MUMBAI_RIVERS } from "./mumbai-rivers";
 import { NAMAKKAL_RIVERS } from "./namakkal-rivers";
 import { PALAKKAD_RIVERS } from "./palakkad-rivers";
+import { RANIPET_RIVERS } from "./ranipet-rivers";
 import { SALEM_RIVERS } from "./salem-rivers";
 import { THANJAVUR_RIVERS } from "./thanjavur-rivers";
 import { TIRUCHIRAPPALLI_RIVERS } from "./tiruchirappalli-rivers";
+import { TIRUPATHUR_RIVERS } from "./tirupathur-rivers";
 import { TIRUPPUR_RIVERS } from "./tiruppur-rivers";
+import { VELLORE_RIVERS } from "./vellore-rivers";
 
 export * from "./types";
 
@@ -33,10 +36,13 @@ const BASINS: Record<string, BasinManifest> = {
   "mumbai-rivers": MUMBAI_RIVERS,
   "namakkal-rivers": NAMAKKAL_RIVERS,
   "palakkad-rivers": PALAKKAD_RIVERS,
+  "ranipet-rivers": RANIPET_RIVERS,
   "salem-rivers": SALEM_RIVERS,
   "thanjavur-rivers": THANJAVUR_RIVERS,
   "tiruchirappalli-rivers": TIRUCHIRAPPALLI_RIVERS,
+  "tirupathur-rivers": TIRUPATHUR_RIVERS,
   "tiruppur-rivers": TIRUPPUR_RIVERS,
+  "vellore-rivers": VELLORE_RIVERS,
 };
 
 export function tryGetBasinManifest(basinId: string): BasinManifest | null {
