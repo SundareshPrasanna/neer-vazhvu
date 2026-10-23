@@ -16,8 +16,8 @@
  *     .github/workflows/data-freshness.yml after the morning pipelines.
  *     Queries Supabase for reservoir feeds and reads committed artifacts
  *     for file feeds. Writes freshness-report.md and freshness-alerts.json
- *     and exits 1 when anything is stale (the workflow opens one GitHub
- *     issue per stale feed).
+ *     and exits 1 when anything is stale (the workflow writes them into the
+ *     pipeline alert digest issue).
  *
  * Checks are DERIVED, not hand-listed:
  *   - Reservoir feeds: every waterSource with hasPublicFeed !== false,
@@ -600,46 +600,36 @@ async function main() {
 
   const report = lines.join("\n");
   writeFileSync(resolve(ROOT, "freshness-report.md"), report);
-  // Machine-readable companion for itemAlerts in
-  // .github/workflows/lib/rolling-alert.js: one item per stale feed, so each
-  // opens its own issue. `level` rises each time the age doubles past the
-  // tolerance, which is what re-notifies; the age itself changes daily and
-  // would make the channel comment daily.
-  const row = (r: Row) =>
-    `| ${r.check.id} | ${r.check.cityId} | ${r.last ?? "-"} | ${r.age ?? "-"} | ${r.check.maxAgeDays} |`;
-  const table = (rs: Row[]) =>
-    ["| feed | city | last data | age (d) | max |", "|---|---|---|---|---|", ...rs.map(row)].join("\n");
+  // Machine-readable companion for digest() in
+  // .github/workflows/lib/rolling-alert.js: one item per stale feed. `level`
+  // rises each time the age doubles past the tolerance, which is what
+  // re-notifies; the age itself changes daily and would notify daily.
   const dated = stale.filter((r) => r.last);
   const unchecked = stale.filter((r) => !r.last);
   const items = dated.map((r) => ({
     id: r.check.id,
-    title: `Stale feed: ${r.check.id}`,
     level: Math.floor(Math.log2(r.age! / r.check.maxAgeDays)),
     summary: `${r.age} days since the last data (${r.last}); tolerance ${r.check.maxAgeDays}.`,
-    body: [table([r]), "", r.check.note ?? ""].join("\n"),
+    detail: r.check.note,
   }));
   // A feed that could not be read is unknown, not stale: one shared item, and
-  // `unknown` keeps that feed's own issue from being closed as recovered.
+  // leaving it out of `scope` keeps that feed's own item as it was.
   if (unchecked.length)
     items.push({
-      id: "unchecked",
-      title: "Freshness check: feeds that could not be read",
+      id: "unreadable-feeds",
       level: 0,
-      summary: `${unchecked.length} feeds could not be checked.`,
-      body: unchecked.map((r) => `- ${r.check.id}: ${r.error}`).join("\n"),
+      summary: `${unchecked.length} feeds could not be checked:`,
+      detail: unchecked.map((r) => `${r.check.id} (${r.error})`).join("; "),
     });
   if (problems.length)
     items.push({
-      id: "registry",
-      title: "Freshness check: registry problems",
+      id: "freshness-registry",
       level: 0,
-      summary: `${problems.length} registry problems.`,
-      body: problems.map((p) => `- ${p}`).join("\n"),
+      summary: `${problems.length} registry problems:`,
+      detail: problems.join("; "),
     });
-  writeFileSync(
-    resolve(ROOT, "freshness-alerts.json"),
-    JSON.stringify({ items, unknown: unchecked.map((r) => r.check.id) }, null, 2) + "\n",
-  );
+  const scope = [...rows.filter((r) => r.last).map((r) => r.check.id), "unreadable-feeds", "freshness-registry"];
+  writeFileSync(resolve(ROOT, "freshness-alerts.json"), JSON.stringify({ items, scope }, null, 2) + "\n");
   console.log(report);
   if (stale.length || problems.length) process.exit(1);
 }

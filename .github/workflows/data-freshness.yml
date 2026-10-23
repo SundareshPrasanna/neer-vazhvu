@@ -47,33 +47,23 @@ jobs:
         run: npx tsx scripts/check-data-freshness.ts --check
 
       - name: Alert on stale feeds
-        # Always runs, including on success: a recovered feed's issue closes
-        # itself here. One issue per stale feed (itemAlerts), because a single
-        # rolling issue stayed open on one dead upstream for 46 days and every
-        # other feed that went stale inside it was only a comment.
+        # Always runs, including on success: a recovered feed leaves the
+        # pipeline alert digest here (.github/workflows/lib/rolling-alert.js).
         if: always()
         uses: actions/github-script@v7
         with:
           script: |
             const fs = require('fs');
-            const { itemAlerts } = require('./.github/workflows/lib/rolling-alert.js');
-            const ran = fs.existsSync('freshness-alerts.json');
-            const alerts = ran
+            const { digest } = require('./.github/workflows/lib/rolling-alert.js');
+            const alerts = fs.existsSync('freshness-alerts.json')
               ? JSON.parse(fs.readFileSync('freshness-alerts.json', 'utf-8'))
-              : { items: [{
-                  id: 'checker', title: 'Freshness check: the checker errored', level: 0,
-                  summary: 'The freshness checker did not finish; see the run log.', body: '',
-                }] };
-            await itemAlerts({
-              github, context,
-              labels: ['pipeline-alert', 'data-freshness'],
-              ...alerts,
-              complete: ran,
-              footer: [
-                'Known recovery: CMWSSB and Pravah both intermittently block GitHub',
-                'runner IPs while responding normally from residential IPs - running the',
-                'scraper locally recovers the day (see neer-vazhvu-api/scripts/).',
-              ].join('\n'),
+              : { items: [{ id: 'freshness-checker', level: 0, summary: 'The freshness checker did not finish; see the run log.' }],
+                  scope: ['freshness-checker'] };
+            await digest({
+              github, context, channel: 'freshness', ...alerts,
+              note: 'stale feeds, 12:00 IST daily; the full table is in the run summary. CMWSSB and Pravah '
+                + 'both intermittently block GitHub runner IPs while answering residential IPs - running the '
+                + 'scraper locally recovers the day (see neer-vazhvu-api/scripts/).',
             });
 
       - name: Add the full table to the run summary
