@@ -17,6 +17,8 @@ import { AllocationHero } from "@/components/dashboard/allocation-hero";
 import { CauveryPumpingHero } from "@/components/dashboard/cauvery-pumping-hero";
 import { DrainageCapacityHero } from "@/components/dashboard/drainage-capacity-hero";
 import { FloodHeadroomHero } from "@/components/dashboard/flood-headroom-hero";
+import { ReservoirHeadroomCard } from "@/components/dashboard/reservoir-headroom-card";
+import { buildHeadroom, inMonsoonSeason, readingAgeDays } from "@/lib/insights/reservoir-headroom";
 import { SewageBalanceCard } from "@/components/dashboard/sewage-balance-card";
 import { BangaloreDailyBriefing } from "@/components/dashboard/bangalore-daily-briefing";
 import { buildBangaloreBriefing } from "@/lib/insights/bangalore-briefing";
@@ -401,6 +403,14 @@ export async function CityDashboard({ cityId }: { cityId: string }) {
   // shape Chennai's ReservoirCards consumes.
   const summaries = snapshotToSummaries(config, snapshot);
 
+  // In the city's monsoon, room left in the reservoirs leads the page.
+  const now = new Date();
+  const headroomConfig = config.dashboard?.reservoirHeadroom;
+  const headroom =
+    headroomConfig && snapshot.asOf && inMonsoonSeason(headroomConfig.monsoon, now)
+      ? buildHeadroom(summaries)
+      : null;
+
   const cityStoryNarrative = config.dashboard?.aiBriefing
     ? await buildCityStoryNarrative(config, waterEstimate, groundwaterData)
     : null;
@@ -425,6 +435,15 @@ export async function CityDashboard({ cityId }: { cityId: string }) {
         stateCode={config.stateCode}
         preview={!reservoirIsLive}
       />
+
+      {headroom && headroomConfig && snapshot.asOf && (
+        <ReservoirHeadroomCard
+          headroom={headroom}
+          asOf={snapshot.asOf}
+          isStale={readingAgeDays(snapshot.asOf, now) > 2}
+          config={headroomConfig}
+        />
+      )}
 
       {/* Hero swap: cities whose tracked sources ARE the urban supply
           (Chennai's CMWSSB reservoirs) get the days-left runway; cities

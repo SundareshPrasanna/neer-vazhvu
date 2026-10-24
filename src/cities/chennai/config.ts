@@ -145,6 +145,11 @@ const config: PlaceConfig = {
     reservoirCatchmentContext: true,
     groundwaterSnapshot: true,
     weapBalance: true,
+    reservoirHeadroom: {
+      monsoon: 'northeast',
+      source: { publisher: 'CMWSSB', url: 'https://cmwssb.tn.gov.in/lake-level' },
+      releasesBy: { en: "Tamil Nadu's Water Resources Department", ta: 'தமிழ்நாடு நீர்வளத் துறை' },
+    },
   },
   // Chennai's facts run the live + derived builders at request time
   // (reservoir storage, Day Zero compare, CGWB blocks, river quality)
