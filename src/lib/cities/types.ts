@@ -1,4 +1,4 @@
-import type { LanguageCode } from '@/lib/i18n/translations';
+import type { I18nText, LanguageCode } from '@/lib/i18n/translations';
 import type { CityId, RouteKey } from './ids';
 
 export type WaterSourceType =
@@ -152,6 +152,26 @@ export interface DashboardSectionsConfig {
    *  supply-side surface can express. Generic - any city that publishes a
    *  generated-vs-treated balance can turn this on. */
   sewageBalance?: boolean;
+  /** Reservoir headroom card: how much more each tracked reservoir can hold,
+   *  leading the dashboard during the city's monsoon. Needs live storage and
+   *  published capacity for its reservoirs. Chennai first (northeast
+   *  monsoon). */
+  reservoirHeadroom?: ReservoirHeadroomConfig;
+}
+
+/**
+ * Framing for the reservoir headroom card. Like FloodChainConfig it carries
+ * no thresholds: capacity and storage come from the publisher's readings.
+ */
+export interface ReservoirHeadroomConfig {
+  /** The IMD season the card leads in: southwest = June-September,
+   *  northeast = October-December. */
+  monsoon: 'southwest' | 'northeast';
+  /** Publisher of the readings and the page they come from. */
+  source: { publisher: string; url: string };
+  /** Who decides surplus releases from these reservoirs, in the city's
+   *  languages (it sits inside a translated sentence). */
+  releasesBy: I18nText;
 }
 
 /**
