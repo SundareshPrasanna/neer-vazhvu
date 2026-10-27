@@ -15,20 +15,20 @@
       }
     ],
     "method": "api",
-    "produced_at": "2026-10-26",
+    "produced_at": "2026-10-27",
     "produced_by": "neer-vazhvu-api/scripts/scrape_apwrims_reservoirs.py",
     "note": "Read from the APWRIMS JSON API. Live storage is computed as published gross storage minus design dead storage, except where storage_note says APWRIMS published live storage; the design values are checked against APWRIMS's reservoir attributes on every run. Readings are dated by their own timestamps."
   },
   "_source": "APWRIMS daily reservoir feed (AP Water Resources Department)",
   "_source_url": "https://apwrims.ap.gov.in/api/reservoir/timeseries",
-  "_fetched": "2026-10-26",
+  "_fetched": "2026-10-27",
   "_note": "Live storage for the four reservoirs that feed GVMC, from the APWRIMS daily reservoir feed. Yeleru's storage includes Godavari water that the Purushottapatnam lift sends through the Polavaram Left Main Canal into the reservoir (since July 2018). VIWSCO's Kateru pump house sends Godavari water through a 56 km pipeline into the Yeleru canal (since December 2004), not into the reservoir, so that water is not in these figures. All four are multi-use: irrigation, industry and the city draw on the same storage. GVMC's own Mudasarlova reservoir and the Gambhiramgedda reservoir are not in this feed.",
   "storage_note": "storage_tmc, storage_mcum and storage_pct_live are LIVE storage: APWRIMS publishes gross storage in TMC, and live storage is gross minus the design dead storage (the water below the lowest outlet), floored at zero. storage_pct_live is live storage as a share of designed live capacity. gross_storage_tmc and gross_pct keep the published gross figures. Each reading is dated by the IST date of its own timestamp. Readings that fail a sanity check are counted under quality.rejected and left out. Up to 15 September 2026, APWRIMS published Meghadrigedda's storage as live storage, not gross: those figures reach the design live capacity at full reservoir level, and from the next day the same levels read higher by the dead storage. They are used as live storage, and gross_storage_tmc for those days is the published figure plus the dead storage.",
-  "as_of": "2026-10-26",
+  "as_of": "2026-10-27",
   "quality": {
     "window": {
-      "start": "2025-10-19",
-      "end": "2026-10-26"
+      "start": "2025-10-20",
+      "end": "2026-10-27"
     },
     "readings_accepted": 1416,
     "rejected": {
@@ -58,32 +58,23 @@
       "gross_capacity_mcum": 33.1,
       "dead_storage_mcum": 3.68,
       "live_capacity_mcum": 29.42,
-      "date": "2026-10-26",
-      "reading_time": "2026-10-26T07:16+05:30",
-      "level_m": 16.307,
-      "level_ft": 53.5,
-      "gross_storage_tmc": 0.54,
-      "gross_pct": 46.19,
-      "storage_tmc": 0.41,
-      "storage_pct_live": 39.46,
+      "date": "2026-10-27",
+      "reading_time": "2026-10-27T06:34+05:30",
+      "level_m": 16.276,
+      "level_ft": 53.4,
+      "gross_storage_tmc": 0.533,
+      "gross_pct": 45.59,
+      "storage_tmc": 0.403,
+      "storage_pct_live": 38.79,
       "below_dead_storage": false,
       "inflow_cusecs": 0,
       "outflow_cusecs": 15,
-      "storage_mcum": 11.61,
-      "last_year_date": "2025-10-26",
+      "storage_mcum": 11.41,
+      "last_year_date": "2025-10-27",
       "last_year_storage_tmc": 0.92,
       "last_year_storage_mcum": 26.05,
       "last_year_pct_live": 88.55,
       "history": [
-        {
-          "date": "2026-09-27",
-          "level_m": 16.185,
-          "gross_storage_tmc": 0.513,
-          "storage_tmc": 0.383,
-          "storage_pct_live": 36.86,
-          "inflow_cusecs": 175,
-          "outflow_cusecs": 15
-        },
         {
           "date": "2026-09-28",
           "level_m": 16.215,
@@ -344,6 +335,15 @@
           "storage_pct_live": 39.46,
           "inflow_cusecs": 0,
           "outflow_cusecs": 15
+        },
+        {
+          "date": "2026-10-27",
+          "level_m": 16.276,
+          "gross_storage_tmc": 0.533,
+          "storage_tmc": 0.403,
+          "storage_pct_live": 38.79,
+          "inflow_cusecs": 0,
+          "outflow_cusecs": 15
         }
       ],
       "days_reported_last_30": 30
@@ -365,8 +365,8 @@
       "gross_capacity_mcum": 101.94,
       "dead_storage_mcum": 9.34,
       "live_capacity_mcum": 92.6,
-      "date": "2026-10-26",
-      "reading_time": "2026-10-26T06:37+05:30",
+      "date": "2026-10-27",
+      "reading_time": "2026-10-27T06:11+05:30",
       "level_m": 105.799,
       "level_ft": 347.11,
       "gross_storage_tmc": 0.956,
@@ -374,23 +374,14 @@
       "storage_tmc": 0.626,
       "storage_pct_live": 19.14,
       "below_dead_storage": false,
-      "inflow_cusecs": 24,
+      "inflow_cusecs": 140,
       "outflow_cusecs": 140,
       "storage_mcum": 17.73,
-      "last_year_date": "2025-10-26",
-      "last_year_storage_tmc": 2.63,
-      "last_year_storage_mcum": 74.47,
-      "last_year_pct_live": 80.43,
+      "last_year_date": "2025-10-27",
+      "last_year_storage_tmc": 2.556,
+      "last_year_storage_mcum": 72.38,
+      "last_year_pct_live": 78.17,
       "history": [
-        {
-          "date": "2026-09-27",
-          "level_m": 105.75,
-          "gross_storage_tmc": 1.271,
-          "storage_tmc": 0.941,
-          "storage_pct_live": 28.78,
-          "inflow_cusecs": 979,
-          "outflow_cusecs": 90
-        },
         {
           "date": "2026-09-28",
           "level_m": 105.796,
@@ -651,6 +642,15 @@
           "storage_pct_live": 19.14,
           "inflow_cusecs": 24,
           "outflow_cusecs": 140
+        },
+        {
+          "date": "2026-10-27",
+          "level_m": 105.799,
+          "gross_storage_tmc": 0.956,
+          "storage_tmc": 0.626,
+          "storage_pct_live": 19.14,
+          "inflow_cusecs": 140,
+          "outflow_cusecs": 140
         }
       ],
       "days_reported_last_30": 30
@@ -672,32 +672,23 @@
       "gross_capacity_mcum": 94.15,
       "dead_storage_mcum": 4.25,
       "live_capacity_mcum": 89.91,
-      "date": "2026-10-26",
-      "reading_time": "2026-10-26T06:26+05:30",
-      "level_m": 85.222,
-      "level_ft": 279.6,
-      "gross_storage_tmc": 1.52,
-      "gross_pct": 45.71,
-      "storage_tmc": 1.37,
-      "storage_pct_live": 43.15,
+      "date": "2026-10-27",
+      "reading_time": "2026-10-27T06:07+05:30",
+      "level_m": 85.161,
+      "level_ft": 279.4,
+      "gross_storage_tmc": 1.505,
+      "gross_pct": 45.26,
+      "storage_tmc": 1.355,
+      "storage_pct_live": 42.68,
       "below_dead_storage": false,
       "inflow_cusecs": 0,
       "outflow_cusecs": 160,
-      "storage_mcum": 38.79,
-      "last_year_date": "2025-10-26",
-      "last_year_storage_tmc": 2.93,
-      "last_year_storage_mcum": 82.97,
-      "last_year_pct_live": 92.28,
+      "storage_mcum": 38.37,
+      "last_year_date": "2025-10-27",
+      "last_year_storage_tmc": 2.85,
+      "last_year_storage_mcum": 80.7,
+      "last_year_pct_live": 89.76,
       "history": [
-        {
-          "date": "2026-09-27",
-          "level_m": 85.862,
-          "gross_storage_tmc": 1.72,
-          "storage_tmc": 1.57,
-          "storage_pct_live": 49.45,
-          "inflow_cusecs": 488,
-          "outflow_cusecs": 25
-        },
         {
           "date": "2026-09-28",
           "level_m": 85.923,
@@ -958,6 +949,15 @@
           "storage_pct_live": 43.15,
           "inflow_cusecs": 0,
           "outflow_cusecs": 160
+        },
+        {
+          "date": "2026-10-27",
+          "level_m": 85.161,
+          "gross_storage_tmc": 1.505,
+          "storage_tmc": 1.355,
+          "storage_pct_live": 42.68,
+          "inflow_cusecs": 0,
+          "outflow_cusecs": 160
         }
       ],
       "days_reported_last_30": 30
@@ -979,32 +979,23 @@
       "gross_capacity_mcum": 682.72,
       "dead_storage_mcum": 174.43,
       "live_capacity_mcum": 508.29,
-      "date": "2026-10-26",
-      "reading_time": "2026-10-26T06:00+05:30",
-      "level_m": 83.338,
-      "level_ft": 273.42,
-      "gross_storage_tmc": 17.96,
-      "gross_pct": 74.49,
-      "storage_tmc": 11.8,
-      "storage_pct_live": 65.74,
+      "date": "2026-10-27",
+      "reading_time": "2026-10-27T06:00+05:30",
+      "level_m": 83.399,
+      "level_ft": 273.62,
+      "gross_storage_tmc": 18.06,
+      "gross_pct": 74.91,
+      "storage_tmc": 11.9,
+      "storage_pct_live": 66.3,
       "below_dead_storage": false,
-      "inflow_cusecs": 873,
-      "outflow_cusecs": 275,
-      "storage_mcum": 334.14,
-      "last_year_date": "2025-10-26",
-      "last_year_storage_tmc": 15.8,
-      "last_year_storage_mcum": 447.41,
-      "last_year_pct_live": 88.02,
+      "inflow_cusecs": 1771,
+      "outflow_cusecs": 225,
+      "storage_mcum": 336.97,
+      "last_year_date": "2025-10-27",
+      "last_year_storage_tmc": 15.76,
+      "last_year_storage_mcum": 446.27,
+      "last_year_pct_live": 87.8,
       "history": [
-        {
-          "date": "2026-09-27",
-          "level_m": 81.558,
-          "gross_storage_tmc": 15.29,
-          "storage_tmc": 9.13,
-          "storage_pct_live": 50.86,
-          "inflow_cusecs": 4055,
-          "outflow_cusecs": 250
-        },
         {
           "date": "2026-09-28",
           "level_m": 81.799,
@@ -1265,6 +1256,15 @@
           "storage_pct_live": 65.74,
           "inflow_cusecs": 873,
           "outflow_cusecs": 275
+        },
+        {
+          "date": "2026-10-27",
+          "level_m": 83.399,
+          "gross_storage_tmc": 18.06,
+          "storage_tmc": 11.9,
+          "storage_pct_live": 66.3,
+          "inflow_cusecs": 1771,
+          "outflow_cusecs": 225
         }
       ],
       "days_reported_last_30": 30
