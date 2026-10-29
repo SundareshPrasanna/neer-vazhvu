@@ -159,8 +159,28 @@
       "cadence": "yearly (GEC assessment)",
       "tier": 1,
       "detection": {
-        "method": "human-review",
-        "reviewEveryDays": 120
+        "method": "url-template",
+        "urlTemplate": "https://ingres.iith.ac.in/api/gec/getBusinessDataForUserOpen",
+        "templateFrom": 2025,
+        "postBody": {
+          "parentLocName": "INDIA",
+          "locname": "RAJASTHAN",
+          "loctype": "STATE",
+          "view": "admin",
+          "locuuid": "785cc6f0-e9d0-4961-9578-08ed2f24377a",
+          "year": "{YYYY}-{YYYY1}",
+          "computationType": "normal",
+          "component": "recharge",
+          "period": "annual",
+          "category": "safe",
+          "mapOnClickParams": "true",
+          "login": "true",
+          "stateuuid": null,
+          "verificationStatus": 1,
+          "approvalLevel": 1,
+          "parentuuid": "ffce954d-24e1-494b-ba7e-0931d8ad6085"
+        },
+        "expectMinRows": 2
       },
       "dependsOn": [
         "public/data/gwr-blocks-jaipur.json",
@@ -168,7 +188,12 @@
         "public/data/facts-jaipur.json"
       ],
       "refreshMethod": "neer-vazhvu-api/scripts/build_ingres_gwr.py --city jaipur (also writes the unit polygons from the IN-GRES GeoServer)",
-      "notes": "Dynamic Ground Water Resources for Jaipur district drilled to its 16 assessment units, five editions from 2021-2022. IN-GRES is ONE upstream serving every state; this entry is the Rajasthan cut. Rajasthan's state UUID came from the COUNTRY-level API call. IN-GRES still serves the 33 pre-2023 districts. The 2024-2025 district figures equal Rajasthan's printed Dynamic Ground Water Resources 2025 (printed p.168). Jaipur Urban's 2022-2023 row equals the state's GWRA 2023 report (printed p.49)."
+      "notes": "Dynamic Ground Water Resources for Jaipur district drilled to its 16 assessment units, five editions from 2021-2022. IN-GRES is ONE upstream serving every state; this entry is the Rajasthan cut. Rajasthan's state UUID came from the COUNTRY-level API call. IN-GRES still serves the 33 pre-2023 districts. The 2024-2025 district figures equal Rajasthan's printed Dynamic Ground Water Resources 2025 (printed p.168). Jaipur Urban's 2022-2023 row equals the state's GWRA 2023 report (printed p.49). Detection: url-template POSTs the IN-GRES open API once per assessment year (recipe in ingres-gw-assessment-tn). lastSeen is the OLDEST edition any dependsOn file carries, so a partly refreshed scope keeps alerting.",
+      "lastSeen": {
+        "apiDate": "2025 https://ingres.iith.ac.in/api/gec/getBusinessDataForUserOpen",
+        "edition": "2025-2026",
+        "acceptedOn": "2026-10-29"
+      }
     },
     {
       "id": "nwic-nwdp-groundwater-rajasthan",
