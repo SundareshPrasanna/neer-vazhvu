@@ -238,8 +238,28 @@
       "cadence": "yearly (GEC assessment)",
       "tier": 1,
       "detection": {
-        "method": "human-review",
-        "reviewEveryDays": 120
+        "method": "url-template",
+        "urlTemplate": "https://ingres.iith.ac.in/api/gec/getBusinessDataForUserOpen",
+        "templateFrom": 2025,
+        "postBody": {
+          "parentLocName": "INDIA",
+          "locname": "GUJARAT",
+          "loctype": "STATE",
+          "view": "admin",
+          "locuuid": "8fd29251-6e20-4f33-9a96-f47cab45eb13",
+          "year": "{YYYY}-{YYYY1}",
+          "computationType": "normal",
+          "component": "recharge",
+          "period": "annual",
+          "category": "safe",
+          "mapOnClickParams": "true",
+          "login": "true",
+          "stateuuid": null,
+          "verificationStatus": 1,
+          "approvalLevel": 1,
+          "parentuuid": "ffce954d-24e1-494b-ba7e-0931d8ad6085"
+        },
+        "expectMinRows": 2
       },
       "dependsOn": [
         "public/data/facts-ahmedabad.json",
@@ -249,7 +269,12 @@
         "public/geojson/ahmedabad-gwr-blocks.geojson"
       ],
       "refreshMethod": "neer-vazhvu-api/scripts/build_ingres_gwr.py --city surat; --city ahmedabad (also writes the unit polygons from the IN-GRES GeoServer)",
-      "notes": "Dynamic Ground Water Resources for Surat, Tapi, Navsari and Bharuch districts across four assessment years, and Ahmedabad district drilled to its ten talukas (five editions from 2021-2022). IN-GRES is ONE upstream serving every state; this entry is the Gujarat cut. Gujarat's state UUID was taken from the COUNTRY-level API call rather than the Angular bundle's GIS-layer table, which is incomplete and carries a second same-shaped table in a different namespace that returns well-formed empty results. Tapi district is in scope because Ukai - the control on Surat's supply and its flood risk - sits there. Watch for units returned as 'salinity': that is a poor-quality category, not a stage-of-extraction band, and such units carry no extraction figures at all."
+      "notes": "Dynamic Ground Water Resources for Surat, Tapi, Navsari and Bharuch districts across four assessment years, and Ahmedabad district drilled to its ten talukas (five editions from 2021-2022). IN-GRES is ONE upstream serving every state; this entry is the Gujarat cut. Gujarat's state UUID was taken from the COUNTRY-level API call rather than the Angular bundle's GIS-layer table, which is incomplete and carries a second same-shaped table in a different namespace that returns well-formed empty results. Tapi district is in scope because Ukai - the control on Surat's supply and its flood risk - sits there. Watch for units returned as 'salinity': that is a poor-quality category, not a stage-of-extraction band, and such units carry no extraction figures at all. Detection: url-template POSTs the IN-GRES open API once per assessment year (recipe in ingres-gw-assessment-tn). lastSeen is the OLDEST edition any dependsOn file carries, so a partly refreshed scope keeps alerting.",
+      "lastSeen": {
+        "apiDate": "2024 https://ingres.iith.ac.in/api/gec/getBusinessDataForUserOpen",
+        "edition": "2024-2025",
+        "acceptedOn": "2026-10-29"
+      }
     }
   ]
 }

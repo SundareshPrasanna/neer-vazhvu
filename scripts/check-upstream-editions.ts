@@ -150,6 +150,15 @@ interface Detection {
    * Omit for well-behaved hosts, which is most of them.
    */
   expectContentType?: string;
+  /** url-template: POST this JSON (placeholders expanded) instead of GET, for
+   *  APIs where the edition is a request field, not a path (IN-GRES `year`). */
+  postBody?: Record<string, unknown>;
+  /**
+   * url-template: count a year only when the JSON response is an array of at
+   * least this many rows. IN-GRES answers a year it has not published with 200
+   * and a lone empty `total` row, so `res.ok` alone would find every year.
+   */
+  expectMinRows?: number;
 }
 
 /** term-expiry default warning window - enough notice to line up sources
@@ -352,17 +361,18 @@ function validate(entries: SourceEntry[]): string[] {
     }
     if (d.method === "url-template") {
       if (!d.urlTemplate) problems.push(`${where}: url-template needs urlTemplate`);
-      else if (!/\{YYYY\}/.test(d.urlTemplate))
-        problems.push(`${where}: urlTemplate must contain {YYYY}: ${d.urlTemplate}`);
+      else if (!/\{YYYY\}/.test(d.urlTemplate + JSON.stringify(d.postBody ?? "")))
+        problems.push(`${where}: urlTemplate or postBody must contain {YYYY}: ${d.urlTemplate}`);
+      if (d.expectMinRows !== undefined && !(Number.isInteger(d.expectMinRows) && d.expectMinRows > 0))
+        problems.push(`${where}: expectMinRows must be a positive integer, got ${d.expectMinRows}`);
       if (d.templateFrom !== undefined && !(d.templateFrom > 1900))
         problems.push(`${where}: templateFrom must be a year, got ${d.templateFrom}`);
       if (d.expectContentType !== undefined && !d.expectContentType.trim())
         problems.push(`${where}: expectContentType must be a non-empty Content-Type prefix`);
     }
-    if (d.expectContentType !== undefined && d.method !== "url-template")
-      problems.push(
-        `${where}: expectContentType only applies to url-template, not ${d.method}`,
-      );
+    for (const k of ["expectContentType", "postBody", "expectMinRows"] as const)
+      if (d[k] !== undefined && d.method !== "url-template")
+        problems.push(`${where}: ${k} only applies to url-template, not ${d.method}`);
 
     // P5-8: hosts verified unreachable from our networks. Deliberately a
     // per-host deny-list, NOT a .nic.in or 164.100.x.x rule: nmcg.nic.in sits in
@@ -489,8 +499,8 @@ async function observeInner(e: SourceEntry): Promise<Observed> {
   if (d.method === "url-template") {
     const thisYear = new Date().getUTCFullYear();
     const from = d.templateFrom ?? thisYear - 1;
-    const expand = (y: number) =>
-      d.urlTemplate!
+    const expand = (y: number, t = d.urlTemplate!) =>
+      t
         .replace(/\{YYYY\}/g, String(y))
         .replace(/\{YYYY1\}/g, String(y + 1))
         .replace(/\{YY\}/g, String((y + 1) % 100).padStart(2, "0"));
@@ -502,8 +512,14 @@ async function observeInner(e: SourceEntry): Promise<Observed> {
     for (let y = from; y <= thisYear + 1; y++) {
       const url = expand(y);
       try {
-        let res = await fetchWithTimeout(url, { method: "HEAD" });
-        if (!res.ok) res = await fetchWithTimeout(url);
+        const post: RequestInit | undefined = d.postBody && {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: expand(y, JSON.stringify(d.postBody)),
+        };
+        // HEAD has no body, so a row count needs the full response.
+        let res = await fetchWithTimeout(url, post ?? { method: d.expectMinRows ? "GET" : "HEAD" });
+        if (!res.ok && !post) res = await fetchWithTimeout(url);
         // A soft-404 host answers every year with 200, so `ok` alone would
         // pin `latest` to the last year probed and never move. Where the
         // entry declares the content type a real edition serves, a mismatch
@@ -513,7 +529,14 @@ async function observeInner(e: SourceEntry): Promise<Observed> {
           (res.headers.get("content-type") ?? "")
             .toLowerCase()
             .startsWith(d.expectContentType.toLowerCase());
-        if (res.ok && typeOk) latest = { year: y, url };
+        const rowsOk =
+          !d.expectMinRows ||
+          (res.ok &&
+            (await res.json().then(
+              (j) => Array.isArray(j) && j.length >= d.expectMinRows!,
+              () => false,
+            )));
+        if (res.ok && typeOk && rowsOk) latest = { year: y, url };
         else notFound++;
       } catch (e) {
         // A single year 404ing is normal (not published yet). A single year

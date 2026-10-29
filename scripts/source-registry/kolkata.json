@@ -109,18 +109,38 @@
       "cadence": "yearly",
       "tier": 1,
       "detection": {
-        "method": "human-review",
-        "reviewEveryDays": 120
+        "method": "url-template",
+        "urlTemplate": "https://ingres.iith.ac.in/api/gec/getBusinessDataForUserOpen",
+        "templateFrom": 2025,
+        "postBody": {
+          "parentLocName": "INDIA",
+          "locname": "WESTBENGAL",
+          "loctype": "STATE",
+          "view": "admin",
+          "locuuid": "68ecabb4-0ea5-4909-b8e3-20bbaa7b91e8",
+          "year": "{YYYY}-{YYYY1}",
+          "computationType": "normal",
+          "component": "recharge",
+          "period": "annual",
+          "category": "safe",
+          "mapOnClickParams": "true",
+          "login": "true",
+          "stateuuid": null,
+          "verificationStatus": 1,
+          "approvalLevel": 1,
+          "parentuuid": "ffce954d-24e1-494b-ba7e-0931d8ad6085"
+        },
+        "expectMinRows": 2
       },
       "dependsOn": [
         "public/data/gwr-blocks-kolkata.json"
       ],
       "refreshMethod": "manual (neer-vazhvu-api/scripts/build_ingres_gwr.py --city kolkata)",
-      "notes": "IN-GRES is ONE upstream serving every state, and there are six of these entries all pointing at the same ingres.iith.ac.in front page. Watched with http-meta they fired together on a single homepage Last-Modified bump and reported six identical non-events. The ids are kept per-city on purpose: they carry lineage and are cited by name in 12 shipped artifact envelopes and 7 producers, so collapsing them is a DATA change needing a corpus release, not a registry tidy-up. Follow-up, on its own PR. What changes here is the method. The edition is an ASSESSMENT YEAR and the year list is not in the served markup (Angular bundle), so no page watch can see it. It IS machine-answerable via the solved open API: POST /api/gec/getBusinessDataForUserOpen with lowercase keys, locname with no spaces, view 'admin', parentuuid REQUIRED (INDIA = ffce954d-24e1-494b-ba7e-0931d8ad6085), varying `year`. A year that exists returns the state's districts; one that does not returns a single empty 'total' row. BASELINE 2026-08-15: West Bengal is on the same 2024-2025 assessment as every other state; the portal is one national release, not per-state.",
+      "notes": "IN-GRES is ONE upstream serving every state; the per-city ids stay because shipped artifact envelopes and producers cite them by name, so collapsing them is a corpus release, not a registry tidy-up. The edition is an ASSESSMENT YEAR that the Angular page never renders, so detection asks the open API instead: url-template POSTs /api/gec/getBusinessDataForUserOpen once per year (lowercase keys, locname with no spaces, view 'admin', parentuuid REQUIRED, INDIA = ffce954d-24e1-494b-ba7e-0931d8ad6085). A published year returns the state's districts; an unpublished one returns a lone empty 'total' row, hence expectMinRows 2. EDITIONS LAND PER STATE: Tamil Nadu had no 2025-2026 on 2026-08-15, Maharashtra did on 2026-08-17, and Karnataka's was found by hand on 2026-09-25 while these entries sat on a 120-day human-review cadence. lastSeen is the OLDEST edition any dependsOn file carries, so a partly refreshed scope keeps alerting.",
       "lastSeen": {
+        "apiDate": "2024 https://ingres.iith.ac.in/api/gec/getBusinessDataForUserOpen",
         "edition": "2024-2025",
-        "acceptedOn": "2026-08-15",
-        "reviewedOn": "2026-08-15"
+        "acceptedOn": "2026-10-29"
       }
     },
     {

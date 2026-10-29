@@ -75,8 +75,28 @@
       "cadence": "yearly",
       "tier": 1,
       "detection": {
-        "method": "human-review",
-        "reviewEveryDays": 120
+        "method": "url-template",
+        "urlTemplate": "https://ingres.iith.ac.in/api/gec/getBusinessDataForUserOpen",
+        "templateFrom": 2025,
+        "postBody": {
+          "parentLocName": "INDIA",
+          "locname": "ANDHRAPRADESH",
+          "loctype": "STATE",
+          "view": "admin",
+          "locuuid": "609c5df4-6414-4bbd-a22d-ff5fbdad6836",
+          "year": "{YYYY}-{YYYY1}",
+          "computationType": "normal",
+          "component": "recharge",
+          "period": "annual",
+          "category": "safe",
+          "mapOnClickParams": "true",
+          "login": "true",
+          "stateuuid": null,
+          "verificationStatus": 1,
+          "approvalLevel": 1,
+          "parentuuid": "ffce954d-24e1-494b-ba7e-0931d8ad6085"
+        },
+        "expectMinRows": 2
       },
       "dependsOn": [
         "public/data/gwr-blocks-visakhapatnam.json",
@@ -85,11 +105,11 @@
         "src/cities/visakhapatnam/story-en.tsx"
       ],
       "refreshMethod": "neer-vazhvu-api/scripts/build_ingres_gwr.py --city visakhapatnam",
-      "notes": "Assessed at mandal level. The 2024-2025 edition matches CGWB's 'Dynamic Ground Water Resources of Andhra Pradesh State 2025' (Dec 2025) for these mandals. TRAPS: the district id is reused across the April 2022 split (its district rows cover 8,547.7 km2 in 2016-2017 and 11,050.6 km2 in 2019-2020, then 1,001.7 km2, the assessed area of the new district, from 2021-2022) and the single 513.8 km2 GVMC unit became seven urban mandals in 2023-24, so no trend is quoted across either redraw. The 2025-2026 edition copies 2024-25 rainfall for every Vizag mandal and is newer than CGWB's December 2025 report. Use currentAvailabilityForAllPurposes (extractable): for Andhra Pradesh, totalGWAvailability adds the in-storage resource and is about 190 times larger. Unit polygons: GeoServer layer gec:indgec_mandal_all, year 2023, whose uuid is the assessment API's own.",
+      "notes": "Assessed at mandal level. The 2024-2025 edition matches CGWB's 'Dynamic Ground Water Resources of Andhra Pradesh State 2025' (Dec 2025) for these mandals. TRAPS: the district id is reused across the April 2022 split (its district rows cover 8,547.7 km2 in 2016-2017 and 11,050.6 km2 in 2019-2020, then 1,001.7 km2, the assessed area of the new district, from 2021-2022) and the single 513.8 km2 GVMC unit became seven urban mandals in 2023-24, so no trend is quoted across either redraw. The 2025-2026 edition copies 2024-25 rainfall for every Vizag mandal and is newer than CGWB's December 2025 report. Use currentAvailabilityForAllPurposes (extractable): for Andhra Pradesh, totalGWAvailability adds the in-storage resource and is about 190 times larger. Unit polygons: GeoServer layer gec:indgec_mandal_all, year 2023, whose uuid is the assessment API's own. Detection: url-template POSTs the IN-GRES open API once per assessment year (recipe in ingres-gw-assessment-tn). lastSeen is the OLDEST edition any dependsOn file carries, so a partly refreshed scope keeps alerting.",
       "lastSeen": {
-        "edition": "IN-GRES mandal assessments 2023-2024, 2024-2025 and 2025-2026",
-        "acceptedOn": "2026-10-15",
-        "reviewedOn": "2026-10-15"
+        "apiDate": "2025 https://ingres.iith.ac.in/api/gec/getBusinessDataForUserOpen",
+        "edition": "2025-2026",
+        "acceptedOn": "2026-10-29"
       }
     },
     {

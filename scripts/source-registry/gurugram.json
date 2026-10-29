@@ -65,19 +65,39 @@
       "cadence": "yearly",
       "tier": 1,
       "detection": {
-        "method": "human-review",
-        "reviewEveryDays": 120
+        "method": "url-template",
+        "urlTemplate": "https://ingres.iith.ac.in/api/gec/getBusinessDataForUserOpen",
+        "templateFrom": 2025,
+        "postBody": {
+          "parentLocName": "INDIA",
+          "locname": "HARYANA",
+          "loctype": "STATE",
+          "view": "admin",
+          "locuuid": "648a95f6-9249-4c92-8ae4-a9d93eb7c898",
+          "year": "{YYYY}-{YYYY1}",
+          "computationType": "normal",
+          "component": "recharge",
+          "period": "annual",
+          "category": "safe",
+          "mapOnClickParams": "true",
+          "login": "true",
+          "stateuuid": null,
+          "verificationStatus": 1,
+          "approvalLevel": 1,
+          "parentuuid": "ffce954d-24e1-494b-ba7e-0931d8ad6085"
+        },
+        "expectMinRows": 2
       },
       "dependsOn": [
         "public/data/gwr-blocks-gurugram.json",
         "public/geojson/gurugram-gwr-blocks.geojson"
       ],
       "refreshMethod": "cd neer-vazhvu-api && python3 scripts/build_ingres_gwr.py --city gurugram && python3 scripts/build_gurugram_gwr_geojson.py --out ../public/geojson/gurugram-gwr-blocks.geojson",
-      "notes": "IN-GRES is ONE upstream serving every state, and there are six of these entries all pointing at the same ingres.iith.ac.in front page. Watched with http-meta they fired together on a single homepage Last-Modified bump and reported six identical non-events. The ids are kept per-city on purpose: they carry lineage and are cited by name in 12 shipped artifact envelopes and 7 producers, so collapsing them is a DATA change needing a corpus release, not a registry tidy-up. Follow-up, on its own PR. What changes here is the method. The edition is an ASSESSMENT YEAR and the year list is not in the served markup (Angular bundle), so no page watch can see it. It IS machine-answerable via the solved open API: POST /api/gec/getBusinessDataForUserOpen with lowercase keys, locname with no spaces, view 'admin', parentuuid REQUIRED (INDIA = ffce954d-24e1-494b-ba7e-0931d8ad6085), varying `year`. A year that exists returns the state's districts; one that does not returns a single empty 'total' row. BASELINE 2026-08-15, verified against Tamil Nadu: 2024-2025 returns 38 districts, 2025-2026 returns the empty total. 2024-2025 is current; there is no newer edition. When 2025-2026 starts returning districts it re-bases groundwater for every city at once. IIT-Hyderabad hosted, so OUTSIDE the NICNET gate that blocks CPCB/CGWA. This is the source that closes Gurugram's signature issue: four assessment years to 2024-25, and unlike the WRIS LEVEL series (37 stations, stops June 2020, no telemetry for this district at all) it is current.\n\nTHE NUMBERS. Gurugram district extracts 194.59% of annual recharge, over_exploited - the primary source for the '~195%' the research drop asserted without one. Block level is worse and more specific: GURGAON_URBAN 326.26%, PATAUDI 168.48, SOHNA 156.86, FARRUKH NAGAR 143.39, GURGAON (rural) 106.91 - all five over_exploited. Haryana state total 136.75%. Neighbours carried for context: Rewari and Faridabad over_exploited, Palwal critical, Nuh (Mewat) semi_critical, Jhajjar safe.\n\nSTATE UUID TRAP - do not repeat it. Haryana is 648a95f6-9249-4c92-8ae4-a9d93eb7c898, obtained BY ASKING THE API: a COUNTRY-level call (locname=INDIA, loctype=COUNTRY, locuuid=parentuuid=INDIA_UUID) returns all 38 states with their uuids in one request. Do NOT source it from the Angular bundle the way West Bengal's was. That table (STATEUUIDLAYERNAME) is GIS-layer-scoped, INCOMPLETE - 27 of 36 states, Haryana absent - and main.js carries a SECOND table of the same shape (HR:{ST_CENSUS:6,name:'HARYANA',UUID:...}) in a different namespace. The decoy uuid is well-formed and returns an empty list for every year, which is indistinguishable from 'this state publishes nothing'. Only running West Bengal as a control through the same code proved the code was fine and the id was wrong.\n\nNAMING: IN-GRES still spells the district GURGAON, the pre-2016 name, where India-WRIS and LGD both say GURUGRAM. Third portal, third vocabulary - enumerate per portal.\n\nPayload gotchas inherited from the WB entry: lowercase keys, locname with NO spaces, view lowercase 'admin', parentuuid REQUIRED as the discriminator.",
+      "notes": "IN-GRES is ONE upstream serving every state; the per-city ids stay because shipped artifact envelopes and producers cite them by name, so collapsing them is a corpus release, not a registry tidy-up. The edition is an ASSESSMENT YEAR that the Angular page never renders, so detection asks the open API instead: url-template POSTs /api/gec/getBusinessDataForUserOpen once per year (lowercase keys, locname with no spaces, view 'admin', parentuuid REQUIRED, INDIA = ffce954d-24e1-494b-ba7e-0931d8ad6085). A published year returns the state's districts; an unpublished one returns a lone empty 'total' row, hence expectMinRows 2. EDITIONS LAND PER STATE: Tamil Nadu had no 2025-2026 on 2026-08-15, Maharashtra did on 2026-08-17, and Karnataka's was found by hand on 2026-09-25 while these entries sat on a 120-day human-review cadence. lastSeen is the OLDEST edition any dependsOn file carries, so a partly refreshed scope keeps alerting. IIT-Hyderabad hosted, so OUTSIDE the NICNET gate that blocks CPCB/CGWA. This is the source that closes Gurugram's signature issue: four assessment years to 2024-25, and unlike the WRIS LEVEL series (37 stations, stops June 2020, no telemetry for this district at all) it is current.\n\nTHE NUMBERS. Gurugram district extracts 194.59% of annual recharge, over_exploited - the primary source for the '~195%' the research drop asserted without one. Block level is worse and more specific: GURGAON_URBAN 326.26%, PATAUDI 168.48, SOHNA 156.86, FARRUKH NAGAR 143.39, GURGAON (rural) 106.91 - all five over_exploited. Haryana state total 136.75%. Neighbours carried for context: Rewari and Faridabad over_exploited, Palwal critical, Nuh (Mewat) semi_critical, Jhajjar safe.\n\nSTATE UUID TRAP - do not repeat it. Haryana is 648a95f6-9249-4c92-8ae4-a9d93eb7c898, obtained BY ASKING THE API: a COUNTRY-level call (locname=INDIA, loctype=COUNTRY, locuuid=parentuuid=INDIA_UUID) returns all 38 states with their uuids in one request. Do NOT source it from the Angular bundle the way West Bengal's was. That table (STATEUUIDLAYERNAME) is GIS-layer-scoped, INCOMPLETE - 27 of 36 states, Haryana absent - and main.js carries a SECOND table of the same shape (HR:{ST_CENSUS:6,name:'HARYANA',UUID:...}) in a different namespace. The decoy uuid is well-formed and returns an empty list for every year, which is indistinguishable from 'this state publishes nothing'. Only running West Bengal as a control through the same code proved the code was fine and the id was wrong.\n\nNAMING: IN-GRES still spells the district GURGAON, the pre-2016 name, where India-WRIS and LGD both say GURUGRAM. Third portal, third vocabulary - enumerate per portal.\n\nPayload gotchas inherited from the WB entry: lowercase keys, locname with NO spaces, view lowercase 'admin', parentuuid REQUIRED as the discriminator.",
       "lastSeen": {
+        "apiDate": "2024 https://ingres.iith.ac.in/api/gec/getBusinessDataForUserOpen",
         "edition": "2024-2025",
-        "acceptedOn": "2026-08-15",
-        "reviewedOn": "2026-08-15"
+        "acceptedOn": "2026-10-29"
       }
     },
     {

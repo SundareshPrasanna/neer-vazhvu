@@ -11,8 +11,28 @@
       "cadence": "yearly",
       "tier": 1,
       "detection": {
-        "method": "human-review",
-        "reviewEveryDays": 120
+        "method": "url-template",
+        "urlTemplate": "https://ingres.iith.ac.in/api/gec/getBusinessDataForUserOpen",
+        "templateFrom": 2025,
+        "postBody": {
+          "parentLocName": "INDIA",
+          "locname": "MAHARASHTRA",
+          "loctype": "STATE",
+          "view": "admin",
+          "locuuid": "e7b3f02d-2497-4bcd-9e20-baa4b621822b",
+          "year": "{YYYY}-{YYYY1}",
+          "computationType": "normal",
+          "component": "recharge",
+          "period": "annual",
+          "category": "safe",
+          "mapOnClickParams": "true",
+          "login": "true",
+          "stateuuid": null,
+          "verificationStatus": 1,
+          "approvalLevel": 1,
+          "parentuuid": "ffce954d-24e1-494b-ba7e-0931d8ad6085"
+        },
+        "expectMinRows": 2
       },
       "dependsOn": [
         "public/data/gwr-blocks-pune.json",
@@ -37,11 +57,11 @@
         "public/data/atlas/mh/kolhapur/briefs"
       ],
       "refreshMethod": "manual (neer-vazhvu-api/scripts/build_ingres_gwr.py --city pune; --city nagpur, which also writes public/geojson/nagpur-gwr-blocks.geojson from the IN-GRES GeoServer, gec:indgec_ver_mahar year 2021)",
-      "notes": "CORRECTS A CROSS-CITY BASELINE. The gurugram.json entry for this same upstream records, as of 2026-08-15, that '2024-2025 is current; there is no newer edition', verified against Tamil Nadu and Haryana. That is true of those states and FALSE as a national statement. Re-probed 2026-08-17: MAHARASHTRA 2025-2026 returns 36 districts (state stage 50.85%), while HARYANA and WESTBENGAL 2025-2026 both still return the empty 'total' row. EDITIONS LAND PER STATE, NOT NATIONALLY. Anything that watches one state and infers the national edition will be wrong for the others. The 2025-2026 Maharashtra rows carry approvalLevel=4 and verificStatus=1, the same as the finalised 2023-2024 and 2024-2025 editions, so it is a published edition and not a draft.\n\nTHIS CITY DRILLS BELOW THE DISTRICT, and it is the first one that does. Pune district totals 63.23% and is categorised SAFE, while Shirur taluka inside it is at 95.71% and has been CRITICAL in all six published editions. Emitting the district figure alone would state the opposite of the finding.\n\nREQUEST SHAPE FOR THE SUB-DISTRICT DRILL - this cost real time, do not 'simplify' it. The discriminator is parentuuid, NOT loctype. Pune's children come back from locname=PUNE, loctype=DISTRICT, locuuid=<Pune uuid>, parentuuid=<MAHARASHTRA uuid>: you name the location you are standing on and the parent you came from. Setting parentuuid to Pune's own uuid - the obvious guess, and exactly what the state-level call does with INDIA_UUID - returns ZERO rows with HTTP 200, which reads as 'this district publishes no block assessment' rather than as a malformed request. loctype values TEHSIL, BLOCK, TALUK and 'ASSESSMENT UNIT' all return zero rows too, so a reader debugging by trying plausible level names finds nothing and concludes the data does not exist.\n\nUUIDS. Maharashtra e7b3f02d-2497-4bcd-9e20-baa4b621822b, Pune district 471dff0a-9b41-46f2-890d-179b2408ca4d. Both obtained BY ASKING THE API, not from the Angular bundle: a COUNTRY-level call returns all 38 states with their locationUUIDs, and a STATE-level call returns its districts with theirs. The bundle route is the documented trap (see gurugram.json).\n\nEDITIONS: 2019-2020, 2021-2022, 2022-2023, 2023-2024, 2024-2025, 2025-2026. 2020-2021 returns a lone empty 'total' row - a real gap in the series, not a fetch failure. Pune City becomes its own assessment unit only in 2023-2024; before that it is inside Haveli.\n\nSPELLING: the portal upper-cases every unit name before 2023-2024 and title-cases after, and spells MAVAL as 'Mawal' in the 2025-2026 edition only. Both are normalised in the producer; keyed on the raw string, a taluka splits into two or three blocks with short histories.\n\nNAGPUR: drills to 14 talukas over the same six editions. Spellings drift beyond case (HINGANA/Hingna, KAMTEE/Kamptee, MOUDA/Mauda, NAGPUR/Nagpur Rural/Nagpur (Rural), Nagpur Urban/Nagpur (Urban), WFS NAGPUR CITY), so the producer maps them through drill.aliases. Nagpur (Urban) first appears in the 2023-2024 area figures with 22,457 ha, the same total by which three units' assessed areas fall (6,277 + 16,081 + 99); no IN-GRES text calls it a transfer. Its 2025-2026 row enters a command area of 206 ha against 16,081 ha the year before, and its non-command figures repeat the 2024-2025 values; its printed rainfall (336.66 mm, 1,146.98 the year before) is an average over the re-split areas. The producer asserts that district 2024-2025 equals CGWB National Compilation 2025 printed p.161 (PDF p.187) (45.68%, 140,292.87 / 64,092.79 ham) and stops if it does not.",
+      "notes": "CORRECTS A CROSS-CITY BASELINE. The gurugram.json entry for this same upstream records, as of 2026-08-15, that '2024-2025 is current; there is no newer edition', verified against Tamil Nadu and Haryana. That is true of those states and FALSE as a national statement. Re-probed 2026-08-17: MAHARASHTRA 2025-2026 returns 36 districts (state stage 50.85%), while HARYANA and WESTBENGAL 2025-2026 both still return the empty 'total' row. EDITIONS LAND PER STATE, NOT NATIONALLY. Anything that watches one state and infers the national edition will be wrong for the others. The 2025-2026 Maharashtra rows carry approvalLevel=4 and verificStatus=1, the same as the finalised 2023-2024 and 2024-2025 editions, so it is a published edition and not a draft.\n\nTHIS CITY DRILLS BELOW THE DISTRICT, and it is the first one that does. Pune district totals 63.23% and is categorised SAFE, while Shirur taluka inside it is at 95.71% and has been CRITICAL in all six published editions. Emitting the district figure alone would state the opposite of the finding.\n\nREQUEST SHAPE FOR THE SUB-DISTRICT DRILL - this cost real time, do not 'simplify' it. The discriminator is parentuuid, NOT loctype. Pune's children come back from locname=PUNE, loctype=DISTRICT, locuuid=<Pune uuid>, parentuuid=<MAHARASHTRA uuid>: you name the location you are standing on and the parent you came from. Setting parentuuid to Pune's own uuid - the obvious guess, and exactly what the state-level call does with INDIA_UUID - returns ZERO rows with HTTP 200, which reads as 'this district publishes no block assessment' rather than as a malformed request. loctype values TEHSIL, BLOCK, TALUK and 'ASSESSMENT UNIT' all return zero rows too, so a reader debugging by trying plausible level names finds nothing and concludes the data does not exist.\n\nUUIDS. Maharashtra e7b3f02d-2497-4bcd-9e20-baa4b621822b, Pune district 471dff0a-9b41-46f2-890d-179b2408ca4d. Both obtained BY ASKING THE API, not from the Angular bundle: a COUNTRY-level call returns all 38 states with their locationUUIDs, and a STATE-level call returns its districts with theirs. The bundle route is the documented trap (see gurugram.json).\n\nEDITIONS: 2019-2020, 2021-2022, 2022-2023, 2023-2024, 2024-2025, 2025-2026. 2020-2021 returns a lone empty 'total' row - a real gap in the series, not a fetch failure. Pune City becomes its own assessment unit only in 2023-2024; before that it is inside Haveli.\n\nSPELLING: the portal upper-cases every unit name before 2023-2024 and title-cases after, and spells MAVAL as 'Mawal' in the 2025-2026 edition only. Both are normalised in the producer; keyed on the raw string, a taluka splits into two or three blocks with short histories.\n\nNAGPUR: drills to 14 talukas over the same six editions. Spellings drift beyond case (HINGANA/Hingna, KAMTEE/Kamptee, MOUDA/Mauda, NAGPUR/Nagpur Rural/Nagpur (Rural), Nagpur Urban/Nagpur (Urban), WFS NAGPUR CITY), so the producer maps them through drill.aliases. Nagpur (Urban) first appears in the 2023-2024 area figures with 22,457 ha, the same total by which three units' assessed areas fall (6,277 + 16,081 + 99); no IN-GRES text calls it a transfer. Its 2025-2026 row enters a command area of 206 ha against 16,081 ha the year before, and its non-command figures repeat the 2024-2025 values; its printed rainfall (336.66 mm, 1,146.98 the year before) is an average over the re-split areas. The producer asserts that district 2024-2025 equals CGWB National Compilation 2025 printed p.161 (PDF p.187) (45.68%, 140,292.87 / 64,092.79 ham) and stops if it does not. Detection: url-template POSTs the IN-GRES open API once per assessment year (recipe in ingres-gw-assessment-tn). lastSeen is the OLDEST edition any dependsOn file carries, so a partly refreshed scope keeps alerting.",
       "lastSeen": {
-        "edition": "2025-2026",
-        "acceptedOn": "2026-08-17",
-        "reviewedOn": "2026-08-17"
+        "apiDate": "2024 https://ingres.iith.ac.in/api/gec/getBusinessDataForUserOpen",
+        "edition": "2024-2025",
+        "acceptedOn": "2026-10-29"
       }
     },
     {
