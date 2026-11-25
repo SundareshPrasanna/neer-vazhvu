@@ -145,3 +145,38 @@ def columns(pdf: Path, key: re.Pattern, wanted: dict[str, re.Pattern], header: s
         if claims and skipped:
             notes.append(f"page {no}: skipped {', '.join(skipped)}")
     return found, notes
+
+
+NUMBER = re.compile(r"-?\d+(\.\d+)?")
+
+
+def serial_rows(pdf: Path, texts: int, values: int) -> list[tuple[list[str], list[float]]]:
+    """([text cell, ...], [value, ...]) for each row of a one-tile table whose rows open with a serial number at the
+    left edge, then `texts` text cells, then `values` figures (Tamil Nadu's daily reservoir storage report). Text that
+    wraps prints on the lines below its row, never above; each word goes to the text column it starts in, placed from
+    where each column's row-line word most often starts on the page. A row that does not read so stops the read."""
+    out = []
+    for words in pages(pdf):
+        lines: dict[float, list] = {}
+        for w in sorted(words, key=lambda t: t[1]):  # the serial sits a fraction of a point off its row's baseline
+            top = next((y for y in lines if abs(w[1] - y) <= 4), None)
+            lines.setdefault(w[1] if top is None else top, []).append(w)
+        ys = sorted(lines)
+        rows = [y for y in ys if (ln := sorted(lines[y]))[0][4].isdigit() and ln[0][2] < 95
+                and sum(bool(NUMBER.fullmatch(w[4])) for w in ln) > values]
+        if not rows:
+            continue
+        lead = [[w for w in sorted(lines[y])[1:] if not NUMBER.fullmatch(w[4])] for y in rows]
+        if any(len(ln) < texts for ln in lead):
+            raise ValueError(f"{pdf.name}: a row prints fewer than {texts} text cells")
+        starts = [statistics.mode(round(ln[i][0]) for ln in lead) for i in range(1, texts)]
+        for i, y in enumerate(rows):
+            ln = sorted(lines[y])
+            figures = [w for w in ln if NUMBER.fullmatch(w[4])][-values:]
+            below = [w for yy in ys if y < yy < (rows[i + 1] if i + 1 < len(rows) else 1e9)
+                     and not any(NUMBER.fullmatch(w[4]) or w[4] in ("Total", "%") for w in lines[yy]) for w in lines[yy]]
+            cells: list[list] = [[] for _ in range(texts)]
+            for w in lead[i] + below:
+                cells[sum(w[0] >= s - 3 for s in starts)].append(w)
+            out.append(([" ".join(w[4] for w in sorted(c, key=lambda t: (t[1], t[0]))) for c in cells], [float(w[4]) for w in figures]))
+    return out
