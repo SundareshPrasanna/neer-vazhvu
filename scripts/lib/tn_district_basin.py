@@ -1638,7 +1638,8 @@ class DistrictBasinBuild:
         feeds = {"wells": (self.build_groundwater_wells, "groundwater-wells")}
         if cfg.TNPCB_RT_SITES:
             feeds["tnpcb-rt"] = (self.build_realtime_stations, "realtime-stations")
-        feeds["cwc"] = (self.build_gauging_stations, "gauging-stations")
+        if "gauging-stations" in cfg.STEPS:  # a basin with no CWC site serves no such family (Namakkal, Tiruppur)
+            feeds["cwc"] = (self.build_gauging_stations, "gauging-stations")
         if cfg.KSDMA_RESERVOIRS:
             feeds["ksdma"] = (self.build_ksdma_reservoirs, "reservoirs")
         if cfg.RESERVOIR_LEVELS:  # separate feeds, so one source's failure never rolls back the other's reading
