@@ -31,7 +31,7 @@ import urllib.error
 import urllib.parse
 import urllib.request
 from collections import Counter
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from pathlib import Path
 
 from shapely.geometry import LineString, MultiLineString, Point, Polygon, mapping, shape
@@ -40,7 +40,7 @@ from shapely.ops import linemerge, substring, unary_union
 ROOT = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(ROOT / "scripts"))
 from nvdm_write import write_artifact  # noqa: E402
-from lib.sheet_print import columns as sheet_columns  # noqa: E402
+from lib.sheet_print import columns as sheet_columns, serial_rows as sheet_serial_rows  # noqa: E402
 
 TODAY = date.today().isoformat()
 
@@ -51,6 +51,7 @@ SIPCOT = "https://sipcotgis.tn.gov.in:8086/geoserver/cite/wfs"
 NWDP = "https://nwdp.nwic.gov.in"  # NWIC's National Water Data Portal: the station data India-WRIS serves, and up when WRIS is down
 TNPCB_RT = "https://tnpcb.gov.in/rtwqmstnpcb"
 TNSMART = "https://beta-tnsmart.rimes.int/index.php/Reservoir"  # RIMES relay of the state's daily reservoir storage
+TNSMART_DAILY = "https://beta-tnsmart.rimes.int/DATA/Rainfall/daily_reservoir/reservoir_{day:%d-%m-%Y}.pdf"  # the state's daily report
 CANAL_CLASS = {"Main Canal": "main", "Branch Canal": "main", "Distributary": "distributary", "Minor": "minor", "Sub Minor": "minor"}
 TNPCB_RT_PARAMS = (  # key in the feed, label, unit, criterion, criterion label
     ("bod", "BOD", "mg/L", 3, "BOD of 3 mg/L or less (outdoor bathing criterion)"),
@@ -288,6 +289,11 @@ def num(v) -> float | None:
         return float(v)
     except (TypeError, ValueError):
         return None
+
+
+def squash(name: str) -> str:
+    """A name with everything but its letters taken out: printed names wrap anywhere inside their cells."""
+    return re.sub(r"[^a-z]", "", name.lower())
 
 
 def dms(t: tuple) -> float:
@@ -743,34 +749,55 @@ class DistrictBasinBuild:
         return {"stationKey": f"reservoir-{key}", "hasReadings": True, "latestLevel": f"{daily[-1][1]:.2f} m above sea level ({daily[-1][0].strftime('%Y-%m-%d')}, CWC)"}
 
     def storage_reading(self, register_name: str) -> dict:
-        """The dashboard's current storage for one reservoir, as it prints it. No series, no conversion."""
+        """The state's latest storage for one reservoir, as the daily report prints it. No series, no conversion."""
         key = self.cfg.RESERVOIR_STORAGE.get(register_name)
         if not key:
             return {}
-        row = self.tnsmart_storage().get(key)
+        report = self.tnsmart_storage()
+        row = report["rows"].get(squash(key))
         if row is None:
-            raise SystemExit(f"reservoirs: the state dashboard no longer lists {key!r} for {register_name}")
-        full = num(row.get("total_water_lvl_ft"))
+            raise SystemExit(f"reservoirs: the state's daily storage report no longer lists {key!r} for {register_name}")
         return {
-            "storagePercentOfCapacity": num(row.get("percent_capacity")) and round(num(row["percent_capacity"]), 1),
-            "storageMcft": num(row.get("capacity_mcf")),
-            "storageDepthFt": num(row.get("depth_ft")),
-            "fullCapacityFt": full,
-            "storageReadOn": str(row.get("date") or "").strip() or None,
-            "storageSource": "Tamil Nadu reservoir dashboard (TN-SMART, RIMES), daily",
+            "storagePercentOfCapacity": round(row["percent"], 1),
+            "storageMcft": row["storageMcft"],
+            "storageDepthFt": row["depthFt"],
+            "fullCapacityFt": row["fullDepthFt"],
+            "storageReadOn": report["asOf"],
+            "storageSource": "Tamil Nadu Water Resources Department daily storage report (via TN-SMART, RIMES)",
         }
 
     def tnsmart_storage(self) -> dict:
-        """Today's storage for the reservoirs the state dashboard reports, keyed by its own name.
-
-        The page carries one JSON array of every reservoir it relays; the reading is a snapshot,
-        not a series, so it is served as a current fact and never charted.
-        """
+        """The newest of the last seven daily storage reports ('Basin wise surface water storage position of
+        Tamilnadu', one PDF a day, relayed by TN-SMART), rows keyed by reservoir name with its spaces taken out,
+        since names wrap inside their cells. A snapshot, served as a current fact and never charted. The dashboard
+        page these readings used to come from went behind a login in November 2026; the reports did not."""
         if self._tnsmart is None:
-            raw = self.cached("tnsmart-reservoirs.json", lambda: {"html": artifact_text_from(TNSMART)})
-            rows = json.loads(re.search(r"\[\s*\{[^\[\]]*?depth_ft.*?\}\s*\]", raw["html"], re.S).group(0))
-            self._tnsmart = {str(r["name"]).strip(): r for r in rows}
+            for back in range(7):
+                day = date.today() - timedelta(days=back)
+                try:
+                    self._tnsmart = self.cached(f"tnsmart-{day.isoformat()}.json", lambda d=day: self.read_storage_report(d))
+                    break
+                except urllib.error.HTTPError as e:
+                    if e.code != 404:  # not posted yet: the day before
+                        raise
+            else:
+                raise RuntimeError("no daily storage report in the last seven days")
         return self._tnsmart
+
+    def read_storage_report(self, day: date) -> dict:
+        fp = self.CACHE / "tnsmart" / f"reservoir_{day:%d-%m-%Y}.pdf"
+        fp.parent.mkdir(parents=True, exist_ok=True)
+        with urllib.request.urlopen(urllib.request.Request(TNSMART_DAILY.format(day=day), headers=UA), timeout=120, context=CTX) as r:
+            fp.write_bytes(r.read())
+        printed = re.search(r"as\s+on\s+(\d\d)-(\d\d)-(\d{4})", subprocess.run(["pdftotext", "-l", "1", str(fp), "-"], check=True, capture_output=True, text=True).stdout)
+        if not printed or f"{printed[3]}-{printed[2]}-{printed[1]}" != day.isoformat():
+            raise RuntimeError(f"{fp.name}: the report does not say it is as on {day:%d-%m-%Y}")
+        rows: dict[str, dict] = {}
+        for (_, district, name), (full_ft, _, depth_ft, storage_mcft, percent) in sheet_serial_rows(fp, 3, 5):
+            if squash(name) in rows:
+                raise RuntimeError(f"{fp.name}: {name!r} prints twice")
+            rows[squash(name)] = {"district": district, "fullDepthFt": full_ft, "depthFt": depth_ft, "storageMcft": storage_mcft, "percent": percent}
+        return {"asOf": day.isoformat(), "rows": rows}
 
     def build_reservoirs(self) -> None:
         cfg, district, sheds = self.cfg, self.district, self.sheds

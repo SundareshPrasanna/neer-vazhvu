@@ -1318,10 +1318,10 @@
       "id": "tnsmart-rimes-reservoirs",
       "scope": "krishnagiri-rivers",
       "publisher": "Regional Integrated Multi-Hazard Early Warning System for Africa and Asia (RIMES), relaying Tamil Nadu's daily reservoir storage",
-      "url": "https://beta-tnsmart.rimes.int/index.php/Reservoir",
+      "url": "https://beta-tnsmart.rimes.int/DATA/Rainfall/daily_reservoir/",
       "license": "LICENCE UNVERIFIED - see notes. The dashboard states no terms of use, no copyright policy and no licence anywhere on the page; nothing has been established about who may redistribute this material. Storage readings are served as current facts with the dashboard named.",
       "type": "page",
-      "cadence": "daily (the page's rows carry the day's date)",
+      "cadence": "daily (one report a day, dated in its title)",
       "tier": 2,
       "detection": {
         "method": "continuous"
@@ -1344,8 +1344,8 @@
         "public/data/basins/tirupathur-rivers/reservoirs.geojson",
         "public/data/basins/tirupathur-rivers/inventory.json"
       ],
-      "refreshMethod": "scripts/build_krishnagiri_rivers_basin.py --live, weekly by .github/workflows/district-basins-refresh.yml (Mondays); the cache prefix tnsmart- is always re-fetched on a --live run",
-      "notes": "The state's daily reservoir dashboard, relayed by RIMES: one JSON array in the page carries every reservoir it reports with the day's depth in feet, storage in Mcft, percentage of capacity, full capacity and coordinates. It serves Kelavarapalli, Krishnagiri (KRP) and Pambar, three of the four dams inside Krishnagiri district; Shoolagiri Chinnar is not on it. IDENTITY CHECK that these are the same dams: the dashboard's full-capacity figures (KRP 52.0 ft, Pambar 19.6 ft, Kelavarapalli 44.28 ft) agree with the Krishnagiri collectorate's own agriculture page. CAVEATS, both deliberate and recorded on the map: RIMES is a relay, not the issuer, so if the state feed breaks this breaks too; the host is a beta subdomain whose stability is not guaranteed; and the page carries no licence statement of any kind, so the licence determination fails closed as unverified. The endpoint index.php/Reservoir/get_reservoir_data returns 31 storage percentages per reservoir with NO dates attached, so it is not used: a chart would have to infer its own x axis. Only the current reading is served, which is what the page itself states."
+      "refreshMethod": "scripts/build_<basin>_rivers_basin.py --live --only storage, weekly by .github/workflows/district-basins-refresh.yml (Mondays): reads the newest of the last seven daily reports (reservoir_DD-MM-YYYY.pdf; a day not yet posted is a 404) with scripts/lib/sheet_print.py serial_rows; the cache prefix tnsmart- is always re-fetched on a --live run",
+      "notes": "The Tamil Nadu Water Resources Department's daily report 'Basin wise surface water storage position of Tamilnadu', relayed by RIMES as one PDF a day at DATA/Rainfall/daily_reservoir/reservoir_DD-MM-YYYY.pdf (the directory lists them). Each of its 89 rows gives basin, district, reservoir, full depth in feet, capacity in Mcft, the day's depth in feet, storage in Mcft and percentage of storage; names wrap inside their cells, so rows are matched with spaces taken out. The dashboard page index.php/Reservoir, which carried the same figures as one JSON array, went behind a login and reCAPTCHA by 16 Nov 2026 (every page now redirects to login/login_form); the reports did not. CHECK that the report and the dashboard agree: the reports for 21, 22 and 26 Oct 2026 reproduce all 30 readings the district maps served from the dashboard on those dates, every field. It serves Kelavarapalli, Krishnagiri (KRP) and Pambar, three of the four dams inside Krishnagiri district; Shoolagiri Chinnar is not in it. IDENTITY CHECK that these are the same dams: the full-capacity depths (KRP 52.0 ft, Pambar 19.6 ft, Kelavarapalli 44.3 ft) agree with the Krishnagiri collectorate's own agriculture page. CAVEATS, both deliberate and recorded on the map: RIMES is a relay, not the issuer, so if the state feed breaks this breaks too; the host is a beta subdomain whose stability is not guaranteed; and neither the reports nor the site carry a licence statement of any kind, so the licence determination fails closed as unverified. Only the current reading is served."
     },
     {
       "id": "ksrec-open-geoserver",
